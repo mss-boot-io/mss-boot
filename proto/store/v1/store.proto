@@ -1,0 +1,73 @@
+syntax = "proto3";
+
+package store.v1;
+
+option go_package = "github.com/lwnmengjing/mss-boot/proto/store/v1";
+
+service Store {
+  rpc Get(GetReq) returns (GetResp) {};
+  rpc Set(SetReq) returns (SetResp) {};
+  rpc Del(DelReq) returns (DelResp) {};
+  rpc HashGet(HashGetReq) returns (HashGetResp) {};
+  rpc HashDel(HashDelReq) returns (HashDelResp) {};
+  rpc Increase(IncreaseReq) returns (IncreaseResp) {};
+  rpc Decrease(DecreaseReq) returns (DecreaseResp) {};
+  rpc Expire(ExpireReq) returns (ExpireResp) {};
+}
+
+message GetReq {
+  string key = 1;
+}
+
+message GetResp {
+  string value = 2;
+}
+
+message SetReq {
+  string key = 1;
+  string value = 2;
+  int32 expire = 3;
+}
+
+message SetResp {}
+
+message DelReq {
+  string key = 1;
+}
+
+message DelResp {}
+
+message ExpireReq {
+  string key = 1;
+  int32 expire = 2;
+}
+
+message ExpireResp {}
+
+message IncreaseReq {
+  string key = 1;
+}
+
+message HashGetReq {
+  string hashKey = 1;
+  string key = 2;
+}
+
+message HashGetResp {
+  string value = 1;
+}
+
+message HashDelReq {
+  string hashKey = 1;
+  string key = 2;
+}
+
+message HashDelResp {}
+
+message IncreaseResp {}
+
+message DecreaseReq {
+  string key = 1;
+}
+
+message DecreaseResp {}

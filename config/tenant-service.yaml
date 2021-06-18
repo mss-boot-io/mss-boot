@@ -1,0 +1,20 @@
+grpc:
+  name: tenant.v1
+  addr: :9091
+  network: tcp
+  timeout: 30
+health:
+  addr: :3001
+metrics:
+  addr: :4001
+logger:
+  type: default #default: go-admin-core构建的默认日志插件, zap: zap插件
+  # 日志存放路径，关闭控制台日志后，日志文件存放位置
+  path: temp/logs
+  # 日志输出，file：文件，default：命令行，其他：命令行
+  stdout: default #控制台日志，启用后，不输出到文件
+  # 日志等级, trace, debug, info, warn, error, fatal
+  level: trace
+database:
+  driver: mysql
+  source: root:123456@tcp(localhost:3306)/admin-go?charset=utf8mb4&parseTime=True&loc=Local&timeout=10000ms

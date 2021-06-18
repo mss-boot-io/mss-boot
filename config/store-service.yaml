@@ -1,0 +1,14 @@
+grpc:
+  name: store.v1
+  addr: :9090
+  network: tcp
+  timeout: 30
+logger:
+  type: default #default: go-admin-core构建的默认日志插件, zap: zap插件
+  # 日志存放路径，关闭控制台日志后，日志文件存放位置
+  path: temp/logs
+  # 日志输出，file：文件，default：命令行，其他：命令行
+  stdout: '' #控制台日志，启用后，不输出到文件
+  # 日志等级, trace, debug, info, warn, error, fatal
+  level: trace
+memory: ok

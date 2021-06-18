@@ -1,0 +1,110 @@
+syntax = "proto3";
+
+package tenant.v1;
+
+import "google/protobuf/timestamp.proto";
+import "github.com/lwnmengjing/mss-boot/proto/common/common.proto";
+
+option go_package = "github.com/lwnmengjing/mss-boot/proto/tenant/v1";
+
+service Tenant {
+  rpc Get(GetReq) returns (GetResp) {};
+  rpc Create(CreateReq) returns (CreateResp) {};
+  rpc Update(UpdateReq) returns (UpdateResp) {};
+  rpc Delete(DeleteReq) returns (DeleteResp) {};
+  rpc List(ListReq) returns (ListResp) {};
+}
+
+message GetReq {
+  //id
+  string id = 1;
+}
+
+message GetResp {
+  //id
+  string id = 1;
+  //名称
+  string name = 2;
+  //状态
+  uint32 status = 3;
+  //系统租户
+  uint32 system = 4;
+  //联系方式
+  string contact = 5;
+  //描述
+  string description = 6;
+  //域名
+  repeated string domains = 7;
+  //创建时间
+  google.protobuf.Timestamp createdAt = 8;
+  //更新时间
+  google.protobuf.Timestamp updatedAt = 9;
+
+}
+
+message CreateReq {
+  //名称
+  string name = 1;
+  //状态
+  uint32 status = 2;
+  //系统租户
+  uint32 system = 3;
+  //联系方式
+  string contact = 4;
+  //描述
+  string description = 5;
+  //域名
+  repeated string domains = 6;
+}
+
+message CreateResp {}
+
+message UpdateReq {
+  //id
+  string id = 1;
+  //名称
+  string name = 2;
+  //状态
+  uint32 status = 3;
+  //系统租户
+  uint32 system = 4;
+  //联系方式
+  string contact = 5;
+  //描述
+  string description = 6;
+  //域名
+  repeated string domains = 7;
+}
+
+message UpdateResp {}
+
+message DeleteReq {
+  //id
+  string id = 1;
+}
+
+message DeleteResp {}
+
+message ListReq {
+  common.Pagination pagination = 1;
+  //id
+  // @inject_tag: search:"custom_value"
+  string id = 2;
+  //名称
+  string name = 3;
+  //状态
+  uint32 status = 4;
+  //系统租户
+  uint32 system = 5;
+  //联系方式
+  string contact = 6;
+  //描述
+  string description = 7;
+  //域名
+  string domains = 8;
+}
+
+message ListResp {
+  repeated GetResp list = 1;
+  uint32 total = 2;
+}

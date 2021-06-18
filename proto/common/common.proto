@@ -1,0 +1,11 @@
+syntax = "proto3";
+
+package common;
+
+option go_package = "github.com/lwnmengjing/mss-boot/proto/common";
+
+message Pagination {
+  string search = 1;
+  uint32 page = 2;
+  uint32 pageSize = 3;
+}

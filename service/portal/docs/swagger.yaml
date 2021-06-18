@@ -1,0 +1,59 @@
+basePath: /api/v1
+definitions:
+  form.CategoryCreateReq:
+    properties:
+      description:
+        description: 描述
+        type: string
+      name:
+        description: 名称
+        type: string
+    type: object
+  form.CategoryCreateResp:
+    properties:
+      createdAt:
+        type: integer
+      description:
+        type: string
+      id:
+        type: string
+      name:
+        type: string
+      updateAt:
+        type: integer
+    type: object
+host: localhost:8080
+info:
+  contact: {}
+  description: admin-go接口文档
+  title: portal API
+  version: 2.0.0
+paths:
+  /category:
+    post:
+      consumes:
+      - application/json
+      description: 获取JSON
+      parameters:
+      - description: data
+        in: body
+        name: data
+        required: true
+        schema:
+          $ref: '#/definitions/form.CategoryCreateReq'
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/form.CategoryCreateResp'
+      security:
+      - Bearer: []
+      summary: 创建category
+      tags:
+      - category
+securityDefinitions:
+  Bearer:
+    in: header
+    name: Authorization
+    type: apiKey
+swagger: "2.0"
