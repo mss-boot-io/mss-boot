@@ -1,0 +1,250 @@
+basePath: /tenant/api/v1
+definitions:
+  form.TenantCreateReq:
+    properties:
+      contact:
+        description: 联系方式
+        type: string
+      description:
+        description: 描述
+        type: string
+      domains:
+        description: 域名
+        items:
+          type: string
+        type: array
+      email:
+        description: 邮箱
+        type: string
+      expiredAt:
+        description: 有效期
+        type: string
+      name:
+        description: 名称
+        type: string
+      status:
+        description: 状态
+        type: integer
+      system:
+        description: 系统管理
+        type: boolean
+    required:
+    - expiredAt
+    - name
+    type: object
+  form.TenantListItem:
+    properties:
+      contact:
+        description: 联系方式
+        type: string
+      createdAt:
+        description: 创建时间
+        type: string
+      description:
+        description: 描述
+        type: string
+      domains:
+        description: 域名
+        items:
+          type: string
+        type: array
+      expiredAt:
+        description: 有效期
+        type: string
+      id:
+        description: id
+        type: string
+      name:
+        description: 名称
+        type: string
+      status:
+        description: 状态
+        type: integer
+      system:
+        description: 系统管理
+        type: boolean
+      updatedAt:
+        description: 更新时间
+        type: string
+    required:
+    - expiredAt
+    type: object
+  form.TenantUpdateReq:
+    properties:
+      contact:
+        description: 联系方式
+        type: string
+      description:
+        description: 描述
+        type: string
+      domains:
+        description: 域名
+        items:
+          type: string
+        type: array
+      email:
+        description: 邮箱
+        type: string
+      expiredAt:
+        description: 有效期
+        type: string
+      name:
+        description: 名称
+        type: string
+    required:
+    - expiredAt
+    type: object
+  response.Page:
+    properties:
+      count:
+        type: integer
+      pageIndex:
+        type: integer
+      pageSize:
+        type: integer
+    type: object
+  response.Response:
+    properties:
+      code:
+        type: integer
+      msg:
+        type: string
+      requestId:
+        description: 数据集
+        type: string
+      status:
+        type: string
+    type: object
+host: localhost:9094
+info:
+  contact: {}
+  description: tenant接口文档
+  title: tenant API
+  version: 0.0.1
+paths:
+  /tenant:
+    get:
+      consumes:
+      - application/json
+      description: 列表tenant
+      parameters:
+      - description: 租户名称
+        in: query
+        name: name
+        type: string
+      - description: 当前页
+        in: query
+        name: page
+        type: string
+      - description: 每页容量
+        in: query
+        name: pageSize
+        type: string
+      responses:
+        "200":
+          description: OK
+          schema:
+            allOf:
+            - $ref: '#/definitions/response.Page'
+            - properties:
+                list:
+                  items:
+                    $ref: '#/definitions/form.TenantListItem'
+                  type: array
+              type: object
+      security:
+      - Bearer: []
+      summary: 列表tenant
+      tags:
+      - tenant
+    post:
+      consumes:
+      - application/json
+      description: 创建tenant
+      parameters:
+      - description: data
+        in: body
+        name: data
+        required: true
+        schema:
+          $ref: '#/definitions/form.TenantCreateReq'
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/response.Response'
+      security:
+      - Bearer: []
+      summary: 创建tenant
+      tags:
+      - tenant
+  /tenant/{id}:
+    delete:
+      consumes:
+      - application/json
+      description: 删除tenant
+      parameters:
+      - description: id
+        in: path
+        name: id
+        type: string
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/response.Response'
+      security:
+      - Bearer: []
+      summary: 删除tenant
+      tags:
+      - tenant
+    get:
+      consumes:
+      - application/json
+      description: 获取tenant
+      parameters:
+      - description: id
+        in: path
+        name: id
+        type: string
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/response.Response'
+      security:
+      - Bearer: []
+      summary: 获取tenant
+      tags:
+      - tenant
+    put:
+      consumes:
+      - application/json
+      description: 更新tenant
+      parameters:
+      - description: id
+        in: path
+        name: id
+        type: string
+      - description: data
+        in: body
+        name: data
+        required: true
+        schema:
+          $ref: '#/definitions/form.TenantUpdateReq'
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/response.Response'
+      security:
+      - Bearer: []
+      summary: 更新tenant
+      tags:
+      - tenant
+securityDefinitions:
+  Bearer:
+    in: header
+    name: Authorization
+    type: apiKey
+swagger: "2.0"

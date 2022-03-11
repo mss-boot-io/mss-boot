@@ -9,21 +9,43 @@ func _() {
 	// Re-run the stringer command to generate them again.
 	var x [1]struct{}
 	_ = x[SUCCESS-0]
-	_ = x[StoreSvcBaseErrorCode-10000]
 	_ = x[StoreSvcOperateAdapterFailed-10000]
+	_ = x[TenantSvcParamsInvalid-20000]
+	_ = x[TenantSvcOperateDBFailed-20001]
+	_ = x[TenantSvcRecordIsExist-20002]
+	_ = x[TenantSvcRecordNotFound-20003]
+	_ = x[AdminSvcParamsInvalid-30000]
+	_ = x[AdminSvcUnauthorized-30001]
+	_ = x[AdminSvcOperateDBFailed-30002]
+	_ = x[AdminSvcForbidden-30003]
+	_ = x[AdminSvcRecordIsExist-30004]
+	_ = x[AdminSvcDeleteRecordNotExist-30005]
 }
 
 const (
-	_ErrorCode_name_0 = "SUCCESS"
-	_ErrorCode_name_1 = "StoreSvcBaseErrorCode"
+	_ErrCode_name_0 = "SUCCESS"
+	_ErrCode_name_1 = "StoreSvcOperateAdapterFailed"
+	_ErrCode_name_2 = "TenantSvcParamsInvalidTenantSvcOperateDBFailedTenantSvcRecordIsExistTenantSvcRecordNotFound"
+	_ErrCode_name_3 = "AdminSvcParamsInvalidAdminSvcUnauthorizedAdminSvcOperateDBFailedAdminSvcForbiddenAdminSvcRecordIsExistAdminSvcDeleteRecordNotExist"
+)
+
+var (
+	_ErrCode_index_2 = [...]uint8{0, 22, 46, 68, 91}
+	_ErrCode_index_3 = [...]uint8{0, 21, 41, 64, 81, 102, 130}
 )
 
 func (i ErrCode) String() string {
 	switch {
 	case i == 0:
-		return _ErrorCode_name_0
+		return _ErrCode_name_0
 	case i == 10000:
-		return _ErrorCode_name_1
+		return _ErrCode_name_1
+	case 20000 <= i && i <= 20003:
+		i -= 20000
+		return _ErrCode_name_2[_ErrCode_index_2[i]:_ErrCode_index_2[i+1]]
+	case 30000 <= i && i <= 30005:
+		i -= 30000
+		return _ErrCode_name_3[_ErrCode_index_3[i]:_ErrCode_index_3[i+1]]
 	default:
 		return "ErrCode(" + strconv.FormatInt(int64(i), 10) + ")"
 	}

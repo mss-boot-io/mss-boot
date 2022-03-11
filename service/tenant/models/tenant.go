@@ -1,49 +1,67 @@
 /*
  * @Author: lwnmengjing
- * @Date: 2021/6/17 5:04 下午
+ * @Date: 2022/3/10 22:37
  * @Last Modified by: lwnmengjing
- * @Last Modified time: 2021/6/17 5:04 下午
+ * @Last Modified time: 2022/3/10 22:37
  */
 
 package models
 
 import (
-	"strings"
+	"context"
+	"errors"
+	"go.mongodb.org/mongo-driver/bson"
+	"go.mongodb.org/mongo-driver/bson/primitive"
+	"go.mongodb.org/mongo-driver/mongo"
 	"time"
 
-	"github.com/google/uuid"
-	"gorm.io/gorm"
+	"github.com/mss-boot-io/mss-boot/pkg/config/mongodb"
 )
 
-// Tenant 租户
 type Tenant struct {
-	ID          string         `gorm:"primaryKey;size:64;default:(UUID());comment:ID"`
-	Name        string         `gorm:"size:255;comment:名称"`
-	Status      uint8          `gorm:"index;comment:状态"`
-	System      uint8          `gorm:"index;comment:管理端"`
-	Contact     string         `gorm:"comment:联系方式"`
-	Domains     string         `gorm:"size:255;comment:域名"`
-	Description string         `gorm:"type:text;comment:描述"`
-	DeletedAt   gorm.DeletedAt `gorm:"index;comment:软删除"`
-	CreatedAt time.Time
-	UpdatedAt time.Time
+	ID          primitive.ObjectID `bson:"_id"`
+	Name        string             `bson:"name"`
+	Email       string             `bson:"email"`
+	Contact     string             `bson:"contact"`
+	Description string             `bson:"description"`
+	Domains     []string           `bson:"domains"`
+	Status      uint8              `bson:"status"`
+	Expire      time.Time          `bson:"expire"`
+	CreatedAt   time.Time          `bson:"createdAt"`
+	UpdatedAt   time.Time          `bson:"updatedAt"`
 }
 
-func (Tenant) TableName() string {
+func (e *Tenant) TableName() string {
 	return "tenant"
 }
 
-func (e *Tenant) BeforeCreate(_ *gorm.DB) error {
-	e.ID = strings.Join(strings.Split(uuid.New().String(), "-"), "")
-	return nil
+func (e *Tenant) C() *mongo.Collection {
+	return mongodb.DB.Collection(e.TableName())
 }
 
-// SetDomains set domains
-func (e *Tenant) SetDomains(domains ...string) {
-	e.Domains = strings.Join(domains, ",")
-}
+//
+//func (e *Tenant) Create() error {
+//	e.ID = bson.NewObjectId().Hex()
+//	e.CreatedAt = time.Now()
+//	e.UpdatedAt = time.Now()
+//	return e.C().InsertOne(context.TODO(), e)
+//}
 
-// GetDomains get domains
-func (e *Tenant) GetDomains() []string {
-	return strings.Split(e.Domains, ",")
+//func (e *Tenant) Update() error {
+//	return e.C().UpdateId(e.ID, e)
+//}
+
+func (e *Tenant) Exist(ctx context.Context) (bool, error) {
+	sr := e.C().FindOne(ctx, bson.M{"name": e.Name})
+	if sr.Err() != nil {
+		if errors.Is(mongo.ErrNoDocuments, sr.Err()) {
+			return false, nil
+		}
+		return false, sr.Err()
+	}
+	_, err := sr.DecodeBytes()
+	if err != nil {
+		return false, nil
+	}
+	return true, nil
 }

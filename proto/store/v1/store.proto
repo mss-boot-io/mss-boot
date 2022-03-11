@@ -2,7 +2,7 @@ syntax = "proto3";
 
 package store.v1;
 
-option go_package = "github.com/lwnmengjing/mss-boot/proto/store/v1";
+option go_package = "github.com/mss-boot-io/mss-boot/proto/store/v1";
 
 service Store {
   rpc Get(GetReq) returns (GetResp) {};

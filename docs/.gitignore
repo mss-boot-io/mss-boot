@@ -1,0 +1,7 @@
+themes/*
+*.lock
+*.xml
+resources
+tags
+*/*.html
+public

@@ -8,13 +8,13 @@
 package config
 
 import (
-	"github.com/lwnmengjing/core-go/server/listener"
+	"github.com/mss-boot-io/mss-boot/core/server/listener"
 )
 
 type Listen struct {
-	Addr     string `json:"addr"`
-	CertFile string `json:"certFile"`
-	KeyFile  string `json:"keyFile"`
+	Addr     string `yaml:"addr" json:"addr"`
+	CertFile string `yaml:"certFile" json:"certFile"`
+	KeyFile  string `yaml:"keyFile" json:"keyFile"`
 }
 
 func (e *Listen) Init(opts ...listener.Option) []listener.Option {

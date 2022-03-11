@@ -8,8 +8,8 @@
 package config
 
 import (
-	"github.com/lwnmengjing/core-go/config"
-	"github.com/lwnmengjing/core-go/config/source/file"
+	"github.com/mss-boot-io/mss-boot/core/config"
+	"github.com/mss-boot-io/mss-boot/core/config/source/file"
 )
 
 // Init 初始化配置

@@ -3,8 +3,8 @@ package config
 import (
 	"time"
 
-	"github.com/lwnmengjing/core-go/server"
-	"github.com/lwnmengjing/core-go/server/grpc"
+	"github.com/mss-boot-io/mss-boot/core/server"
+	"github.com/mss-boot-io/mss-boot/core/server/grpc"
 )
 
 // GRPC grpc服务公共配置(选用)

@@ -10,17 +10,20 @@ package handler
 import (
 	"context"
 
-	log "github.com/lwnmengjing/core-go/logger"
-	"github.com/lwnmengjing/core-go/server/grpc/interceptors/logging/ctxlog"
+	"github.com/mss-boot-io/mss-boot/core/logger"
+	"github.com/mss-boot-io/mss-boot/core/server/grpc/interceptors/logging/ctxlog"
+	"github.com/mss-boot-io/mss-boot/core/tools/utils"
 )
 
 // Handler 基类
 type Handler struct {
-	ID  string
-	Log *log.Helper
+	ID        string
+	RequestID string
+	Log       *logger.Helper
 }
 
 // Make 构建
 func (e *Handler) Make(c context.Context) {
-	e.Log = ctxlog.Extract(c)
+	e.Log = logger.NewHelper(ctxlog.Extract(c))
+	e.RequestID = utils.GetRequestID(c)
 }

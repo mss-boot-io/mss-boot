@@ -1,8 +1,8 @@
 /*
  * @Author: lwnmengjing
- * @Date: 2021/6/17 2:56 下午
+ * @Date: 2022/3/10 13:46
  * @Last Modified by: lwnmengjing
- * @Last Modified time: 2021/6/17 2:56 下午
+ * @Last Modified time: 2022/3/10 13:46
  */
 
 package main
@@ -21,7 +21,7 @@ const version = "0.0.1"
 var ver bool
 
 func init() {
-	flag.String("c", "config/store-service.yaml",
+	flag.String("c", "cfg/tenant.yaml",
 		"Read configuration from specified `FILE`, supports JSON/YAML/TOML formats")
 	flag.BoolVar(&ver, "v", false, "Print the server version information")
 	flag.Parse()

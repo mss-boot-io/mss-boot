@@ -12,18 +12,23 @@ import (
 	"log"
 	"os"
 
-	"github.com/lwnmengjing/core-go/logger"
-	"github.com/lwnmengjing/core-go/logger/level"
-	"github.com/lwnmengjing/core-go/logger/writer"
+	"github.com/mss-boot-io/mss-boot/core/logger"
+	"github.com/mss-boot-io/mss-boot/core/logger/level"
+	"github.com/mss-boot-io/mss-boot/core/logger/writer"
+	"github.com/mss-boot-io/mss-boot/core/plugins/logger/logrus"
+	"github.com/mss-boot-io/mss-boot/core/plugins/logger/zap"
+	logrusCore "github.com/sirupsen/logrus"
+	"go.uber.org/zap/zapcore"
 )
 
 // Logger logger配置
 type Logger struct {
-	Type   string `yaml:"type"`
-	Path   string `yaml:"path"`
-	Level  string `yaml:"level"`
-	Stdout string `yaml:"stdout"`
-	Cap    uint   `yaml:"cap"`
+	Type      string `yaml:"type" json:"type"`
+	Path      string `yaml:"path" json:"path"`
+	Level     string `yaml:"level" json:"level"`
+	Stdout    string `yaml:"stdout" json:"stdout"`
+	Cap       uint   `yaml:"cap" json:"cap"`
+	Formatter string `yaml:"formatter" json:"formatter"`
 }
 
 // Init 初始化日志
@@ -55,16 +60,30 @@ func (e *Logger) Init() {
 		log.Fatalf("get logger level error, %s", err.Error())
 	}
 
+	opts := []logger.Option{
+		logger.WithLevel(l),
+		logger.WithOutput(output),
+	}
 	switch e.Type {
-	//case "zap":
-	//	setLogger, err = zap.NewLogger(logger.WithLevel(l), logger.WithOutput(output), zap.WithCallerSkip(2))
-	//	if err != nil {
-	//		log.Fatalf("new zap logger error, %s", err.Error())
-	//	}
-	//case "logrus":
-	//	setLogger = logrus.NewLogger(logger.WithLevel(l), logger.WithOutput(output), logrus.ReportCaller())
+	case "zap":
+		opts = append(opts, zap.WithCallerSkip(2))
+		switch e.Formatter {
+		case "json":
+			opts = append(opts, zap.WithEncoder(zapcore.NewJSONEncoder(zapcore.EncoderConfig{})))
+		}
+		logger.DefaultLogger, err = zap.NewLogger(opts...)
+		if err != nil {
+			log.Fatalf("new zap logger error, %s", err.Error())
+		}
+	case "logrus":
+		opts = append(opts, logrus.WithSkip(12), logrus.ReportCaller())
+		switch e.Formatter {
+		case "json":
+			opts = append(opts, logrus.WithJSONFormatter(&logrusCore.JSONFormatter{}))
+		}
+		logger.DefaultLogger = logrus.NewLogger(opts...)
 	default:
-		logger.DefaultLogger = logger.NewLogger(logger.WithLevel(l), logger.WithOutput(output))
+		logger.DefaultLogger = logger.NewLogger(opts...)
 	}
 }
 

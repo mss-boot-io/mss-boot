@@ -1,5 +1,7 @@
 package errors
 
+import "errors"
+
 //go:generate stringer -type ErrCode -output error_code_string.go
 
 // ErrCode 错误码类型
@@ -11,6 +13,8 @@ const (
 	StoreSvcBaseErrorCode = 10000
 	// TenantSvcBaseErrCode tenant error code
 	TenantSvcBaseErrCode = 20000
+	// AdminSvcBaseErrCode admin error code
+	AdminSvcBaseErrCode = 30000
 )
 
 const (
@@ -24,8 +28,28 @@ const (
 )
 
 const (
-	// TenantSvcBaseErrCode tenant数据库灿做失败
-	TenantSvcOperateDBFailed ErrCode = iota + TenantSvcBaseErrCode
+	// TenantSvcParamsInvalid tenant参数校验失败
+	TenantSvcParamsInvalid ErrCode = iota + TenantSvcBaseErrCode
+	// TenantSvcOperateDBFailed tenant数据库操作失败
+	TenantSvcOperateDBFailed
+	TenantSvcRecordIsExist
+	TenantSvcRecordNotFound
+	TenantSvcObjectIDInvalid
+)
+
+const (
+	// AdminSvcParamsInvalid admin参数校验失败
+	AdminSvcParamsInvalid ErrCode = iota + AdminSvcBaseErrCode
+	// AdminSvcUnauthorized admin登录失败
+	AdminSvcUnauthorized
+	// AdminSvcOperateDBFailed admin数据库操作失败
+	AdminSvcOperateDBFailed
+	// AdminSvcForbidden admin鉴权失败
+	AdminSvcForbidden
+	// AdminSvcRecordIsExist admin记录已经存在
+	AdminSvcRecordIsExist
+	// AdminSvcDeleteRecordNotExist admin删除的记录不存在
+	AdminSvcDeleteRecordNotExist
 )
 
 // Code 返回错误码
@@ -36,4 +60,28 @@ func (e ErrCode) Code() int32 {
 // CheckErrorCode 判断错误码是否是成功错误吗
 func CheckErrorCode(errCode int32) bool {
 	return int32(SUCCESS) == errCode
+}
+
+// Is reports whether any error in err's chain matches target.
+func Is(err, target error) bool {
+	return errors.Is(err, target)
+}
+
+// New returns an error that formats as the given text.
+// Each call to New returns a distinct error value even if the text is identical.
+func New(text string) error {
+	return errors.New(text)
+}
+
+// Unwrap returns the result of calling the Unwrap method on err, if err's
+// type contains an Unwrap method returning error.
+// Otherwise, Unwrap returns nil.
+func Unwrap(err error) error {
+	return errors.Unwrap(err)
+}
+
+// As panics if target is not a non-nil pointer to either a type that implements
+// error, or to any interface type.
+func As(err error, target interface{}) bool {
+	return errors.As(err, target)
 }

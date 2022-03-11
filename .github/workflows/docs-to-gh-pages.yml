@@ -1,0 +1,41 @@
+name: Deploy docs
+
+on:
+  push:
+    paths:
+      - 'docs/**'
+    branches:
+      - main
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v2
+
+      - name: Setup Hugo
+        uses: peaceiris/actions-hugo@v2
+        with:
+          hugo-version: '0.91.2'
+          extended: true
+
+      - name: Install Theme
+        uses: actions/checkout@v2
+        with:
+          repository: StefMa/hugo-fresh
+          path: docs/themes/hugo-fresh
+
+      - name: Build
+        run: hugo --minify
+        working-directory: docs
+
+      - name: Add README
+        run: cp README.md docs/public/
+
+      - name: Deploy
+        uses: peaceiris/actions-gh-pages@v3
+        with:
+          github_token: ${{ secrets.GITHUB_TOKEN }}
+          force_orphan: true
+          commit_message: '[skip ci] Deploy:'
+          publish_dir: docs/public

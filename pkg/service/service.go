@@ -1,19 +1,16 @@
 package service
 
 import (
-	"github.com/lwnmengjing/core-go/errcode"
-	"github.com/lwnmengjing/core-go/logger"
-	"gorm.io/gorm"
+	"github.com/mss-boot-io/mss-boot/core/errcode"
+	"github.com/mss-boot-io/mss-boot/core/logger"
 )
 
 type Service struct {
-	Orm *gorm.DB
 	Log *logger.Helper
 }
 
 // Make make
-func (e *Service) Make(orm *gorm.DB, log *logger.Helper) {
-	e.Orm = orm
+func (e *Service) Make(log *logger.Helper) {
 	e.Log = log
 }
 
