@@ -5,12 +5,11 @@
  * @Last Modified time: 2022/3/10 22:43
  */
 
-package controller
+package controllers
 
 import (
 	"github.com/gin-gonic/gin"
 	"github.com/mss-boot-io/mss-boot/pkg"
-	"github.com/mss-boot-io/mss-boot/pkg/config/mongodb"
 	"github.com/mss-boot-io/mss-boot/pkg/errors"
 	"github.com/mss-boot-io/mss-boot/pkg/response"
 	"github.com/mss-boot-io/mss-boot/pkg/search/mgos"
@@ -19,7 +18,6 @@ import (
 	"go.mongodb.org/mongo-driver/bson/primitive"
 	"go.mongodb.org/mongo-driver/mongo"
 	"go.mongodb.org/mongo-driver/mongo/options"
-	"go.mongodb.org/mongo-driver/x/bsonx"
 	"tenant/form"
 	"tenant/models"
 	"time"
@@ -27,14 +25,6 @@ import (
 
 func init() {
 	response.AppendController(&Tenant{})
-	ops := options.Index()
-	ops.SetName("name")
-	ops.SetUnique(true)
-
-	mongodb.CreateIndex("tenant", mongo.IndexModel{
-		Keys:    bsonx.Doc{{"name", bsonx.Int32(1)}},
-		Options: ops,
-	})
 }
 
 type Tenant struct {
@@ -42,7 +32,7 @@ type Tenant struct {
 }
 
 func (Tenant) C() *mongo.Collection {
-	return mongodb.DB.Collection("tenant")
+	return (&models.Tenant{}).C()
 }
 
 func (Tenant) Path() string {
@@ -209,9 +199,10 @@ func (e Tenant) List(c *gin.Context) {
 		e.Err(errors.TenantSvcParamsInvalid, err)
 		return
 	}
-	litter.Dump(req)
-	filter := mgos.MakeCondition(*req)
+	filter, sort := mgos.MakeCondition(*req)
 
+	litter.Dump(filter)
+	litter.Dump(sort)
 	if req.PageSize == 0 {
 		req.PageSize = 10
 	}
@@ -219,6 +210,7 @@ func (e Tenant) List(c *gin.Context) {
 		req.Page = 1
 	}
 	ops := options.Find()
+	ops.SetSort(sort)
 	ops.SetLimit(int64(req.PageSize))
 	ops.SetSkip(int64(req.PageSize * (req.Page - 1)))
 	var count int64

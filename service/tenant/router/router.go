@@ -13,7 +13,7 @@ import (
 	ginSwagger "github.com/swaggo/gin-swagger"
 	"github.com/swaggo/gin-swagger/swaggerFiles"
 
-	_ "tenant/controller"
+	_ "tenant/controllers"
 	_ "tenant/docs"
 	"tenant/middleware"
 )

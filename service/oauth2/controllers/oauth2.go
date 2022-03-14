@@ -5,7 +5,7 @@
  * @Last Modified time: 2021/6/23 2:17 下午
  */
 
-package controller
+package controllers
 
 import (
 	"net/http"

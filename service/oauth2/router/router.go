@@ -13,7 +13,7 @@ import (
 	ginSwagger "github.com/swaggo/gin-swagger"
 	"github.com/swaggo/gin-swagger/swaggerFiles"
 
-	"oauth2/controller"
+	"oauth2/controllers"
 	_ "oauth2/docs"
 	"oauth2/middleware"
 )
@@ -25,7 +25,7 @@ func Init(r *gin.RouterGroup) {
 	middleware.Init(v1)
 	var e *gin.RouterGroup
 	for i := range response.Controllers {
-		if _, ok := response.Controllers[i].(*controller.OAuth2); ok {
+		if _, ok := response.Controllers[i].(*controllers.OAuth2); ok {
 			response.Controllers[i].Other(r)
 			continue
 		}

@@ -7,7 +7,11 @@
 
 package form
 
-import "time"
+import (
+	"time"
+
+	"github.com/mss-boot-io/mss-boot/pkg/enum"
+)
 
 type TenantCreateReq struct {
 	//名称
@@ -23,7 +27,7 @@ type TenantCreateReq struct {
 	//系统管理
 	System bool `json:"system" bson:"system"`
 	//状态
-	Status uint8 `json:"status" bson:"status"`
+	Status enum.Status `json:"status" bson:"status"`
 	//有效期
 	ExpiredAt time.Time `json:"expiredAt" bson:"expiredAt" binding:"required"`
 	//创建时间
@@ -65,7 +69,7 @@ type TenantGetResp struct {
 	//系统管理
 	System bool `json:"system" bson:"system"`
 	//状态
-	Status uint8 `json:"status" bson:"status"`
+	Status enum.Status `json:"status" bson:"status"`
 	//描述
 	Description string `json:"description" bson:"description"`
 	//域名
@@ -91,7 +95,9 @@ type TenantListReq struct {
 	//系统管理
 	System bool `query:"system" form:"system"`
 	//状态
-	Status bool `query:"status" form:"status"`
+	Status enum.Status `query:"status" form:"status"`
+	//系统管理排序
+	SystemSort int8 `query:"systemSort" form:"systemSort" search:"type:order;column:system"`
 }
 
 type TenantListItem struct {
@@ -104,7 +110,7 @@ type TenantListItem struct {
 	//系统管理
 	System bool `json:"system" bson:"system"`
 	//状态
-	Status uint8 `json:"status" bson:"status"`
+	Status enum.Status `json:"status" bson:"status"`
 	//描述
 	Description string `json:"description" bson:"description"`
 	//域名

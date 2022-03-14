@@ -1,67 +1,60 @@
 /*
  * @Author: lwnmengjing
- * @Date: 2022/3/10 22:37
+ * @Date: 2022/3/14 9:24
  * @Last Modified by: lwnmengjing
- * @Last Modified time: 2022/3/10 22:37
+ * @Last Modified time: 2022/3/14 9:24
  */
 
 package models
 
 import (
 	"context"
-	"errors"
-	"go.mongodb.org/mongo-driver/bson"
-	"go.mongodb.org/mongo-driver/bson/primitive"
-	"go.mongodb.org/mongo-driver/mongo"
 	"time"
 
+	log "github.com/mss-boot-io/mss-boot/core/logger"
 	"github.com/mss-boot-io/mss-boot/pkg/config/mongodb"
+	"github.com/mss-boot-io/mss-boot/pkg/enum"
+	"go.mongodb.org/mongo-driver/mongo"
+	"go.mongodb.org/mongo-driver/mongo/options"
+	"go.mongodb.org/mongo-driver/x/bsonx"
 )
 
-type Tenant struct {
-	ID          primitive.ObjectID `bson:"_id"`
-	Name        string             `bson:"name"`
-	Email       string             `bson:"email"`
-	Contact     string             `bson:"contact"`
-	Description string             `bson:"description"`
-	Domains     []string           `bson:"domains"`
-	Status      uint8              `bson:"status"`
-	Expire      time.Time          `bson:"expire"`
-	CreatedAt   time.Time          `bson:"createdAt"`
-	UpdatedAt   time.Time          `bson:"updatedAt"`
+func init() {
+	mongodb.AppendTable(&Tenant{})
 }
 
-func (e *Tenant) TableName() string {
+// Tenant 租户
+type Tenant struct {
+	ID          string      `json:"id" bson:"_id"`
+	Name        string      `json:"name" bson:"name"`
+	Contact     string      `json:"contact" bson:"contact"`
+	System      bool        `json:"system" bson:"system"`
+	Status      enum.Status `json:"status" bson:"status"`
+	Description string      `json:"description" bson:"description"`
+	Domains     []string    `json:"domains" bson:"domains"`
+	Metadata    interface{} `json:"metadata" bson:"metadata"`
+	ExpiredAt   time.Time   `json:"expiredAt" bson:"expiredAt" binding:"required"`
+	CreatedAt   time.Time   `json:"createdAt" bson:"createdAt"`
+	UpdatedAt   time.Time   `json:"updatedAt" bson:"updatedAt"`
+}
+
+func (Tenant) TableName() string {
 	return "tenant"
+}
+
+func (e *Tenant) Make() {
+	ops := options.Index()
+	ops.SetName("name")
+	ops.SetUnique(true)
+	_, err := e.C().Indexes().CreateOne(context.TODO(), mongo.IndexModel{
+		Keys:    bsonx.Doc{{"name", bsonx.Int32(1)}},
+		Options: ops,
+	})
+	if err != nil {
+		log.Fatal(err)
+	}
 }
 
 func (e *Tenant) C() *mongo.Collection {
 	return mongodb.DB.Collection(e.TableName())
-}
-
-//
-//func (e *Tenant) Create() error {
-//	e.ID = bson.NewObjectId().Hex()
-//	e.CreatedAt = time.Now()
-//	e.UpdatedAt = time.Now()
-//	return e.C().InsertOne(context.TODO(), e)
-//}
-
-//func (e *Tenant) Update() error {
-//	return e.C().UpdateId(e.ID, e)
-//}
-
-func (e *Tenant) Exist(ctx context.Context) (bool, error) {
-	sr := e.C().FindOne(ctx, bson.M{"name": e.Name})
-	if sr.Err() != nil {
-		if errors.Is(mongo.ErrNoDocuments, sr.Err()) {
-			return false, nil
-		}
-		return false, sr.Err()
-	}
-	_, err := sr.DecodeBytes()
-	if err != nil {
-		return false, nil
-	}
-	return true, nil
 }

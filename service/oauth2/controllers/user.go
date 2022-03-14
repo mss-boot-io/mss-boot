@@ -5,7 +5,7 @@
  * @Last Modified time: 2022/3/9 11:47
  */
 
-package controller
+package controllers
 
 import (
 	"context"
