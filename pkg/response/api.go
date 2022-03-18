@@ -26,7 +26,7 @@ var DefaultLanguage = "zh-CN"
 
 type Api struct {
 	Context *gin.Context
-	Logger  *logger.Helper
+	Log     *logger.Helper
 	Error   error
 	engine  *gin.RouterGroup
 }
@@ -39,7 +39,7 @@ func (e *Api) AddError(err error) {
 	if e.Error == nil {
 		e.Error = err
 	} else if err != nil {
-		e.Logger.Error(err)
+		e.Log.Error(err)
 		e.Error = fmt.Errorf("%v; %w", e.Error, err)
 	}
 }
@@ -47,7 +47,7 @@ func (e *Api) AddError(err error) {
 // Make 设置http上下文
 func (e *Api) Make(c *gin.Context) *Api {
 	e.Context = c
-	e.Logger = GetRequestLogger(c)
+	e.Log = GetRequestLogger(c)
 	return e
 }
 
@@ -78,7 +78,7 @@ func (e *Api) Bind(d interface{}, bindings ...binding.Binding) *Api {
 			err = e.Context.ShouldBindWith(d, bindings[i])
 		}
 		if err != nil && err.Error() == "EOF" {
-			e.Logger.Warn("request body is not present anymore. ")
+			e.Log.Warn("request body is not present anymore. ")
 			err = nil
 			continue
 		}

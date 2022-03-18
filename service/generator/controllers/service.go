@@ -70,7 +70,7 @@ func (e Service) Create(c *gin.Context) {
 			e.Err(errors.GeneratorSvcRecordIsExist, err)
 			return
 		}
-		e.Logger.Error(err)
+		e.Log.Error(err)
 		e.Err(errors.GeneratorSvcOperateDBFailed, err)
 		return
 	}
@@ -106,7 +106,7 @@ func (e Service) Update(c *gin.Context) {
 			{"updatedAt", time.Now()},
 		}}})
 	if err != nil {
-		e.Logger.Error(err)
+		e.Log.Error(err)
 		e.Err(errors.GeneratorSvcOperateDBFailed, err)
 		return
 	}
@@ -134,7 +134,7 @@ func (e Service) Delete(c *gin.Context) {
 
 	objID, err := primitive.ObjectIDFromHex(req.ID)
 	if err != nil {
-		e.Logger.Error(err)
+		e.Log.Error(err)
 		e.Err(errors.GeneratorSvcObjectIDInvalid, err)
 		return
 	}
@@ -145,7 +145,7 @@ func (e Service) Delete(c *gin.Context) {
 	}
 
 	if err != nil {
-		e.Logger.Error(err)
+		e.Log.Error(err)
 		e.Err(errors.GeneratorSvcOperateDBFailed, err)
 		return
 	}
@@ -173,13 +173,13 @@ func (e Service) Get(c *gin.Context) {
 	resp := &form.ServiceGetResp{}
 	objID, err := primitive.ObjectIDFromHex(req.ID)
 	if err != nil {
-		e.Logger.Error(err)
+		e.Log.Error(err)
 		e.Err(errors.GeneratorSvcObjectIDInvalid, err)
 		return
 	}
 	err = e.C().FindOne(c, bson.M{"_id": objID}).Decode(&resp)
 	if err != nil {
-		e.Logger.Error(err)
+		e.Log.Error(err)
 		e.Err(errors.GeneratorSvcOperateDBFailed, err)
 		return
 	}
@@ -223,13 +223,13 @@ func (e Service) List(c *gin.Context) {
 	var count int64
 	count, err = e.C().CountDocuments(c, filter)
 	if err != nil {
-		e.Logger.Error(err)
+		e.Log.Error(err)
 		e.Err(errors.GeneratorSvcOperateDBFailed, err)
 		return
 	}
 	result, err := e.C().Find(c, filter, ops)
 	if err != nil {
-		e.Logger.Error(err)
+		e.Log.Error(err)
 		e.Err(errors.GeneratorSvcOperateDBFailed, err)
 		return
 	}
@@ -237,7 +237,7 @@ func (e Service) List(c *gin.Context) {
 	list := make([]form.ServiceListItem, 0)
 	err = result.All(c, &list)
 	if err != nil {
-		e.Logger.Error(err)
+		e.Log.Error(err)
 		e.Err(errors.GeneratorSvcOperateDBFailed, err)
 		return
 	}
@@ -248,14 +248,14 @@ func (e Service) List(c *gin.Context) {
 func (e Service) Generate(c *gin.Context) {
 	objID, err := primitive.ObjectIDFromHex(c.Param("id"))
 	if err != nil {
-		e.Logger.Error(err)
+		e.Log.Error(err)
 		e.Err(errors.GeneratorSvcObjectIDInvalid, err)
 		return
 	}
 	m := &models.Service{}
 	err = e.C().FindOne(c, bson.M{"_id": objID}).Decode(m)
 	if err != nil {
-		e.Logger.Error(err)
+		e.Log.Error(err)
 		e.Err(errors.GeneratorSvcOperateDBFailed, err)
 		return
 	}

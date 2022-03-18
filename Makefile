@@ -16,7 +16,7 @@ SRC_DIR=$(GOPATH)/src
 .PHONY: proto
 proto:
 	#protoc-go-inject-tag -I ./proto -I ${GOPATH}/src  --go_out=plugins=grpc: proto/${W}/${V}/*;
-	find proto/ -name '*.proto' -exec protoc -I $GOPATH/src --proto_path=$(PROTO_PATH) $(PROTO_FLAGS) --go_out=plugins=grpc:. {} \;
+	find proto/ -name '*.proto' -exec protoc --proto_path=$(PROTO_PATH) $(PROTO_FLAGS) --go_out=plugins=grpc:. {} \;
 
 
 .PHONY: lint

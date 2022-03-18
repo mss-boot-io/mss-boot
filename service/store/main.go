@@ -3,25 +3,17 @@ package main
 import (
 	"context"
 	"flag"
-	"github.com/gin-gonic/gin"
+
 	log "github.com/mss-boot-io/mss-boot/core/logger"
 	"github.com/mss-boot-io/mss-boot/core/server"
+	"github.com/mss-boot-io/mss-boot/core/server/grpc"
 	"github.com/mss-boot-io/mss-boot/pkg/config"
+	pb "github.com/mss-boot-io/mss-boot/proto/store/v1"
 
-	"generator/cfg"
-	"generator/router"
+	"store/cfg"
+	"store/handlers"
 )
 
-// @title generator API
-// @version 0.0.1
-// @description generator接口文档
-
-// @securityDefinitions.apikey Bearer
-// @in header
-// @name Authorization
-
-// @host localhost:8001
-// @BasePath
 func main() {
 	c := &cfg.Config{}
 	err := config.Init(flag.Lookup("c").Value.String(), c)
@@ -30,10 +22,9 @@ func main() {
 	}
 	ctx := context.Background()
 
-	r := gin.Default()
-	router.Init(r.Group("/generator"))
-
-	c.Init(r)
+	c.Init(func(srv *grpc.Server) {
+		pb.RegisterStoreServer(srv.Server(), handlers.NewStoreHandler("store"))
+	})
 
 	log.Info("starting generator manage")
 

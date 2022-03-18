@@ -30,8 +30,8 @@ func AddFields(ctx context.Context, fields map[string]interface{}) {
 	}
 }
 
-// Extract takes the call-scoped Logger from grpc_logger middleware.
-// It always returns a Logger that has all the grpc_ctxtags updated.
+// Extract takes the call-scoped Log from grpc_logger middleware.
+// It always returns a Log that has all the grpc_ctxtags updated.
 func Extract(ctx context.Context) logger.Logger {
 	l, ok := ctx.Value(ctxMarkerKey).(*ctxLogger)
 	if !ok || l == nil {
