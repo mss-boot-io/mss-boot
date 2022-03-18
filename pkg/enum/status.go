@@ -13,7 +13,8 @@ package enum
 type Status uint8
 
 const (
-	Enabled Status = iota
+	_ Status = iota
+	Enabled
 	Disabled
 	Locked
 )

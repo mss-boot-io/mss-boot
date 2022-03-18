@@ -16,14 +16,14 @@ type response struct {
 }
 
 type Page struct {
-	Count     int64 `json:"count"`
-	PageIndex int   `json:"pageIndex"`
-	PageSize  int   `json:"pageSize"`
+	Count    int64 `json:"total"`
+	Current  int   `json:"current"`
+	PageSize int   `json:"pageSize"`
 }
 
 type page struct {
 	Page
-	List interface{} `json:"list"`
+	response
 }
 
 func (e *response) SetData(data interface{}) {

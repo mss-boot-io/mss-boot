@@ -27,7 +27,7 @@ func Error(c *gin.Context, code errcode.ErrorCoder, err error, msg ...string) {
 	res.SetSuccess(false)
 	c.Set("result", res)
 	c.Set("status", code)
-	c.AbortWithStatusJSON(http.StatusOK, res)
+	c.AbortWithStatusJSON(http.StatusBadRequest, res)
 }
 
 // OK 通常成功数据处理
@@ -40,15 +40,29 @@ func OK(c *gin.Context, data interface{}, msg ...string) {
 	res.SetCode(http.StatusOK)
 	c.Set("result", res)
 	c.Set("status", http.StatusOK)
-	c.AbortWithStatusJSON(http.StatusOK, res)
+	switch c.Request.Method {
+	case http.MethodDelete:
+		c.AbortWithStatusJSON(http.StatusNoContent, data)
+		return
+	case http.MethodPost:
+		c.AbortWithStatusJSON(http.StatusCreated, data)
+		return
+	default:
+		c.AbortWithStatusJSON(http.StatusOK, data)
+	}
 }
 
 // PageOK 分页数据处理
 func PageOK(c *gin.Context, result interface{}, count int64, pageIndex int, pageSize int, msg ...string) {
 	var res page
-	res.List = result
 	res.Count = count
-	res.PageIndex = pageIndex
+	res.Current = pageIndex
 	res.PageSize = pageSize
-	OK(c, res, msg...)
+	res.response.SetData(result)
+	res.response.SetMsg(msg...)
+	res.response.SetTraceID(pkg.GenerateMsgIDFromContext(c))
+	res.response.SetCode(http.StatusOK)
+	c.Set("result", res)
+	c.Set("status", http.StatusOK)
+	c.AbortWithStatusJSON(http.StatusOK, res)
 }

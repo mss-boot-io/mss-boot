@@ -1,0 +1,393 @@
+definitions:
+  form.ModelCreateReq:
+    properties:
+      description:
+        type: string
+      metadata: {}
+      name:
+        type: string
+      service:
+        type: string
+    type: object
+  form.ModelGetResp:
+    properties:
+      createdAt:
+        type: string
+      description:
+        type: string
+      id:
+        type: string
+      metadata: {}
+      name:
+        type: string
+      service:
+        type: string
+      status:
+        type: integer
+      updatedAt:
+        type: string
+    type: object
+  form.ModelListItem:
+    properties:
+      createdAt:
+        type: string
+      description:
+        type: string
+      id:
+        type: string
+      name:
+        type: string
+      service:
+        type: string
+      status:
+        type: integer
+      updatedAt:
+        type: string
+    type: object
+  form.ModelUpdateReq:
+    properties:
+      description:
+        type: string
+      metadata: {}
+      name:
+        type: string
+      service:
+        type: string
+    type: object
+  form.ServiceCreateReq:
+    properties:
+      description:
+        type: string
+      metadata: {}
+      name:
+        type: string
+    type: object
+  form.ServiceGetResp:
+    properties:
+      createdAt:
+        type: string
+      description:
+        type: string
+      id:
+        type: string
+      metadata: {}
+      name:
+        type: string
+      status:
+        type: integer
+      updatedAt:
+        type: string
+    type: object
+  form.ServiceListItem:
+    properties:
+      createdAt:
+        type: string
+      description:
+        type: string
+      id:
+        type: string
+      name:
+        type: string
+      status:
+        type: integer
+      updatedAt:
+        type: string
+    type: object
+  form.ServiceUpdateReq:
+    properties:
+      description:
+        type: string
+      metadata: {}
+      name:
+        type: string
+    type: object
+  response.Page:
+    properties:
+      current:
+        type: integer
+      pageSize:
+        type: integer
+      total:
+        type: integer
+    type: object
+  response.Response:
+    properties:
+      code:
+        type: integer
+      msg:
+        type: string
+      requestId:
+        description: 数据集
+        type: string
+      status:
+        type: string
+    type: object
+host: localhost:8001
+info:
+  contact: {}
+  description: generator接口文档
+  title: generator API
+  version: 0.0.1
+paths:
+  /generator/api/v1/model:
+    get:
+      consumes:
+      - application/json
+      description: 列表model
+      parameters:
+      - description: 名称
+        in: query
+        name: name
+        type: string
+      - description: 当前页
+        in: query
+        name: page
+        type: string
+      - description: 每页容量
+        in: query
+        name: pageSize
+        type: string
+      responses:
+        "200":
+          description: OK
+          schema:
+            allOf:
+            - $ref: '#/definitions/response.Page'
+            - properties:
+                data:
+                  items:
+                    $ref: '#/definitions/form.ModelListItem'
+                  type: array
+              type: object
+      security:
+      - Bearer: []
+      summary: 列表model
+      tags:
+      - model
+    post:
+      consumes:
+      - application/json
+      description: 创建model
+      parameters:
+      - description: data
+        in: body
+        name: data
+        required: true
+        schema:
+          $ref: '#/definitions/form.ModelCreateReq'
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/response.Response'
+      security:
+      - Bearer: []
+      summary: 创建model
+      tags:
+      - model
+  /generator/api/v1/model/{id}:
+    delete:
+      consumes:
+      - application/json
+      description: 删除model
+      parameters:
+      - description: id
+        in: path
+        name: id
+        required: true
+        type: string
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/response.Response'
+      security:
+      - Bearer: []
+      summary: 删除model
+      tags:
+      - model
+    get:
+      consumes:
+      - application/json
+      description: 获取model
+      parameters:
+      - description: id
+        in: path
+        name: id
+        required: true
+        type: string
+      responses:
+        "200":
+          description: OK
+          schema:
+            allOf:
+            - $ref: '#/definitions/response.Response'
+            - properties:
+                data:
+                  $ref: '#/definitions/form.ModelGetResp'
+              type: object
+      security:
+      - Bearer: []
+      summary: 获取model
+      tags:
+      - model
+    put:
+      consumes:
+      - application/json
+      description: 更新model
+      parameters:
+      - description: id
+        in: path
+        name: id
+        required: true
+        type: string
+      - description: data
+        in: body
+        name: data
+        required: true
+        schema:
+          $ref: '#/definitions/form.ModelUpdateReq'
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/response.Response'
+      security:
+      - Bearer: []
+      summary: 更新model
+      tags:
+      - model
+  /generator/api/v1/service:
+    get:
+      consumes:
+      - application/json
+      description: 列表service
+      parameters:
+      - description: 名称
+        in: query
+        name: name
+        type: string
+      - description: 当前页
+        in: query
+        name: page
+        type: string
+      - description: 每页容量
+        in: query
+        name: pageSize
+        type: string
+      responses:
+        "200":
+          description: OK
+          schema:
+            allOf:
+            - $ref: '#/definitions/response.Page'
+            - properties:
+                data:
+                  items:
+                    $ref: '#/definitions/form.ServiceListItem'
+                  type: array
+              type: object
+      security:
+      - Bearer: []
+      summary: 列表service
+      tags:
+      - service
+    post:
+      consumes:
+      - application/json
+      description: 创建service
+      parameters:
+      - description: data
+        in: body
+        name: data
+        required: true
+        schema:
+          $ref: '#/definitions/form.ServiceCreateReq'
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/response.Response'
+      security:
+      - Bearer: []
+      summary: 创建service
+      tags:
+      - service
+  /generator/api/v1/service/{id}:
+    delete:
+      consumes:
+      - application/json
+      description: 删除service
+      parameters:
+      - description: id
+        in: path
+        name: id
+        required: true
+        type: string
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/response.Response'
+      security:
+      - Bearer: []
+      summary: 删除service
+      tags:
+      - service
+    get:
+      consumes:
+      - application/json
+      description: 获取service
+      parameters:
+      - description: id
+        in: path
+        name: id
+        required: true
+        type: string
+      responses:
+        "200":
+          description: OK
+          schema:
+            allOf:
+            - $ref: '#/definitions/response.Response'
+            - properties:
+                data:
+                  $ref: '#/definitions/form.ServiceGetResp'
+              type: object
+      security:
+      - Bearer: []
+      summary: 获取service
+      tags:
+      - service
+    put:
+      consumes:
+      - application/json
+      description: 更新service
+      parameters:
+      - description: id
+        in: path
+        name: id
+        required: true
+        type: string
+      - description: data
+        in: body
+        name: data
+        required: true
+        schema:
+          $ref: '#/definitions/form.ServiceUpdateReq'
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/response.Response'
+      security:
+      - Bearer: []
+      summary: 更新service
+      tags:
+      - service
+securityDefinitions:
+  Bearer:
+    in: header
+    name: Authorization
+    type: apiKey
+swagger: "2.0"

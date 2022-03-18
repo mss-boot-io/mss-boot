@@ -52,7 +52,7 @@ func (e *Logger) Init() {
 			log.Fatalf("logger setup error: %s", err.Error())
 		}
 	default:
-		output = os.Stdout
+		output = os.Stderr
 	}
 	var l level.Level
 	l, err = level.GetLevel(e.Level)

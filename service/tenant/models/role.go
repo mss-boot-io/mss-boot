@@ -37,6 +37,10 @@ func (Role) TableName() string {
 	return "role"
 }
 
+func (e *Role) C() *mongo.Collection {
+	return mongodb.DB.Collection(e.TableName())
+}
+
 func (e *Role) Make() {
 	ops := options.Index()
 	ops.SetName("name")
@@ -52,8 +56,4 @@ func (e *Role) Make() {
 	if err != nil {
 		log.Fatal(err)
 	}
-}
-
-func (e *Role) C() *mongo.Collection {
-	return mongodb.DB.Collection(e.TableName())
 }
