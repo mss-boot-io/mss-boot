@@ -1,4 +1,3 @@
-basePath: /tenant/api/v1
 definitions:
   form.TenantCreateReq:
     properties:
@@ -31,6 +30,40 @@ definitions:
     required:
     - expiredAt
     - name
+    type: object
+  form.TenantGetResp:
+    properties:
+      contact:
+        description: 联系方式
+        type: string
+      createdAt:
+        description: 创建时间
+        type: string
+      description:
+        description: 描述
+        type: string
+      domains:
+        description: 域名
+        items:
+          type: string
+        type: array
+      expiredAt:
+        description: 有效期
+        type: string
+      name:
+        description: 名称
+        type: string
+      status:
+        description: 状态
+        type: integer
+      system:
+        description: 系统管理
+        type: boolean
+      updatedAt:
+        description: 更新时间
+        type: string
+    required:
+    - expiredAt
     type: object
   form.TenantListItem:
     properties:
@@ -96,11 +129,11 @@ definitions:
     type: object
   response.Page:
     properties:
-      count:
-        type: integer
-      pageIndex:
+      current:
         type: integer
       pageSize:
+        type: integer
+      total:
         type: integer
     type: object
   response.Response:
@@ -122,7 +155,7 @@ info:
   title: tenant API
   version: 0.0.1
 paths:
-  /tenant:
+  /tenant/api/v1/tenant:
     get:
       consumes:
       - application/json
@@ -147,7 +180,7 @@ paths:
             allOf:
             - $ref: '#/definitions/response.Page'
             - properties:
-                list:
+                data:
                   items:
                     $ref: '#/definitions/form.TenantListItem'
                   type: array
@@ -178,7 +211,7 @@ paths:
       summary: 创建tenant
       tags:
       - tenant
-  /tenant/{id}:
+  /tenant/api/v1/tenant/{id}:
     delete:
       consumes:
       - application/json
@@ -211,7 +244,7 @@ paths:
         "200":
           description: OK
           schema:
-            $ref: '#/definitions/response.Response'
+            $ref: '#/definitions/form.TenantGetResp'
       security:
       - Bearer: []
       summary: 获取tenant

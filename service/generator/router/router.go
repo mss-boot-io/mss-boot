@@ -1,10 +1,3 @@
-/*
- * @Author: lwnmengjing
- * @Date: 2021/6/17 9:42 上午
- * @Last Modified by: lwnmengjing
- * @Last Modified time: 2021/6/17 9:42 上午
- */
-
 package router
 
 import (
@@ -13,9 +6,9 @@ import (
 	ginSwagger "github.com/swaggo/gin-swagger"
 	"github.com/swaggo/gin-swagger/swaggerFiles"
 
-	"oauth2/controllers"
-	_ "oauth2/docs"
-	"oauth2/middleware"
+	_ "generator/controllers"
+	_ "generator/docs"
+	"generator/middleware"
 )
 
 func Init(r *gin.RouterGroup) {
@@ -25,10 +18,6 @@ func Init(r *gin.RouterGroup) {
 	middleware.Init(v1)
 	var e *gin.RouterGroup
 	for i := range response.Controllers {
-		if _, ok := response.Controllers[i].(*controllers.OAuth2); ok {
-			response.Controllers[i].Other(r)
-			continue
-		}
 		response.Controllers[i].Other(v1)
 		e = v1.Group(response.Controllers[i].Path(), response.Controllers[i].Handlers()...)
 		e.GET("/:id", response.Controllers[i].Get)

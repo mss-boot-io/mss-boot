@@ -12,7 +12,7 @@ import "github.com/gin-gonic/gin"
 // Controllers controllers
 var Controllers = make([]Controller, 0)
 
-// Controller controller
+// Controller controllers
 type Controller interface {
 	// Path http path
 	Path() string
@@ -32,7 +32,7 @@ type Controller interface {
 	Other(*gin.RouterGroup)
 }
 
-// AppendController add controller to Controllers
+// AppendController add controllers to Controllers
 func AppendController(c Controller) {
 	Controllers = append(Controllers, c)
 }

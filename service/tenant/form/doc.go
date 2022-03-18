@@ -8,5 +8,5 @@
 package form
 
 /**
- * ⚠️注意: 该包不能调用其他的业务包(controller, models)
+ * ⚠️注意: 该包不能调用其他的业务包(controllers, models)
  */

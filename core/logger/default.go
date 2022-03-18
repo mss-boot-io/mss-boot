@@ -5,11 +5,9 @@ import (
 	"fmt"
 	"log"
 	"os"
-	"runtime"
 	"sort"
 	"strings"
 	"sync"
-	"time"
 
 	"github.com/mss-boot-io/mss-boot/core/logger/formatter"
 	"github.com/mss-boot-io/mss-boot/core/logger/level"
@@ -27,6 +25,7 @@ func init() {
 type defaultLogger struct {
 	sync.RWMutex
 	opts Options
+	log  *log.Logger
 }
 
 // Init (opts...) should only overwrite provided Options
@@ -34,6 +33,8 @@ func (l *defaultLogger) Init(opts ...Option) error {
 	for _, o := range opts {
 		o(&l.opts)
 	}
+	//l.log = log.New(l.opts.Out, "", log.Lshortfile|log.LstdFlags)
+	l.log = log.New(os.Stderr, "", log.LstdFlags|log.Llongfile)
 	return nil
 }
 
@@ -104,13 +105,13 @@ func (l *defaultLogger) logf(level level.Level, format string, v ...interface{})
 
 	fields["Level"] = level.String()
 
-	if _, file, line, ok := runtime.Caller(l.opts.CallerSkipCount); ok {
-		fields["file"] = fmt.Sprintf("%s:%d", logCallerFilePath(file), line)
-	}
+	//if _, file, line, ok := runtime.Caller(l.opts.CallerSkipCount); ok {
+	//	fields["file"] = fmt.Sprintf("%s:%d", logCallerFilePath(file), line)
+	//}
 
 	rec := formatter.Record{
-		Timestamp: time.Now(),
-		Metadata:  make(map[string]string, len(fields)),
+		//Timestamp: time.Now(),
+		Metadata: make(map[string]string, len(fields)),
 	}
 	if format == "" {
 		rec.Message = fmt.Sprint(v...)
@@ -139,18 +140,20 @@ func (l *defaultLogger) logf(level level.Level, format string, v ...interface{})
 	if l.opts.Name != "" {
 		name = "[" + l.opts.Name + "]"
 	}
-	t := rec.Timestamp.Format("2006-01-02 15:04:05.000Z0700")
+	//t := rec.Timestamp.Format("2006-01-02 15:04:05.000Z0700")
 	//fmt.Printf("%s\n", t)
 	//fmt.Printf("%s\n", Name)
 	//fmt.Printf("%s\n", metadata)
 	//fmt.Printf("%v\n", rec.Message)
 	logStr := ""
 	if name == "" {
-		logStr = fmt.Sprintf("%s %s %v\n", t, metadata, rec.Message)
+		logStr = fmt.Sprintf("%s %v\n", metadata, rec.Message)
 	} else {
-		logStr = fmt.Sprintf("%s %s %s %v\n", name, t, metadata, rec.Message)
+		logStr = fmt.Sprintf("%s %s %v\n", name, metadata, rec.Message)
 	}
-	_, err := l.opts.Out.Write([]byte(logStr))
+	err := l.log.Output(l.opts.CallerSkipCount+1, logStr)
+
+	//_, err := l.opts.Out.Write([]byte(logStr))
 	if err != nil {
 		log.Printf("log [Logf] write error: %s \n", err.Error())
 	}

@@ -19,7 +19,7 @@ import (
 	"net/http"
 	"net/http/httputil"
 	"oauth2/common"
-	"oauth2/controller"
+	"oauth2/controllers"
 	"oauth2/models"
 	"os"
 )
@@ -55,8 +55,8 @@ func Init() {
 
 	common.OAuth2Srv = server.NewServer(server.NewConfig(), manager)
 
-	common.OAuth2Srv.SetClientAuthorizedHandler(controller.ClientAuthorizedHandler)
-	common.OAuth2Srv.SetPasswordAuthorizationHandler(controller.PasswordAuthorizationHandler)
+	common.OAuth2Srv.SetClientAuthorizedHandler(controllers.ClientAuthorizedHandler)
+	common.OAuth2Srv.SetPasswordAuthorizationHandler(controllers.PasswordAuthorizationHandler)
 
 	common.OAuth2Srv.SetUserAuthorizationHandler(userAuthorizeHandler)
 

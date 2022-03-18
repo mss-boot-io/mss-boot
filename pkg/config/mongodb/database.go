@@ -10,7 +10,6 @@ package mongodb
 import (
 	"context"
 	"log"
-	"strings"
 	"time"
 
 	"go.mongodb.org/mongo-driver/mongo"
@@ -20,7 +19,7 @@ import (
 
 var DB *mongo.Database
 
-var Indexes = make(map[string][]mongo.IndexModel)
+var tables = make([]Tabler, 0)
 
 type Database struct {
 	URL     string        `yaml:"url" json:"url"`
@@ -28,13 +27,9 @@ type Database struct {
 	Timeout time.Duration `yaml:"timeout" json:"timeout"`
 }
 
-// CreateIndex create index for collection
-func CreateIndex(db string, indexes ...mongo.IndexModel) {
-	if im, ok := Indexes[db]; ok {
-		Indexes[db] = append(im, indexes...)
-		return
-	}
-	Indexes[db] = indexes
+// AppendTable append table
+func AppendTable(t Tabler) {
+	tables = append(tables, t)
 }
 
 func (e *Database) Init() {
@@ -54,12 +49,12 @@ func (e *Database) Init() {
 		log.Fatalln(err)
 	}
 	DB = client.Database(e.Name)
-	var indexes []string
-	for table := range Indexes {
-		indexes, err = DB.Collection(table).Indexes().CreateMany(ctx, Indexes[table])
-		if err != nil {
-			log.Fatalln(err)
-		}
-		log.Printf("%s create index %s\n", table, strings.Join(indexes, ""))
+	for i := range tables {
+		tables[i].Make()
 	}
+}
+
+// C get table's Collection
+func (e *Database) C(t Tabler) *mongo.Collection {
+	return DB.Collection(t.TableName())
 }

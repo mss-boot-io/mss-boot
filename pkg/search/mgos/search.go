@@ -12,7 +12,7 @@ import (
 )
 
 // MakeCondition make condition
-func MakeCondition(q interface{}) bson.M {
+func MakeCondition(q interface{}) (bson.M, bson.D) {
 	condition := &Public{}
 	ResolveSearchQuery(q, condition)
 	var filter bson.M
@@ -31,12 +31,5 @@ func MakeCondition(q interface{}) bson.M {
 	} else if len(condition.Or) > 0 {
 		filter = orFilter
 	}
-	return filter
-	//if len(condition.And) > 0 || len(condition.Or) > 0 {
-	//	pipeline = append(pipeline, bson.D{{"$match", filter}})
-	//}
-	//if len(condition.Order) > 0 {
-	//	pipeline = append(pipeline, bson.D{{"$sort", condition.Order}})
-	//}
-	//return pipeline, filter
+	return filter, condition.Order
 }

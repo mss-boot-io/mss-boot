@@ -23,7 +23,7 @@ var doc = `{
     "host": "{{.Host}}",
     "basePath": "{{.BasePath}}",
     "paths": {
-        "/tenant": {
+        "/tenant/api/v1/tenant": {
             "get": {
                 "security": [
                     {
@@ -69,7 +69,7 @@ var doc = `{
                                 {
                                     "type": "object",
                                     "properties": {
-                                        "list": {
+                                        "data": {
                                             "type": "array",
                                             "items": {
                                                 "$ref": "#/definitions/form.TenantListItem"
@@ -117,7 +117,7 @@ var doc = `{
                 }
             }
         },
-        "/tenant/{id}": {
+        "/tenant/api/v1/tenant/{id}": {
             "get": {
                 "security": [
                     {
@@ -144,7 +144,7 @@ var doc = `{
                     "200": {
                         "description": "OK",
                         "schema": {
-                            "$ref": "#/definitions/response.Response"
+                            "$ref": "#/definitions/form.TenantGetResp"
                         }
                     }
                 }
@@ -267,6 +267,53 @@ var doc = `{
                 }
             }
         },
+        "form.TenantGetResp": {
+            "type": "object",
+            "required": [
+                "expiredAt"
+            ],
+            "properties": {
+                "contact": {
+                    "description": "联系方式",
+                    "type": "string"
+                },
+                "createdAt": {
+                    "description": "创建时间",
+                    "type": "string"
+                },
+                "description": {
+                    "description": "描述",
+                    "type": "string"
+                },
+                "domains": {
+                    "description": "域名",
+                    "type": "array",
+                    "items": {
+                        "type": "string"
+                    }
+                },
+                "expiredAt": {
+                    "description": "有效期",
+                    "type": "string"
+                },
+                "name": {
+                    "description": "名称",
+                    "type": "string"
+                },
+                "status": {
+                    "description": "状态",
+                    "type": "integer"
+                },
+                "system": {
+                    "description": "系统管理",
+                    "type": "boolean"
+                },
+                "updatedAt": {
+                    "description": "更新时间",
+                    "type": "string"
+                }
+            }
+        },
         "form.TenantListItem": {
             "type": "object",
             "required": [
@@ -356,13 +403,13 @@ var doc = `{
         "response.Page": {
             "type": "object",
             "properties": {
-                "count": {
-                    "type": "integer"
-                },
-                "pageIndex": {
+                "current": {
                     "type": "integer"
                 },
                 "pageSize": {
+                    "type": "integer"
+                },
+                "total": {
                     "type": "integer"
                 }
             }
@@ -408,7 +455,7 @@ type swaggerInfo struct {
 var SwaggerInfo = swaggerInfo{
 	Version:     "0.0.1",
 	Host:        "localhost:9094",
-	BasePath:    "/tenant/api/v1",
+	BasePath:    "",
 	Schemes:     []string{},
 	Title:       "tenant API",
 	Description: "tenant接口文档",

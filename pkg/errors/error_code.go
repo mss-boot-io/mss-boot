@@ -8,13 +8,14 @@ import "errors"
 type ErrCode int32
 
 const (
-
 	// StoreSvcBaseErrorCode panic
 	StoreSvcBaseErrorCode = 10000
+	// GeneratorSvcBaseErrCode generator error code
+	GeneratorSvcBaseErrCode = 20000
 	// TenantSvcBaseErrCode tenant error code
-	TenantSvcBaseErrCode = 20000
+	TenantSvcBaseErrCode = 30000
 	// AdminSvcBaseErrCode admin error code
-	AdminSvcBaseErrCode = 30000
+	AdminSvcBaseErrCode = 40000
 )
 
 const (
@@ -25,6 +26,15 @@ const (
 const (
 	// StoreSvcOperateAdapterFailed store适配器操作失败
 	StoreSvcOperateAdapterFailed ErrCode = iota + StoreSvcBaseErrorCode
+)
+
+const (
+	// GeneratorSvcParamsInvalid generator参数校验失败
+	GeneratorSvcParamsInvalid ErrCode = iota + GeneratorSvcBaseErrCode
+	GeneratorSvcOperateDBFailed
+	GeneratorSvcRecordIsExist
+	GeneratorSvcRecordNotFound
+	GeneratorSvcObjectIDInvalid
 )
 
 const (
