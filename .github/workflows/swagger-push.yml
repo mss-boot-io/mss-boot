@@ -1,0 +1,47 @@
+name: Deploy Swagger
+
+on:
+  push:
+    paths:
+      - 'service/**/docs'
+    branches:
+      - main
+      - feature/push-swagger
+  workflow_dispatch:
+
+jobs:
+  upload:
+    runs-on: ubuntu-latest
+    strategy:
+      matrix:
+        service: [generator, oauth2, tenant]
+    steps:
+      - uses: actions/checkout@v2
+
+      - name: Rename
+        run: mkdir swagger && mv service/${{ matrix.service }}/docs/swagger.json swagger/${{ matrix.service }}.json
+
+      - name: Upload Swagger
+        uses: actions/upload-artifact@v3
+        with:
+          name: swagger
+          path: swagger
+
+  deploy:
+    runs-on: ubuntu-latest
+    needs: upload
+    steps:
+      - name: Download
+        uses: actions/download-artifact@v3
+        with:
+          name: swagger
+          path: swagger
+
+      - name: Deploy
+        uses: peaceiris/actions-gh-pages@v3
+        with:
+          github_token: ${{ secrets.GITHUB_TOKEN }}
+          keep_file: true
+          commit_message: '[swagger] Deploy:'
+          publish_dir: swagger
+          destination_dir: swagger
