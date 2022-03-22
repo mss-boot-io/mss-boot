@@ -12,6 +12,7 @@ import (
 )
 
 var doc = `{
+
     "schemes": {{ marshal .Schemes }},
     "swagger": "2.0",
     "info": {

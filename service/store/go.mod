@@ -4,7 +4,7 @@ go 1.18
 
 replace (
 	github.com/mss-boot-io/mss-boot => ../../
-	github.com/robinjoseph08/redisqueue/v2 => ../../../redisqueue
+	github.com/robinjoseph08/redisqueue/v2 v2.1.0 => github.com/mss-boot-io/redisqueue/v2 v2.1.0
 )
 
 require (
@@ -15,7 +15,6 @@ require (
 	github.com/mss-boot-io/mss-boot v0.0.0-00010101000000-000000000000
 	github.com/nsqio/go-nsq v1.1.0
 	github.com/robinjoseph08/redisqueue/v2 v2.1.0
-	github.com/sanity-io/litter v1.5.4
 	github.com/spf13/cast v1.4.1
 )
 
@@ -26,6 +25,7 @@ require (
 	github.com/fatih/color v1.13.0 // indirect
 	github.com/fsnotify/fsnotify v1.5.1 // indirect
 	github.com/git-chglog/git-chglog v0.0.0-20190611050339-63a4e637021f // indirect
+	github.com/go-redis/redis/v7 v7.3.0 // indirect
 	github.com/golang/protobuf v1.5.2 // indirect
 	github.com/golang/snappy v0.0.3 // indirect
 	github.com/grpc-ecosystem/go-grpc-middleware v1.3.0 // indirect
