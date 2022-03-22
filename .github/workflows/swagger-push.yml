@@ -41,7 +41,7 @@ jobs:
         uses: peaceiris/actions-gh-pages@v3
         with:
           github_token: ${{ secrets.GITHUB_TOKEN }}
-          keep_file: true
+          keep_files: true
           commit_message: '[swagger] Deploy:'
           publish_dir: swagger
           destination_dir: swagger
