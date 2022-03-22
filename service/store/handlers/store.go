@@ -8,8 +8,6 @@
 package handlers
 
 import (
-	"context"
-
 	log "github.com/mss-boot-io/mss-boot/core/logger"
 	"github.com/mss-boot-io/mss-boot/pkg/server/handler"
 	pb "github.com/mss-boot-io/mss-boot/proto/store/v1"
@@ -29,11 +27,4 @@ func NewStoreHandler(id string) *StoreHandler {
 			Log: log.NewHelper(log.DefaultLogger),
 		},
 	}
-}
-
-func (e *StoreHandler) Get(c context.Context, req *pb.GetReq) (*pb.GetResp, error) {
-	e.Make(c)
-	e.Log.Info(req)
-	resp := &pb.GetResp{Value: "123"}
-	return resp, nil
 }

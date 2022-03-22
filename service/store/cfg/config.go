@@ -6,21 +6,23 @@ import (
 	"github.com/mss-boot-io/mss-boot/core/server/grpc"
 	"github.com/mss-boot-io/mss-boot/core/server/listener"
 	"github.com/mss-boot-io/mss-boot/pkg/config"
-	"github.com/mss-boot-io/mss-boot/pkg/config/mongodb"
 )
 
+// Config config
 type Config struct {
-	Logger   config.Logger    `yaml:"logger" json:"logger"`
-	Server   config.GRPC      `yaml:"server" json:"server"`
-	Health   *config.Listen   `yaml:"health" json:"health"`
-	Metrics  *config.Listen   `yaml:"metrics" json:"metrics"`
-	Clients  config.Clients   `yaml:"clients" json:"clients"`
-	Database mongodb.Database `yaml:"database" json:"database"`
+	Logger   config.Logger  `yaml:"logger" json:"logger"`
+	Server   config.GRPC    `yaml:"server" json:"server"`
+	Health   *config.Listen `yaml:"health" json:"health"`
+	Metrics  *config.Listen `yaml:"metrics" json:"metrics"`
+	Cache    string         `yaml:"cache" json:"cache"`
+	Queue    string         `yaml:"queue" json:"queue"`
+	Locker   string         `yaml:"locker" json:"locker"`
+	Provider Provider       `yaml:"provider" json:"provider"`
 }
 
 func (e *Config) Init(handler func(srv *grpc.Server)) {
 	e.Logger.Init()
-	e.Database.Init()
+	e.Provider.Init(e.Cache, e.Queue, e.Locker)
 
 	runnable := []server.Runnable{
 		e.Server.Init(handler, grpc.WithID("store")),
@@ -37,6 +39,5 @@ func (e *Config) Init(handler func(srv *grpc.Server)) {
 
 func (e *Config) OnChange() {
 	e.Logger.Init()
-	e.Database.Init()
 	log.Info("!!! cfg change and reload")
 }

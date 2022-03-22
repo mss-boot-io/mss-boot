@@ -3,7 +3,6 @@ package main
 import (
 	"context"
 	"flag"
-
 	log "github.com/mss-boot-io/mss-boot/core/logger"
 	"github.com/mss-boot-io/mss-boot/core/server"
 	"github.com/mss-boot-io/mss-boot/core/server/grpc"
@@ -20,6 +19,8 @@ func main() {
 	if err != nil {
 		log.Fatalf("cfg init failed, %s\n", err.Error())
 	}
+	//ctx, cancel := context.WithTimeout(context.TODO(), 5*time.Second)
+	//defer cancel()
 	ctx := context.Background()
 
 	c.Init(func(srv *grpc.Server) {

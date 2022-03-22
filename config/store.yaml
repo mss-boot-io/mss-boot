@@ -1,0 +1,33 @@
+server:
+  addr: :9091
+health:
+  addr: :4000
+metrics:
+  addr: :5000
+logger:
+  # 日志类型 default: go-admin-core构建的默认日志插件, zap: zap插件
+  type: default
+  # 日志存放路径，关闭控制台日志后，日志文件存放位置
+  # path: temp/logs
+  # 日志输出，file：文件，default：命令行，其他：命令行
+  stdout: default #控制台日志，启用后，不输出到文件
+  # 日志等级, trace, debug, info, warn, error, fatal
+  level: trace
+  # 日志格式 json json格式
+  formatter: default
+cache: 'redis'
+queue: 'redis'
+locker: 'redis'
+provider:
+  redis:
+    addr: 127.0.0.1:6379
+    password: ''
+    producer:
+      streamMaxLength: 100
+      approximateMaxLength: true
+    consumer:
+      visibilityTimeout: 60
+      bufferSize: 100
+      concurrency: 10
+      blockingTimeout: 5
+      reclaimInterval: 1
