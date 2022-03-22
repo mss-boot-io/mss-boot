@@ -13,7 +13,7 @@ import (
 	"fmt"
 	"sync"
 
-	"github.com/mss-boot-io/mss-boot/core/logger"
+	log "github.com/mss-boot-io/mss-boot/core/logger"
 )
 
 // Server server
@@ -28,7 +28,6 @@ type Server struct {
 	internalProceduresStop chan struct{}
 	shutdownCtx            context.Context
 	shutdownCancel         context.CancelFunc
-	logger                 *logger.Helper
 	opts                   Options
 }
 
@@ -61,8 +60,8 @@ func (e *Server) Add(r ...Runnable) {
 
 // Start start runnable
 func (e *Server) Start(ctx context.Context) (err error) {
-	e.mux.Lock()
-	defer e.mux.Unlock()
+	//e.mux.Lock()
+	//defer e.mux.Unlock()
 	e.internalCtx, e.internalCancel = context.WithCancel(ctx)
 	stopComplete := make(chan struct{})
 	defer close(stopComplete)
@@ -76,7 +75,7 @@ func (e *Server) Start(ctx context.Context) (err error) {
 			}
 		}
 	}()
-	e.errChan = make(chan error)
+	e.errChan = make(chan error, len(e.services))
 
 	for k := range e.services {
 		if e.getStarted(k) {
@@ -124,7 +123,7 @@ func (e *Server) engageStopProcedure(stopComplete <-chan struct{}) error {
 			select {
 			case err, ok := <-e.errChan:
 				if ok {
-					e.logger.Error(err, "error received after stop sequence was engaged")
+					log.Error(err, "error received after stop sequence was engaged")
 				}
 			case <-stopComplete:
 				return

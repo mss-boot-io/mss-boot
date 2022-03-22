@@ -42,6 +42,8 @@ type Options struct {
 	id                       string
 	domain                   string
 	addr                     string
+	certFile                 string
+	keyFile                  string
 	tls                      *tls.Config
 	keepAlive                time.Duration
 	timeout                  time.Duration
@@ -79,6 +81,20 @@ func WithDomain(s string) Option {
 func WithAddr(s string) Option {
 	return func(o *Options) {
 		o.addr = s
+	}
+}
+
+// WithCert 设置cert
+func WithCert(s string) Option {
+	return func(o *Options) {
+		o.certFile = s
+	}
+}
+
+// WithKey 设置key
+func WithKey(s string) Option {
+	return func(o *Options) {
+		o.keyFile = s
 	}
 }
 
@@ -166,7 +182,7 @@ func defaultOptions() *Options {
 			opentracing.UnaryServerInterceptor(),
 			logging.UnaryServerInterceptor(),
 			prometheus.UnaryServerInterceptor,
-			//recovery.UnaryServerInterceptor(recovery.WithRecoveryHandler(customRecovery("", ""))),
+			recovery.UnaryServerInterceptor(recovery.WithRecoveryHandler(customRecovery("", ""))),
 		},
 		streamServerInterceptors: []grpc.StreamServerInterceptor{
 			requesttag.StreamServerInterceptor(),
@@ -174,12 +190,12 @@ func defaultOptions() *Options {
 			opentracing.StreamServerInterceptor(),
 			logging.StreamServerInterceptor(),
 			prometheus.StreamServerInterceptor,
-			//recovery.StreamServerInterceptor(recovery.WithRecoveryHandler(customRecovery("", ""))),
+			recovery.StreamServerInterceptor(recovery.WithRecoveryHandler(customRecovery("", ""))),
 		},
 	}
 }
 
-// customRecovery customRecovery
+// customRecovery custom recovery
 func customRecovery(id, domain string) recovery.RecoveryHandlerFunc {
 	return func(p interface{}) (err error) {
 		log.Errorf("panic triggered: %v", p)

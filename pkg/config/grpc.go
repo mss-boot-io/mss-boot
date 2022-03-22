@@ -9,10 +9,10 @@ import (
 
 // GRPC grpc服务公共配置(选用)
 type GRPC struct {
-	Network string // default: tcp
-	Addr    string // default:  :9090
-	Timeout int    // default: 30
-	Name    string // default:
+	Addr     string `yaml:"addr" json:"addr"` // default:  :9090
+	CertFile string `yaml:"certFile" json:"certFile"`
+	KeyFile  string `yaml:"keyFile" json:"keyFile"`
+	Timeout  int    `yaml:"timeout" json:"timeout"` // default: 10
 }
 
 // Init init
@@ -24,8 +24,9 @@ func (e *GRPC) Init(
 	}
 	opts = append(opts,
 		grpc.WithAddr(e.Addr),
+		grpc.WithKey(e.KeyFile),
+		grpc.WithCert(e.CertFile),
 		grpc.WithTimeout(time.Duration(e.Timeout)*time.Second),
-		grpc.WithID(e.Name),
 	)
 	s := grpc.New("grpc", opts...)
 	s.Register(register)

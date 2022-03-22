@@ -70,7 +70,7 @@ func (e Model) Create(c *gin.Context) {
 			e.Err(errors.GeneratorSvcRecordIsExist, err)
 			return
 		}
-		e.Logger.Error(err)
+		e.Log.Error(err)
 		e.Err(errors.GeneratorSvcOperateDBFailed, err)
 		return
 	}
@@ -107,7 +107,7 @@ func (e Model) Update(c *gin.Context) {
 			{"updatedAt", time.Now()},
 		}}})
 	if err != nil {
-		e.Logger.Error(err)
+		e.Log.Error(err)
 		e.Err(errors.GeneratorSvcOperateDBFailed, err)
 		return
 	}
@@ -135,7 +135,7 @@ func (e Model) Delete(c *gin.Context) {
 
 	objID, err := primitive.ObjectIDFromHex(req.ID)
 	if err != nil {
-		e.Logger.Error(err)
+		e.Log.Error(err)
 		e.Err(errors.GeneratorSvcObjectIDInvalid, err)
 		return
 	}
@@ -146,7 +146,7 @@ func (e Model) Delete(c *gin.Context) {
 	}
 
 	if err != nil {
-		e.Logger.Error(err)
+		e.Log.Error(err)
 		e.Err(errors.GeneratorSvcOperateDBFailed, err)
 		return
 	}
@@ -174,13 +174,13 @@ func (e Model) Get(c *gin.Context) {
 	resp := &form.ModelGetResp{}
 	objID, err := primitive.ObjectIDFromHex(req.ID)
 	if err != nil {
-		e.Logger.Error(err)
+		e.Log.Error(err)
 		e.Err(errors.GeneratorSvcObjectIDInvalid, err)
 		return
 	}
 	err = e.C().FindOne(c, bson.M{"_id": objID}).Decode(&resp)
 	if err != nil {
-		e.Logger.Error(err)
+		e.Log.Error(err)
 		e.Err(errors.GeneratorSvcOperateDBFailed, err)
 		return
 	}
@@ -224,13 +224,13 @@ func (e Model) List(c *gin.Context) {
 	var count int64
 	count, err = e.C().CountDocuments(c, filter)
 	if err != nil {
-		e.Logger.Error(err)
+		e.Log.Error(err)
 		e.Err(errors.GeneratorSvcOperateDBFailed, err)
 		return
 	}
 	result, err := e.C().Find(c, filter, ops)
 	if err != nil {
-		e.Logger.Error(err)
+		e.Log.Error(err)
 		e.Err(errors.GeneratorSvcOperateDBFailed, err)
 		return
 	}
@@ -238,7 +238,7 @@ func (e Model) List(c *gin.Context) {
 	list := make([]form.ModelListItem, 0)
 	err = result.All(c, &list)
 	if err != nil {
-		e.Logger.Error(err)
+		e.Log.Error(err)
 		e.Err(errors.GeneratorSvcOperateDBFailed, err)
 		return
 	}

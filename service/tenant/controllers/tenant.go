@@ -76,7 +76,7 @@ func (e Tenant) Create(c *gin.Context) {
 			e.Err(errors.TenantSvcRecordIsExist, err)
 			return
 		}
-		e.Logger.Error(err)
+		e.Log.Error(err)
 		e.Err(errors.TenantSvcOperateDBFailed, err)
 		return
 	}
@@ -128,7 +128,7 @@ func (e Tenant) Delete(c *gin.Context) {
 	println(req.ID)
 	objID, err := primitive.ObjectIDFromHex(req.ID)
 	if err != nil {
-		e.Logger.Error(err)
+		e.Log.Error(err)
 		e.Err(errors.TenantSvcObjectIDInvalid, err)
 		return
 	}
@@ -139,7 +139,7 @@ func (e Tenant) Delete(c *gin.Context) {
 	}
 
 	if err != nil {
-		e.Logger.Error(err)
+		e.Log.Error(err)
 		e.Err(errors.TenantSvcOperateDBFailed, err)
 		return
 	}
@@ -167,13 +167,13 @@ func (e Tenant) Get(c *gin.Context) {
 	resp := &form.TenantGetResp{}
 	objID, err := primitive.ObjectIDFromHex(req.ID)
 	if err != nil {
-		e.Logger.Error(err)
+		e.Log.Error(err)
 		e.Err(errors.TenantSvcObjectIDInvalid, err)
 		return
 	}
 	err = e.C().FindOne(c, bson.M{"_id": objID}).Decode(&resp)
 	if err != nil {
-		e.Logger.Error(err)
+		e.Log.Error(err)
 		e.Err(errors.TenantSvcOperateDBFailed, err)
 		return
 	}
@@ -215,13 +215,13 @@ func (e Tenant) List(c *gin.Context) {
 	var count int64
 	count, err = e.C().CountDocuments(c, filter)
 	if err != nil {
-		e.Logger.Error(err)
+		e.Log.Error(err)
 		e.Err(errors.TenantSvcOperateDBFailed, err)
 		return
 	}
 	result, err := e.C().Find(c, filter, ops)
 	if err != nil {
-		e.Logger.Error(err)
+		e.Log.Error(err)
 		e.Err(errors.TenantSvcOperateDBFailed, err)
 		return
 	}
@@ -229,7 +229,7 @@ func (e Tenant) List(c *gin.Context) {
 	list := make([]form.TenantListItem, 0)
 	err = result.All(c, &list)
 	if err != nil {
-		e.Logger.Error(err)
+		e.Log.Error(err)
 		e.Err(errors.TenantSvcOperateDBFailed, err)
 		return
 	}

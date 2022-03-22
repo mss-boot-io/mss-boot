@@ -33,8 +33,8 @@ func (l *defaultLogger) Init(opts ...Option) error {
 	for _, o := range opts {
 		o(&l.opts)
 	}
-	//l.log = log.New(l.opts.Out, "", log.Lshortfile|log.LstdFlags)
-	l.log = log.New(os.Stderr, "", log.LstdFlags|log.Llongfile)
+	l.log = log.New(l.opts.Out, "", log.Lshortfile|log.LstdFlags)
+	//l.log = log.New(os.Stderr, "", log.LstdFlags|log.Llongfile)
 	return nil
 }
 

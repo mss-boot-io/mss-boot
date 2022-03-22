@@ -19,6 +19,7 @@ import (
 	log "github.com/mss-boot-io/mss-boot/core/logger"
 	"google.golang.org/grpc"
 	"google.golang.org/grpc/keepalive"
+	"google.golang.org/grpc/reflection"
 )
 
 // Server server
@@ -30,7 +31,7 @@ type Server struct {
 	options Options
 }
 
-// New new grpc server
+// New grpc server
 func New(name string, options ...Option) *Server {
 	s := &Server{name: name}
 	s.Options(options...)
@@ -60,7 +61,7 @@ func (e *Server) Server() *grpc.Server {
 func (e *Server) NewServer() {
 	grpc.EnableTracing = false
 	e.srv = grpc.NewServer(e.initGrpcServerOptions()...)
-	//reflection.Register(e.srv)
+	reflection.Register(e.srv)
 }
 
 // Register register
@@ -71,6 +72,7 @@ func (e *Server) Register(do func(server *Server)) {
 
 func (e *Server) initGrpcServerOptions() []grpc.ServerOption {
 	return []grpc.ServerOption{
+		grpc.ConnectionTimeout(e.options.timeout),
 		grpc.UnaryInterceptor(middleware.ChainUnaryServer(e.options.unaryServerInterceptors...)),
 		grpc.StreamInterceptor(middleware.ChainStreamServer(e.options.streamServerInterceptors...)),
 		grpc.MaxConcurrentStreams(uint32(e.options.maxConcurrentStreams)),
@@ -87,7 +89,7 @@ func (e *Server) initGrpcServerOptions() []grpc.ServerOption {
 	}
 }
 
-// Start start
+// Start run
 func (e *Server) Start(ctx context.Context) error {
 	e.mux.Lock()
 	defer e.mux.Unlock()

@@ -9,6 +9,7 @@ package listener
 
 import (
 	"net/http"
+	"time"
 )
 
 // Option 参数设置类型
@@ -19,11 +20,13 @@ type options struct {
 	handler                 http.Handler
 	startedHook             func()
 	endHook                 func()
+	timeout                 time.Duration
 }
 
 func setDefaultOption() options {
 	return options{
-		addr: ":8080",
+		addr:    ":8080",
+		timeout: 10 * time.Second,
 		handler: http.HandlerFunc(func(w http.ResponseWriter, req *http.Request) {
 			w.WriteHeader(http.StatusOK)
 		}),
@@ -69,5 +72,12 @@ func WithCert(s string) Option {
 func WithKey(s string) Option {
 	return func(o *options) {
 		o.keyFile = s
+	}
+}
+
+// WithTimeout 设置timeout
+func WithTimeout(t int) Option {
+	return func(o *options) {
+		o.timeout = time.Second * time.Duration(t)
 	}
 }

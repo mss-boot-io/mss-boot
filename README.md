@@ -1,3 +1,4 @@
 # mss-boot
 
- - [x] store
+ - [ ] generator (generate code)
+ - [ ] tenant (tenant admin)

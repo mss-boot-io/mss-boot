@@ -3,12 +3,10 @@ package main
 import (
 	"context"
 	"flag"
-	"log"
-	"time"
-
 	"github.com/gin-gonic/gin"
 	"github.com/mss-boot-io/mss-boot/core/server"
 	"github.com/mss-boot-io/mss-boot/pkg/config"
+	"log"
 
 	"tenant/cfg"
 	"tenant/router"
@@ -31,8 +29,7 @@ func main() {
 		log.Printf("cfg init failed, %s\n", err.Error())
 		return
 	}
-	ctx, cancel := context.WithTimeout(context.TODO(), 5*time.Second)
-	defer cancel()
+	ctx := context.Background()
 
 	r := gin.Default()
 	router.Init(r.Group("/tenant"))
