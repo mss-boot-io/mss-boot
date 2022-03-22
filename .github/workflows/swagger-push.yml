@@ -3,7 +3,7 @@ name: Deploy Swagger
 on:
   push:
     paths:
-      - 'service/**/docs'
+      - 'service/**/docs/**'
     branches:
       - main
       - feature/push-swagger
