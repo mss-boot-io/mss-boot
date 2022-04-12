@@ -31,6 +31,51 @@ type Api struct {
 	engine  *gin.RouterGroup
 }
 
+func (*Api) Path() string {
+	return ""
+}
+
+func (*Api) Handlers() []gin.HandlerFunc {
+	return []gin.HandlerFunc{}
+}
+
+func (*Api) Create(c *gin.Context) {
+	c.JSON(http.StatusMethodNotAllowed, gin.H{
+		"success":      false,
+		"errorMessage": "Method Not Allowed",
+	})
+}
+
+func (*Api) Update(c *gin.Context) {
+	c.JSON(http.StatusMethodNotAllowed, gin.H{
+		"success":      false,
+		"errorMessage": "Method Not Allowed",
+	})
+}
+
+func (*Api) Delete(c *gin.Context) {
+	c.JSON(http.StatusMethodNotAllowed, gin.H{
+		"success":      false,
+		"errorMessage": "Method Not Allowed",
+	})
+}
+
+func (*Api) Get(c *gin.Context) {
+	c.JSON(http.StatusMethodNotAllowed, gin.H{
+		"success":      false,
+		"errorMessage": "Method Not Allowed",
+	})
+}
+
+func (*Api) List(c *gin.Context) {
+	c.JSON(http.StatusMethodNotAllowed, gin.H{
+		"success":      false,
+		"errorMessage": "Method Not Allowed",
+	})
+}
+
+func (*Api) Other(_ *gin.RouterGroup) {}
+
 func (e *Api) SetEngine(engine *gin.RouterGroup) {
 	e.engine = engine
 }

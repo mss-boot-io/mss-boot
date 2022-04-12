@@ -19,15 +19,15 @@ type Controller interface {
 	// Handlers middlewares
 	Handlers() []gin.HandlerFunc
 	// Create create
-	Create(c *gin.Context)
+	Create(*gin.Context)
 	// Update update
-	Update(c *gin.Context)
+	Update(*gin.Context)
 	// Delete delete
-	Delete(c *gin.Context)
+	Delete(*gin.Context)
 	// Get get
-	Get(c *gin.Context)
+	Get(*gin.Context)
 	// List list
-	List(c *gin.Context)
+	List(*gin.Context)
 	// Other other
 	Other(*gin.RouterGroup)
 }

@@ -122,3 +122,55 @@ type TenantListItem struct {
 	//更新时间
 	UpdatedAt time.Time `json:"updatedAt" bson:"updatedAt"`
 }
+
+type TenantAuthURLReq struct {
+	ExtraScopes []string `query:"extraScopes" form:"extraScopes"`
+	CrossClient []string `query:"crossClient" form:"crossClient"`
+	ConnectorID string   `query:"connectorID" form:"connectorID"`
+	State       string   `query:"state" form:"state"`
+}
+
+type TenantAuthURLResp struct {
+	URL string `json:"url"`
+}
+
+type TenantClientResp struct {
+	ServerURL        string `json:"serverUrl"`
+	ClientID         string `json:"clientId"`
+	AppName          string `json:"appName"`
+	OrganizationName string `json:"organizationName"`
+}
+
+type TenantCallbackReq struct {
+	Code             string `query:"code" form:"code"`
+	RefreshToken     string `query:"refreshToken" form:"refreshToken"`
+	State            string `query:"state" form:"state"`
+	Error            string `query:"error" form:"error"`
+	ErrorDescription string `query:"error_description" form:"error_description"`
+}
+
+type TenantCallbackResp struct {
+	// AccessToken is the token that authorizes and authenticates
+	// the requests.
+	AccessToken string `json:"accessToken"`
+
+	// TokenType is the type of token.
+	// The Type method returns either this or "Bearer", the default.
+	TokenType string `json:"tokenType,omitempty"`
+
+	// RefreshToken is a token that's used by the application
+	// (as opposed to the user) to refresh the access token
+	// if it expires.
+	RefreshToken string `json:"refreshToken,omitempty"`
+
+	// Expiry is the optional expiration time of the access token.
+	//
+	// If zero, TokenSource implementations will reuse the same
+	// token forever and RefreshToken or equivalent
+	// mechanisms for that TokenSource will not be used.
+	Expiry time.Time `json:"expiry,omitempty"`
+}
+
+type TenantRefreshTokenReq struct {
+	RefreshToken string `query:"refreshToken" form:"refreshToken"`
+}

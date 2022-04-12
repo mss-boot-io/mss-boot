@@ -45,6 +45,7 @@ const (
 	TenantSvcRecordIsExist
 	TenantSvcRecordNotFound
 	TenantSvcObjectIDInvalid
+	TenantSvcAccessTokenParseFailed
 )
 
 const (

@@ -24,8 +24,9 @@ import (
 )
 
 type Client struct {
-	ID          string
+	ID          string `bson:"_id"`
 	Secret      string
+	Scopes      []string
 	CallbackURL string
 	HomepageURL string
 	Application Application

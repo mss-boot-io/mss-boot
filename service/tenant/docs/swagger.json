@@ -8,6 +8,140 @@
     },
     "host": "localhost:9094",
     "paths": {
+        "/tenant/api/v1/callback": {
+            "get": {
+                "security": [
+                    {
+                        "Bearer": []
+                    }
+                ],
+                "description": "获取access_token",
+                "consumes": [
+                    "application/json"
+                ],
+                "tags": [
+                    "tenant"
+                ],
+                "summary": "获取access_token",
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "code",
+                        "name": "code",
+                        "in": "query"
+                    },
+                    {
+                        "type": "string",
+                        "description": "state",
+                        "name": "state",
+                        "in": "query"
+                    },
+                    {
+                        "type": "string",
+                        "description": "error",
+                        "name": "error",
+                        "in": "query"
+                    },
+                    {
+                        "type": "string",
+                        "description": "error_description",
+                        "name": "error_description",
+                        "in": "query"
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/form.TenantCallbackResp"
+                        }
+                    }
+                }
+            }
+        },
+        "/tenant/api/v1/client": {
+            "get": {
+                "security": [
+                    {
+                        "Bearer": []
+                    }
+                ],
+                "description": "获取client配置",
+                "consumes": [
+                    "application/json"
+                ],
+                "tags": [
+                    "tenant"
+                ],
+                "summary": "获取client配置",
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/form.TenantClientResp"
+                        }
+                    }
+                }
+            }
+        },
+        "/tenant/api/v1/current-user": {
+            "get": {
+                "security": [
+                    {
+                        "Bearer": []
+                    }
+                ],
+                "description": "获取当前用户",
+                "consumes": [
+                    "application/json"
+                ],
+                "tags": [
+                    "tenant"
+                ],
+                "summary": "获取当前用户",
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/auth.Claims"
+                        }
+                    }
+                }
+            }
+        },
+        "/tenant/api/v1/refresh-token": {
+            "get": {
+                "security": [
+                    {
+                        "Bearer": []
+                    }
+                ],
+                "description": "获取access_token",
+                "consumes": [
+                    "application/json"
+                ],
+                "tags": [
+                    "tenant"
+                ],
+                "summary": "获取access_token",
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "refresh_token",
+                        "name": "refresh_token",
+                        "in": "query"
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/form.TenantCallbackResp"
+                        }
+                    }
+                }
+            }
+        },
         "/tenant/api/v1/tenant": {
             "get": {
                 "security": [
@@ -122,7 +256,8 @@
                         "type": "string",
                         "description": "id",
                         "name": "id",
-                        "in": "path"
+                        "in": "path",
+                        "required": true
                     }
                 ],
                 "responses": {
@@ -153,7 +288,8 @@
                         "type": "string",
                         "description": "id",
                         "name": "id",
-                        "in": "path"
+                        "in": "path",
+                        "required": true
                     },
                     {
                         "description": "data",
@@ -193,7 +329,8 @@
                         "type": "string",
                         "description": "id",
                         "name": "id",
-                        "in": "path"
+                        "in": "path",
+                        "required": true
                     }
                 ],
                 "responses": {
@@ -208,6 +345,257 @@
         }
     },
     "definitions": {
+        "auth.Claims": {
+            "type": "object",
+            "properties": {
+                "accessToken": {
+                    "type": "string"
+                },
+                "address": {
+                    "type": "array",
+                    "items": {
+                        "type": "string"
+                    }
+                },
+                "affiliation": {
+                    "type": "string"
+                },
+                "aud": {
+                    "description": "the `aud` (Audience) claim. See https://datatracker.ietf.org/doc/html/rfc7519#section-4.1.3",
+                    "type": "array",
+                    "items": {
+                        "type": "string"
+                    }
+                },
+                "avatar": {
+                    "type": "string"
+                },
+                "bio": {
+                    "type": "string"
+                },
+                "birthday": {
+                    "type": "string"
+                },
+                "createdIp": {
+                    "type": "string"
+                },
+                "createdTime": {
+                    "type": "string"
+                },
+                "dingtalk": {
+                    "type": "string"
+                },
+                "displayName": {
+                    "type": "string"
+                },
+                "education": {
+                    "type": "string"
+                },
+                "email": {
+                    "type": "string"
+                },
+                "exp": {
+                    "description": "the `exp` (Expiration Time) claim. See https://datatracker.ietf.org/doc/html/rfc7519#section-4.1.4",
+                    "$ref": "#/definitions/jwt.NumericDate"
+                },
+                "facebook": {
+                    "type": "string"
+                },
+                "gender": {
+                    "type": "string"
+                },
+                "gitee": {
+                    "type": "string"
+                },
+                "github": {
+                    "type": "string"
+                },
+                "gitlab": {
+                    "type": "string"
+                },
+                "google": {
+                    "type": "string"
+                },
+                "hash": {
+                    "type": "string"
+                },
+                "homepage": {
+                    "type": "string"
+                },
+                "iat": {
+                    "description": "the `iat` (Issued At) claim. See https://datatracker.ietf.org/doc/html/rfc7519#section-4.1.6",
+                    "$ref": "#/definitions/jwt.NumericDate"
+                },
+                "id": {
+                    "type": "string"
+                },
+                "idCard": {
+                    "type": "string"
+                },
+                "idCardType": {
+                    "type": "string"
+                },
+                "isAdmin": {
+                    "type": "boolean"
+                },
+                "isDefaultAvatar": {
+                    "type": "boolean"
+                },
+                "isDeleted": {
+                    "type": "boolean"
+                },
+                "isForbidden": {
+                    "type": "boolean"
+                },
+                "isGlobalAdmin": {
+                    "type": "boolean"
+                },
+                "isOnline": {
+                    "type": "boolean"
+                },
+                "iss": {
+                    "description": "the `iss` (Issuer) claim. See https://datatracker.ietf.org/doc/html/rfc7519#section-4.1.1",
+                    "type": "string"
+                },
+                "jti": {
+                    "description": "the `jti` (JWT ID) claim. See https://datatracker.ietf.org/doc/html/rfc7519#section-4.1.7",
+                    "type": "string"
+                },
+                "karma": {
+                    "type": "integer"
+                },
+                "language": {
+                    "type": "string"
+                },
+                "lark": {
+                    "type": "string"
+                },
+                "lastSigninIp": {
+                    "type": "string"
+                },
+                "lastSigninTime": {
+                    "type": "string"
+                },
+                "ldap": {
+                    "type": "string"
+                },
+                "linkedin": {
+                    "type": "string"
+                },
+                "location": {
+                    "type": "string"
+                },
+                "name": {
+                    "type": "string"
+                },
+                "nbf": {
+                    "description": "the `nbf` (Not Before) claim. See https://datatracker.ietf.org/doc/html/rfc7519#section-4.1.5",
+                    "$ref": "#/definitions/jwt.NumericDate"
+                },
+                "owner": {
+                    "type": "string"
+                },
+                "password": {
+                    "type": "string"
+                },
+                "passwordSalt": {
+                    "type": "string"
+                },
+                "permanentAvatar": {
+                    "type": "string"
+                },
+                "phone": {
+                    "type": "string"
+                },
+                "preHash": {
+                    "type": "string"
+                },
+                "properties": {
+                    "type": "object",
+                    "additionalProperties": {
+                        "type": "string"
+                    }
+                },
+                "qq": {
+                    "type": "string"
+                },
+                "ranking": {
+                    "type": "integer"
+                },
+                "region": {
+                    "type": "string"
+                },
+                "score": {
+                    "type": "integer"
+                },
+                "signupApplication": {
+                    "type": "string"
+                },
+                "sub": {
+                    "description": "the `sub` (Subject) claim. See https://datatracker.ietf.org/doc/html/rfc7519#section-4.1.2",
+                    "type": "string"
+                },
+                "tag": {
+                    "type": "string"
+                },
+                "title": {
+                    "type": "string"
+                },
+                "type": {
+                    "type": "string"
+                },
+                "updatedTime": {
+                    "type": "string"
+                },
+                "wechat": {
+                    "type": "string"
+                },
+                "wecom": {
+                    "type": "string"
+                },
+                "weibo": {
+                    "type": "string"
+                }
+            }
+        },
+        "form.TenantCallbackResp": {
+            "type": "object",
+            "properties": {
+                "accessToken": {
+                    "description": "AccessToken is the token that authorizes and authenticates\nthe requests.",
+                    "type": "string"
+                },
+                "expiry": {
+                    "description": "Expiry is the optional expiration time of the access token.\n\nIf zero, TokenSource implementations will reuse the same\ntoken forever and RefreshToken or equivalent\nmechanisms for that TokenSource will not be used.",
+                    "type": "string"
+                },
+                "refreshToken": {
+                    "description": "RefreshToken is a token that's used by the application\n(as opposed to the user) to refresh the access token\nif it expires.",
+                    "type": "string"
+                },
+                "tokenType": {
+                    "description": "TokenType is the type of token.\nThe Type method returns either this or \"Bearer\", the default.",
+                    "type": "string"
+                }
+            }
+        },
+        "form.TenantClientResp": {
+            "type": "object",
+            "properties": {
+                "appName": {
+                    "type": "string"
+                },
+                "clientId": {
+                    "type": "string"
+                },
+                "organizationName": {
+                    "type": "string"
+                },
+                "serverUrl": {
+                    "type": "string"
+                }
+            }
+        },
         "form.TenantCreateReq": {
             "type": "object",
             "required": [
@@ -385,6 +773,14 @@
                 }
             }
         },
+        "jwt.NumericDate": {
+            "type": "object",
+            "properties": {
+                "time.Time": {
+                    "type": "string"
+                }
+            }
+        },
         "response.Page": {
             "type": "object",
             "properties": {
@@ -402,17 +798,22 @@
         "response.Response": {
             "type": "object",
             "properties": {
-                "code": {
+                "errorCode": {
+                    "type": "string"
+                },
+                "errorMessage": {
+                    "type": "string"
+                },
+                "host": {
+                    "type": "string"
+                },
+                "showType": {
                     "type": "integer"
                 },
-                "msg": {
-                    "type": "string"
+                "success": {
+                    "type": "boolean"
                 },
-                "requestId": {
-                    "description": "数据集",
-                    "type": "string"
-                },
-                "status": {
+                "traceId": {
                     "type": "string"
                 }
             }

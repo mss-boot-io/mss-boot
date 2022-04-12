@@ -7,32 +7,24 @@
 
 package config
 
-import "golang.org/x/oauth2"
+import "github.com/casdoor/casdoor-go-sdk/auth"
 
 type OAuth2 struct {
-	ID          string         `yaml:"id" json:"id"`
-	Secret      string         `yaml:"secret" json:"secret"`
-	Scopes      []string       `yaml:"scopes" json:"scopes"`
-	RedirectURL string         `yaml:"redirectURL" json:"redirectURL"`
-	Endpoint    OAuth2Endpoint `yaml:"endpoint" json:"endpoint"`
+	Endpoint         string `yaml:"endpoint" json:"endpoint"`
+	ClientID         string `yaml:"clientID" json:"clientID"`
+	ClientSecret     string `yaml:"clientSecret" json:"clientSecret"`
+	JwtPublicKey     string `yaml:"jwtPublicKey" json:"jwtPublicKey"`
+	OrganizationName string `yaml:"organizationName" json:"organizationName"`
+	ApplicationName  string `yaml:"applicationName" json:"applicationName"`
 }
 
-type OAuth2Endpoint struct {
-	AuthURL   string `yaml:"authURL" json:"authURL"`
-	TokenURL  string `yaml:"tokenURL" json:"tokenURL"`
-	AuthStyle int    `yaml:"authStyle" json:"authStyle"`
-}
-
-func (e OAuth2) Init() *oauth2.Config {
-	return &oauth2.Config{
-		ClientID:     e.ID,
-		ClientSecret: e.Secret,
-		Endpoint: oauth2.Endpoint{
-			AuthURL:   e.Endpoint.AuthURL,
-			TokenURL:  e.Endpoint.TokenURL,
-			AuthStyle: oauth2.AuthStyle(e.Endpoint.AuthStyle),
-		},
-		RedirectURL: e.RedirectURL,
-		Scopes:      e.Scopes,
-	}
+// Init 初始化
+func (e *OAuth2) Init() {
+	auth.InitConfig(
+		e.Endpoint,
+		e.ClientID,
+		e.ClientSecret,
+		e.JwtPublicKey,
+		e.OrganizationName,
+		e.ApplicationName)
 }

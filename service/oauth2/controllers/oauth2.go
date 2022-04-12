@@ -8,6 +8,9 @@
 package controllers
 
 import (
+	"crypto/sha256"
+	"encoding/base64"
+	"golang.org/x/oauth2"
 	"net/http"
 	"net/url"
 	"oauth2/common"
@@ -29,34 +32,54 @@ type OAuth2 struct {
 }
 
 func (OAuth2) Path() string {
-	return "/tenant"
+	return "/"
 }
 
 func (e OAuth2) Handlers() []gin.HandlerFunc {
 	return []gin.HandlerFunc{}
 }
 
-func (e OAuth2) Create(c *gin.Context) {
+func (e OAuth2) Create(_ *gin.Context) {
 }
 
-func (e OAuth2) Update(c *gin.Context) {
+func (e OAuth2) Update(_ *gin.Context) {
 }
 
-func (e OAuth2) Delete(c *gin.Context) {
+func (e OAuth2) Delete(_ *gin.Context) {
 }
 
-func (e OAuth2) Get(c *gin.Context) {
+func (e OAuth2) Get(_ *gin.Context) {
 }
 
-func (e OAuth2) List(c *gin.Context) {
+func (e OAuth2) List(_ *gin.Context) {
 }
 
 func (e OAuth2) Other(r *gin.RouterGroup) {
-	r.Any("/login", e.Login)
+	r.GET("/login", e.Login)
+	r.POST("/login", e.Login)
 	r.GET("/auth", e.Auth)
-	r.Any("/oauth/authorize", e.Authorize)
-	r.Any("/oauth/token", e.Token)
-	r.Any("/test", e.Check)
+	r.GET("/oauth/authorize", e.Authorize)
+	r.POST("/oauth/authorize", e.Authorize)
+	r.GET("/oauth/token", e.Token)
+	r.POST("/oauth/token", e.Token)
+	r.GET("/test", e.Check)
+	r.GET("/url", e.URL)
+}
+
+func genCodeChallengeS256(s string) string {
+	s256 := sha256.Sum256([]byte(s))
+	return base64.URLEncoding.EncodeToString(s256[:])
+}
+
+func (e OAuth2) URL(c *gin.Context) {
+	config := oauth2.Config{
+		ClientID:     c.Query("id"),
+		ClientSecret: c.Query("secret"),
+		Scopes:       c.QueryArray("scopes"),
+		RedirectURL:  c.Query("redirect"),
+	}
+	e.OK(config.AuthCodeURL(c.Query("state"), oauth2.SetAuthURLParam("code_challenge", genCodeChallengeS256("s256example")),
+		oauth2.SetAuthURLParam("code_challenge_method", "S256")))
 }
 
 func (e OAuth2) Login(c *gin.Context) {
@@ -86,7 +109,8 @@ func (e OAuth2) Login(c *gin.Context) {
 		c.Redirect(http.StatusFound, "/oauth2/auth")
 		return
 	}
-	outputHTML(c, "static/login.html")
+	c.Redirect(http.StatusFound, "http://localhost:8000/#/mss-boot-frontend/user/login")
+	//outputHTML(c, "static/login.html")
 }
 
 func (e OAuth2) Auth(c *gin.Context) {
