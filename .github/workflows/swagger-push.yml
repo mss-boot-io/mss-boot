@@ -14,7 +14,7 @@ jobs:
     runs-on: ubuntu-latest
     strategy:
       matrix:
-        service: [generator, oauth2, tenant]
+        service: [generator, tenant]
     steps:
       - uses: actions/checkout@v2
 

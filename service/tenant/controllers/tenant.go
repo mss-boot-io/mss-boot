@@ -276,7 +276,7 @@ func (e Tenant) GetClient(c *gin.Context) {
 // @Param state query string false "state"
 // @Param error query string false "error"
 // @Param error_description query string false "error_description"
-// @Success 200 {object} form.TenantCallbackResp
+// @Success 200 {object} response.Response{data=form.TenantCallbackResp}
 // @Router /tenant/api/v1/callback [get]
 // @Security Bearer
 func (e Tenant) Callback(c *gin.Context) {
@@ -288,7 +288,7 @@ func (e Tenant) Callback(c *gin.Context) {
 	}
 	token, err := auth.GetOAuthToken(req.Code, req.State)
 	if err != nil {
-		e.Err(errors.TenantSvcParamsInvalid, err)
+		e.Err(errors.TenantSvcAccessTokenParseFailed, err)
 		return
 	}
 	resp := &form.TenantCallbackResp{
@@ -307,9 +307,8 @@ func (e Tenant) Callback(c *gin.Context) {
 // @Accept  application/json
 // @Product application/json
 // @Param refresh_token query string false "refresh_token"
-// @Success 200 {object} form.TenantCallbackResp
+// @Success 200 {object} response.Response{data=form.TenantCallbackResp}
 // @Router /tenant/api/v1/refresh-token [get]
 // @Security Bearer
 func (e Tenant) RefreshToken(c *gin.Context) {
-
 }
