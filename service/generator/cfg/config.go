@@ -8,7 +8,6 @@ import (
 	"github.com/mss-boot-io/mss-boot/core/server/listener"
 	"github.com/mss-boot-io/mss-boot/pkg/config"
 	"github.com/mss-boot-io/mss-boot/pkg/config/mongodb"
-	"github.com/mss-boot-io/mss-boot/pkg/oauth2"
 )
 
 type Config struct {
@@ -24,7 +23,7 @@ type Config struct {
 func (e *Config) Init(handler http.Handler) {
 	e.Logger.Init()
 	e.Database.Init()
-	oauth2.Cfg = e.OAuth2.Init()
+	e.OAuth2.Init()
 
 	runnable := []server.Runnable{
 		listener.New("generator",

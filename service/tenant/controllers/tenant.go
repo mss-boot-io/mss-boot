@@ -8,6 +8,7 @@
 package controllers
 
 import (
+	"github.com/casdoor/casdoor-go-sdk/auth"
 	"time"
 
 	"github.com/gin-gonic/gin"
@@ -19,7 +20,6 @@ import (
 	"go.mongodb.org/mongo-driver/bson/primitive"
 	"go.mongodb.org/mongo-driver/mongo"
 	"go.mongodb.org/mongo-driver/mongo/options"
-
 	"tenant/form"
 	"tenant/models"
 )
@@ -91,7 +91,7 @@ func (e Tenant) Create(c *gin.Context) {
 // @Tags tenant
 // @Accept  application/json
 // @Product application/json
-// @Param id path string false "id"
+// @Param id path string true "id"
 // @Param data body form.TenantUpdateReq true "data"
 // @Success 200 {object} response.Response
 // @Router /tenant/api/v1/tenant/{id} [put]
@@ -113,7 +113,7 @@ func (e Tenant) Update(c *gin.Context) {
 // @Tags tenant
 // @Accept  application/json
 // @Product application/json
-// @Param id path string false "id"
+// @Param id path string true "id"
 // @Success 200 {object} response.Response
 // @Router /tenant/api/v1/tenant/{id} [delete]
 // @Security Bearer
@@ -153,7 +153,7 @@ func (e Tenant) Delete(c *gin.Context) {
 // @Tags tenant
 // @Accept  application/json
 // @Product application/json
-// @Param id path string false "id"
+// @Param id path string true "id"
 // @Success 200 {object} form.TenantGetResp
 // @Router /tenant/api/v1/tenant/{id} [get]
 // @Security Bearer
@@ -237,6 +237,79 @@ func (e Tenant) List(c *gin.Context) {
 	return
 }
 
-func (e Tenant) Other(_ *gin.RouterGroup) {
+func (e Tenant) Other(r *gin.RouterGroup) {
+	r.GET("/client", e.GetClient)
+	r.GET("/callback", e.Callback)
+	r.GET("/refresh-token", e.RefreshToken)
+}
+
+// GetClient 获取client配置
+// @Summary 获取client配置
+// @Description 获取client配置
+// @Tags tenant
+// @Accept  application/json
+// @Product application/json
+// @Success 200 {object} form.TenantClientResp
+// @Router /tenant/api/v1/client [get]
+// @Security Bearer
+func (e Tenant) GetClient(c *gin.Context) {
+	err := e.Make(c).Error
+	if err != nil {
+		e.Err(errors.TenantSvcParamsInvalid, err)
+		return
+	}
+	e.OK(form.TenantClientResp{
+		ServerURL:        "http://localhost:8000",
+		ClientID:         "a79e8abd42af97ed7c90",
+		AppName:          "mss-boot",
+		OrganizationName: "mss-boot-io",
+	})
+}
+
+// Callback 获取access_token
+// @Summary 获取access_token
+// @Description 获取access_token
+// @Tags tenant
+// @Accept  application/json
+// @Product application/json
+// @Param code query string false "code"
+// @Param state query string false "state"
+// @Param error query string false "error"
+// @Param error_description query string false "error_description"
+// @Success 200 {object} form.TenantCallbackResp
+// @Router /tenant/api/v1/callback [get]
+// @Security Bearer
+func (e Tenant) Callback(c *gin.Context) {
+	req := &form.TenantCallbackReq{}
+	err := e.Make(c).Bind(req).Error
+	if err != nil {
+		e.Err(errors.TenantSvcParamsInvalid, err)
+		return
+	}
+	token, err := auth.GetOAuthToken(req.Code, req.State)
+	if err != nil {
+		e.Err(errors.TenantSvcParamsInvalid, err)
+		return
+	}
+	resp := &form.TenantCallbackResp{
+		AccessToken:  token.AccessToken,
+		TokenType:    token.TokenType,
+		RefreshToken: token.RefreshToken,
+		Expiry:       token.Expiry,
+	}
+	e.OK(resp)
+}
+
+// RefreshToken 获取access_token
+// @Summary 获取access_token
+// @Description 获取access_token
+// @Tags tenant
+// @Accept  application/json
+// @Product application/json
+// @Param refresh_token query string false "refresh_token"
+// @Success 200 {object} form.TenantCallbackResp
+// @Router /tenant/api/v1/refresh-token [get]
+// @Security Bearer
+func (e Tenant) RefreshToken(c *gin.Context) {
 
 }

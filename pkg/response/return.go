@@ -42,13 +42,13 @@ func OK(c *gin.Context, data interface{}, msg ...string) {
 	c.Set("status", http.StatusOK)
 	switch c.Request.Method {
 	case http.MethodDelete:
-		c.AbortWithStatusJSON(http.StatusNoContent, data)
+		c.AbortWithStatusJSON(http.StatusNoContent, res)
 		return
 	case http.MethodPost:
-		c.AbortWithStatusJSON(http.StatusCreated, data)
+		c.AbortWithStatusJSON(http.StatusCreated, res)
 		return
 	default:
-		c.AbortWithStatusJSON(http.StatusOK, data)
+		c.AbortWithStatusJSON(http.StatusOK, res)
 	}
 }
 

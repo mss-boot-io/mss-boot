@@ -1,4 +1,186 @@
 definitions:
+  auth.Claims:
+    properties:
+      accessToken:
+        type: string
+      address:
+        items:
+          type: string
+        type: array
+      affiliation:
+        type: string
+      aud:
+        description: the `aud` (Audience) claim. See https://datatracker.ietf.org/doc/html/rfc7519#section-4.1.3
+        items:
+          type: string
+        type: array
+      avatar:
+        type: string
+      bio:
+        type: string
+      birthday:
+        type: string
+      createdIp:
+        type: string
+      createdTime:
+        type: string
+      dingtalk:
+        type: string
+      displayName:
+        type: string
+      education:
+        type: string
+      email:
+        type: string
+      exp:
+        $ref: '#/definitions/jwt.NumericDate'
+        description: the `exp` (Expiration Time) claim. See https://datatracker.ietf.org/doc/html/rfc7519#section-4.1.4
+      facebook:
+        type: string
+      gender:
+        type: string
+      gitee:
+        type: string
+      github:
+        type: string
+      gitlab:
+        type: string
+      google:
+        type: string
+      hash:
+        type: string
+      homepage:
+        type: string
+      iat:
+        $ref: '#/definitions/jwt.NumericDate'
+        description: the `iat` (Issued At) claim. See https://datatracker.ietf.org/doc/html/rfc7519#section-4.1.6
+      id:
+        type: string
+      idCard:
+        type: string
+      idCardType:
+        type: string
+      isAdmin:
+        type: boolean
+      isDefaultAvatar:
+        type: boolean
+      isDeleted:
+        type: boolean
+      isForbidden:
+        type: boolean
+      isGlobalAdmin:
+        type: boolean
+      isOnline:
+        type: boolean
+      iss:
+        description: the `iss` (Issuer) claim. See https://datatracker.ietf.org/doc/html/rfc7519#section-4.1.1
+        type: string
+      jti:
+        description: the `jti` (JWT ID) claim. See https://datatracker.ietf.org/doc/html/rfc7519#section-4.1.7
+        type: string
+      karma:
+        type: integer
+      language:
+        type: string
+      lark:
+        type: string
+      lastSigninIp:
+        type: string
+      lastSigninTime:
+        type: string
+      ldap:
+        type: string
+      linkedin:
+        type: string
+      location:
+        type: string
+      name:
+        type: string
+      nbf:
+        $ref: '#/definitions/jwt.NumericDate'
+        description: the `nbf` (Not Before) claim. See https://datatracker.ietf.org/doc/html/rfc7519#section-4.1.5
+      owner:
+        type: string
+      password:
+        type: string
+      passwordSalt:
+        type: string
+      permanentAvatar:
+        type: string
+      phone:
+        type: string
+      preHash:
+        type: string
+      properties:
+        additionalProperties:
+          type: string
+        type: object
+      qq:
+        type: string
+      ranking:
+        type: integer
+      region:
+        type: string
+      score:
+        type: integer
+      signupApplication:
+        type: string
+      sub:
+        description: the `sub` (Subject) claim. See https://datatracker.ietf.org/doc/html/rfc7519#section-4.1.2
+        type: string
+      tag:
+        type: string
+      title:
+        type: string
+      type:
+        type: string
+      updatedTime:
+        type: string
+      wechat:
+        type: string
+      wecom:
+        type: string
+      weibo:
+        type: string
+    type: object
+  form.TenantCallbackResp:
+    properties:
+      accessToken:
+        description: |-
+          AccessToken is the token that authorizes and authenticates
+          the requests.
+        type: string
+      expiry:
+        description: |-
+          Expiry is the optional expiration time of the access token.
+
+          If zero, TokenSource implementations will reuse the same
+          token forever and RefreshToken or equivalent
+          mechanisms for that TokenSource will not be used.
+        type: string
+      refreshToken:
+        description: |-
+          RefreshToken is a token that's used by the application
+          (as opposed to the user) to refresh the access token
+          if it expires.
+        type: string
+      tokenType:
+        description: |-
+          TokenType is the type of token.
+          The Type method returns either this or "Bearer", the default.
+        type: string
+    type: object
+  form.TenantClientResp:
+    properties:
+      appName:
+        type: string
+      clientId:
+        type: string
+      organizationName:
+        type: string
+      serverUrl:
+        type: string
+    type: object
   form.TenantCreateReq:
     properties:
       contact:
@@ -127,6 +309,11 @@ definitions:
     required:
     - expiredAt
     type: object
+  jwt.NumericDate:
+    properties:
+      time.Time:
+        type: string
+    type: object
   response.Page:
     properties:
       current:
@@ -138,14 +325,17 @@ definitions:
     type: object
   response.Response:
     properties:
-      code:
+      errorCode:
+        type: string
+      errorMessage:
+        type: string
+      host:
+        type: string
+      showType:
         type: integer
-      msg:
-        type: string
-      requestId:
-        description: 数据集
-        type: string
-      status:
+      success:
+        type: boolean
+      traceId:
         type: string
     type: object
 host: localhost:9094
@@ -155,6 +345,88 @@ info:
   title: tenant API
   version: 0.0.1
 paths:
+  /tenant/api/v1/callback:
+    get:
+      consumes:
+      - application/json
+      description: 获取access_token
+      parameters:
+      - description: code
+        in: query
+        name: code
+        type: string
+      - description: state
+        in: query
+        name: state
+        type: string
+      - description: error
+        in: query
+        name: error
+        type: string
+      - description: error_description
+        in: query
+        name: error_description
+        type: string
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/form.TenantCallbackResp'
+      security:
+      - Bearer: []
+      summary: 获取access_token
+      tags:
+      - tenant
+  /tenant/api/v1/client:
+    get:
+      consumes:
+      - application/json
+      description: 获取client配置
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/form.TenantClientResp'
+      security:
+      - Bearer: []
+      summary: 获取client配置
+      tags:
+      - tenant
+  /tenant/api/v1/current-user:
+    get:
+      consumes:
+      - application/json
+      description: 获取当前用户
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/auth.Claims'
+      security:
+      - Bearer: []
+      summary: 获取当前用户
+      tags:
+      - tenant
+  /tenant/api/v1/refresh-token:
+    get:
+      consumes:
+      - application/json
+      description: 获取access_token
+      parameters:
+      - description: refresh_token
+        in: query
+        name: refresh_token
+        type: string
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/form.TenantCallbackResp'
+      security:
+      - Bearer: []
+      summary: 获取access_token
+      tags:
+      - tenant
   /tenant/api/v1/tenant:
     get:
       consumes:
@@ -220,6 +492,7 @@ paths:
       - description: id
         in: path
         name: id
+        required: true
         type: string
       responses:
         "200":
@@ -239,6 +512,7 @@ paths:
       - description: id
         in: path
         name: id
+        required: true
         type: string
       responses:
         "200":
@@ -258,6 +532,7 @@ paths:
       - description: id
         in: path
         name: id
+        required: true
         type: string
       - description: data
         in: body

@@ -8,20 +8,22 @@
 package manage
 
 import (
+	"io"
+	"log"
+	"net/http"
+	"net/http/httputil"
+	"os"
+
 	"github.com/go-oauth2/oauth2/v4/errors"
 	"github.com/go-oauth2/oauth2/v4/generates"
 	"github.com/go-oauth2/oauth2/v4/manage"
 	"github.com/go-oauth2/oauth2/v4/server"
 	"github.com/go-session/session"
 	"github.com/sanity-io/litter"
-	"io"
-	"log"
-	"net/http"
-	"net/http/httputil"
+
 	"oauth2/common"
 	"oauth2/controllers"
 	"oauth2/models"
-	"os"
 )
 
 func Init() {
