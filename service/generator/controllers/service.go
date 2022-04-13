@@ -8,6 +8,7 @@
 package controllers
 
 import (
+	"github.com/mss-boot-io/mss-boot/pkg/middlewares"
 	"time"
 
 	"github.com/gin-gonic/gin"
@@ -40,7 +41,9 @@ func (Service) Path() string {
 }
 
 func (e Service) Handlers() []gin.HandlerFunc {
-	return []gin.HandlerFunc{}
+	return []gin.HandlerFunc{
+		middlewares.AuthMiddleware(),
+	}
 }
 
 // Create 创建
@@ -262,5 +265,6 @@ func (e Service) Generate(c *gin.Context) {
 }
 
 func (e Service) Other(r *gin.RouterGroup) {
+	r.Use(middlewares.AuthMiddleware())
 	r.POST("/generate/service/:id", e.Generate)
 }

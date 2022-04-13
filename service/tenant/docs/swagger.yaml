@@ -371,7 +371,12 @@ paths:
         "200":
           description: OK
           schema:
-            $ref: '#/definitions/form.TenantCallbackResp'
+            allOf:
+            - $ref: '#/definitions/response.Response'
+            - properties:
+                data:
+                  $ref: '#/definitions/form.TenantCallbackResp'
+              type: object
       security:
       - Bearer: []
       summary: 获取access_token
@@ -411,20 +416,25 @@ paths:
     get:
       consumes:
       - application/json
-      description: 获取access_token
+      description: 获取accessToken
       parameters:
-      - description: refresh_token
+      - description: refreshToken
         in: query
-        name: refresh_token
+        name: refreshToken
         type: string
       responses:
         "200":
           description: OK
           schema:
-            $ref: '#/definitions/form.TenantCallbackResp'
+            allOf:
+            - $ref: '#/definitions/response.Response'
+            - properties:
+                data:
+                  $ref: '#/definitions/form.TenantCallbackResp'
+              type: object
       security:
       - Bearer: []
-      summary: 获取access_token
+      summary: 获取accessToken
       tags:
       - tenant
   /tenant/api/v1/tenant:

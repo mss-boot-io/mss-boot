@@ -245,7 +245,3 @@ func (e Model) List(c *gin.Context) {
 	e.PageOK(list, count, req.Page, req.PageSize)
 	return
 }
-
-func (e Model) Other(_ *gin.RouterGroup) {
-
-}

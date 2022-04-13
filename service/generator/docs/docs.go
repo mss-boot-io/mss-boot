@@ -12,7 +12,6 @@ import (
 )
 
 var doc = `{
-
     "schemes": {{ marshal .Schemes }},
     "swagger": "2.0",
     "info": {
@@ -623,17 +622,22 @@ var doc = `{
         "response.Response": {
             "type": "object",
             "properties": {
-                "code": {
+                "errorCode": {
+                    "type": "string"
+                },
+                "errorMessage": {
+                    "type": "string"
+                },
+                "host": {
+                    "type": "string"
+                },
+                "showType": {
                     "type": "integer"
                 },
-                "msg": {
-                    "type": "string"
+                "success": {
+                    "type": "boolean"
                 },
-                "requestId": {
-                    "description": "数据集",
-                    "type": "string"
-                },
-                "status": {
+                "traceId": {
                     "type": "string"
                 }
             }
