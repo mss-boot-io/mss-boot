@@ -3,7 +3,7 @@ module github.com/mss-boot-io/mss-boot
 go 1.18
 
 require (
-	github.com/casdoor/casdoor-go-sdk v0.3.4
+	github.com/casdoor/casdoor-go-sdk v0.4.0
 	github.com/fsnotify/fsnotify v1.5.1
 	github.com/gin-gonic/gin v1.7.7
 	github.com/go-playground/locales v0.13.0

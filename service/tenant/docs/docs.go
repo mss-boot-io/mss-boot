@@ -68,7 +68,19 @@ var doc = `{
                     "200": {
                         "description": "OK",
                         "schema": {
-                            "$ref": "#/definitions/form.TenantCallbackResp"
+                            "allOf": [
+                                {
+                                    "$ref": "#/definitions/response.Response"
+                                },
+                                {
+                                    "type": "object",
+                                    "properties": {
+                                        "data": {
+                                            "$ref": "#/definitions/form.TenantCallbackResp"
+                                        }
+                                    }
+                                }
+                            ]
                         }
                     }
                 }
@@ -131,19 +143,19 @@ var doc = `{
                         "Bearer": []
                     }
                 ],
-                "description": "获取access_token",
+                "description": "获取accessToken",
                 "consumes": [
                     "application/json"
                 ],
                 "tags": [
                     "tenant"
                 ],
-                "summary": "获取access_token",
+                "summary": "获取accessToken",
                 "parameters": [
                     {
                         "type": "string",
-                        "description": "refresh_token",
-                        "name": "refresh_token",
+                        "description": "refreshToken",
+                        "name": "refreshToken",
                         "in": "query"
                     }
                 ],
@@ -151,7 +163,19 @@ var doc = `{
                     "200": {
                         "description": "OK",
                         "schema": {
-                            "$ref": "#/definitions/form.TenantCallbackResp"
+                            "allOf": [
+                                {
+                                    "$ref": "#/definitions/response.Response"
+                                },
+                                {
+                                    "type": "object",
+                                    "properties": {
+                                        "data": {
+                                            "$ref": "#/definitions/form.TenantCallbackResp"
+                                        }
+                                    }
+                                }
+                            ]
                         }
                     }
                 }

@@ -1,3 +1,3 @@
 package main
 
-//go:generate swag init --parseDependency --parseDepth=1 --parseVendor
+//go:generate swag init --parseDependency --parseDepth=4 --parseVendor

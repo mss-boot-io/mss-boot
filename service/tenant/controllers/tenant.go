@@ -9,6 +9,7 @@ package controllers
 
 import (
 	"github.com/casdoor/casdoor-go-sdk/auth"
+	"github.com/mss-boot-io/mss-boot/pkg/middlewares"
 	"time"
 
 	"github.com/gin-gonic/gin"
@@ -41,7 +42,9 @@ func (Tenant) Path() string {
 }
 
 func (e Tenant) Handlers() []gin.HandlerFunc {
-	return []gin.HandlerFunc{}
+	return []gin.HandlerFunc{
+		middlewares.AuthMiddleware(),
+	}
 }
 
 // Create 创建
@@ -154,7 +157,7 @@ func (e Tenant) Delete(c *gin.Context) {
 // @Accept  application/json
 // @Product application/json
 // @Param id path string true "id"
-// @Success 200 {object} form.TenantGetResp
+// @Success 200 {object} response.Response{data=form.TenantGetResp}
 // @Router /tenant/api/v1/tenant/{id} [get]
 // @Security Bearer
 func (e Tenant) Get(c *gin.Context) {
@@ -249,7 +252,7 @@ func (e Tenant) Other(r *gin.RouterGroup) {
 // @Tags tenant
 // @Accept  application/json
 // @Product application/json
-// @Success 200 {object} form.TenantClientResp
+// @Success 200 {object} response.Response{data=form.TenantClientResp}
 // @Router /tenant/api/v1/client [get]
 // @Security Bearer
 func (e Tenant) GetClient(c *gin.Context) {
@@ -288,7 +291,7 @@ func (e Tenant) Callback(c *gin.Context) {
 	}
 	token, err := auth.GetOAuthToken(req.Code, req.State)
 	if err != nil {
-		e.Err(errors.TenantSvcAccessTokenParseFailed, err)
+		e.Err(errors.TenantSvcGetAuthTokenFailed, err)
 		return
 	}
 	resp := &form.TenantCallbackResp{
@@ -300,15 +303,33 @@ func (e Tenant) Callback(c *gin.Context) {
 	e.OK(resp)
 }
 
-// RefreshToken 获取access_token
-// @Summary 获取access_token
-// @Description 获取access_token
+// RefreshToken 获取accessToken
+// @Summary 获取accessToken
+// @Description 获取accessToken
 // @Tags tenant
 // @Accept  application/json
 // @Product application/json
-// @Param refresh_token query string false "refresh_token"
+// @Param refreshToken query string false "refreshToken"
 // @Success 200 {object} response.Response{data=form.TenantCallbackResp}
 // @Router /tenant/api/v1/refresh-token [get]
 // @Security Bearer
 func (e Tenant) RefreshToken(c *gin.Context) {
+	req := &form.TenantRefreshTokenReq{}
+	err := e.Make(c).Bind(req).Error
+	if err != nil {
+		e.Err(errors.TenantSvcParamsInvalid, err)
+		return
+	}
+	token, err := auth.RefreshOAuthToken(req.RefreshToken)
+	if err != nil {
+		e.Err(errors.TenantSvcGetAuthTokenFailed, err)
+		return
+	}
+	resp := &form.TenantCallbackResp{
+		AccessToken:  token.AccessToken,
+		TokenType:    token.TokenType,
+		RefreshToken: token.RefreshToken,
+		Expiry:       token.Expiry,
+	}
+	e.OK(resp)
 }

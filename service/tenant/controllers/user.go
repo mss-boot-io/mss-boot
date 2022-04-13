@@ -8,12 +8,11 @@
 package controllers
 
 import (
-	"strings"
-
 	"github.com/casdoor/casdoor-go-sdk/auth"
 	"github.com/gin-gonic/gin"
 
 	"github.com/mss-boot-io/mss-boot/pkg/errors"
+	"github.com/mss-boot-io/mss-boot/pkg/middlewares"
 	"github.com/mss-boot-io/mss-boot/pkg/response"
 )
 
@@ -29,7 +28,14 @@ func (User) Path() string {
 	return "/user"
 }
 
+func (e User) Handlers() []gin.HandlerFunc {
+	return []gin.HandlerFunc{
+		middlewares.AuthMiddleware(),
+	}
+}
+
 func (e User) Other(r *gin.RouterGroup) {
+	r.Use(middlewares.AuthMiddleware())
 	r.GET("/current-user", e.GetCurrentUser)
 }
 
@@ -39,20 +45,20 @@ func (e User) Other(r *gin.RouterGroup) {
 // @Tags tenant
 // @Accept  application/json
 // @Product application/json
-// @Success 200 {object} auth.Claims
+// @Success 200 {object} response.Response{data=auth.Claims}
 // @Router /tenant/api/v1/current-user [get]
 // @Security Bearer
 func (e User) GetCurrentUser(c *gin.Context) {
-	e.Make(c)
-	accessToken := strings.ReplaceAll(c.GetHeader("Authorization"), "Bearer ", "")
-	if accessToken == "" {
-		e.OK(nil)
-	}
-	claims, err := auth.ParseJwtToken(accessToken)
-	if err != nil {
-		e.Err(errors.TenantSvcAccessTokenParseFailed, err)
+	v, ok := c.Get("claims")
+	if !ok {
+		e.Err(errors.TenantSvcAccessTokenParseFailed, nil)
 		return
 	}
-	claims.AccessToken = accessToken
+	ok = false
+	claims, ok := v.(*auth.Claims)
+	if !ok {
+		e.Err(errors.TenantSvcAccessTokenParseFailed, nil)
+		return
+	}
 	e.OK(claims)
 }
