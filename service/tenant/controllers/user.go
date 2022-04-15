@@ -14,6 +14,7 @@ import (
 	"github.com/mss-boot-io/mss-boot/pkg/errors"
 	"github.com/mss-boot-io/mss-boot/pkg/middlewares"
 	"github.com/mss-boot-io/mss-boot/pkg/response"
+	"tenant/models"
 )
 
 func init() {
@@ -60,5 +61,7 @@ func (e User) GetCurrentUser(c *gin.Context) {
 		e.Err(errors.TenantSvcAccessTokenParseFailed, nil)
 		return
 	}
+	//写入用户信息
+	go models.CreateOrUpdateUser(claims)
 	e.OK(claims)
 }
