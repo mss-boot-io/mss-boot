@@ -21,8 +21,8 @@ type response struct {
 
 type Page struct {
 	Count    int64 `json:"total"`
-	Current  int   `json:"current"`
-	PageSize int   `json:"pageSize"`
+	Current  int64 `json:"current"`
+	PageSize int64 `json:"pageSize"`
 }
 
 type page struct {

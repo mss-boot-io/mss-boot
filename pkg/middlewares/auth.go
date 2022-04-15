@@ -20,7 +20,7 @@ func AuthMiddleware() gin.HandlerFunc {
 	return func(c *gin.Context) {
 		accessToken := getTokenFromHeader(c)
 		if accessToken == "" {
-			c.JSON(http.StatusUnauthorized, gin.H{
+			c.AbortWithStatusJSON(http.StatusUnauthorized, gin.H{
 				"errorCode":    http.StatusUnauthorized,
 				"errorMessage": "Unauthorized",
 			})
@@ -28,7 +28,7 @@ func AuthMiddleware() gin.HandlerFunc {
 		}
 		claims, err := auth.ParseJwtToken(accessToken)
 		if err != nil {
-			c.JSON(http.StatusUnauthorized, gin.H{
+			c.AbortWithStatusJSON(http.StatusUnauthorized, gin.H{
 				"errorCode":    http.StatusUnauthorized,
 				"errorMessage": err,
 			})
@@ -36,6 +36,7 @@ func AuthMiddleware() gin.HandlerFunc {
 		}
 		claims.AccessToken = accessToken
 		c.Set("claims", claims)
+		c.Next()
 	}
 }
 

@@ -9,6 +9,7 @@ package form
 
 import (
 	"github.com/mss-boot-io/mss-boot/pkg/enum"
+	"github.com/mss-boot-io/mss-boot/pkg/response/curd"
 	"time"
 )
 
@@ -22,7 +23,7 @@ type ModelCreateReq struct {
 }
 
 type ModelUpdateReq struct {
-	ID          string      `uri:"id" json:"-" bson:"_id"`
+	curd.OneID
 	Name        string      `json:"name" bson:"name"`
 	Service     string      `bson:"service" json:"service"`
 	Metadata    interface{} `bson:"metadata" json:"metadata"`
@@ -30,7 +31,7 @@ type ModelUpdateReq struct {
 }
 
 type ModelGetReq struct {
-	ID string `uri:"id" json:"-" bson:"_id"`
+	curd.OneID
 }
 
 type ModelGetResp struct {
@@ -45,11 +46,11 @@ type ModelGetResp struct {
 }
 
 type ModelDeleteReq struct {
-	ID string `uri:"id" json:"-" bson:"_id"`
+	curd.OneID
 }
 
 type ModelListReq struct {
-	Pagination
+	curd.Pagination
 	Name    string `query:"name" form:"name" search:"type:contains;column:name"`
 	Service string `query:"service" form:"service" search:"type:contains;column:service"`
 }
