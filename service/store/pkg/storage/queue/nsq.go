@@ -8,7 +8,10 @@
 package queue
 
 import (
-	json "github.com/json-iterator/go"
+	"encoding/json"
+
+	"github.com/nsqio/go-nsq"
+
 	"github.com/mss-boot-io/mss-boot/service/store/pkg/storage"
 )
 

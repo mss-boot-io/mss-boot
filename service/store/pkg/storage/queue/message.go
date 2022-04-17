@@ -1,6 +1,8 @@
 package queue
 
 import (
+	"github.com/robinjoseph08/redisqueue/v2"
+
 	"github.com/mss-boot-io/mss-boot/service/store/pkg/storage"
 )
 
