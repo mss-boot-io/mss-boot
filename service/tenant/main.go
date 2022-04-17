@@ -15,11 +15,9 @@ import (
 // @title tenant API
 // @version 0.0.1
 // @description tenant接口文档
-
 // @securityDefinitions.apikey Bearer
 // @in header
 // @name Authorization
-
 // @host localhost:9094
 // @BasePath
 func main() {
