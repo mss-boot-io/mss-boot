@@ -9,8 +9,8 @@ import (
 	"github.com/mss-boot-io/mss-boot/pkg/config"
 	pb "github.com/mss-boot-io/mss-boot/proto/store/v1"
 
-	"store/cfg"
-	"store/handlers"
+	"github.com/mss-boot-io/mss-boot/service/store/cfg"
+	"github.com/mss-boot-io/mss-boot/service/store/handlers"
 )
 
 func main() {

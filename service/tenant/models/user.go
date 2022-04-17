@@ -10,6 +10,10 @@ package models
 import (
 	"context"
 	"errors"
+	"github.com/casdoor/casdoor-go-sdk/auth"
+	"github.com/mss-boot-io/mss-boot/pkg/enum"
+	"go.mongodb.org/mongo-driver/bson"
+	"go.mongodb.org/mongo-driver/bson/primitive"
 	"time"
 
 	log "github.com/mss-boot-io/mss-boot/core/logger"
@@ -28,7 +32,7 @@ type User struct {
 	Avatar    string      `bson:"avatar" json:"avatar"`
 	Email     string      `bson:"email" json:"email"`
 	Phone     string      `bson:"phone" json:"phone"`
-	Status    uint8       `bson:"status" json:"status"`
+	Status    enum.Status `bson:"status" json:"status"`
 	PWD       UserPwd     `bson:"pwd" json:"pwd"`
 	Metadata  interface{} `bson:"metadata" json:"metadata"`
 	CreatedAt time.Time   `json:"createdAt" bson:"createdAt"`
@@ -79,4 +83,36 @@ func (e *User) VerifyPassword(pwd string) bool {
 		return false
 	}
 	return verify == e.PWD.Hash
+}
+
+// CreateOrUpdateUser create or update user
+func CreateOrUpdateUser(claims *auth.Claims) {
+	tenant := &Tenant{}
+	err := tenant.C().FindOne(context.TODO(), bson.M{"name": claims.Owner}).Decode(tenant)
+	if err != nil {
+		log.Errorf("find tenant error: %s", err)
+		return
+	}
+	usernamePostfix := ""
+	if claims.Github != "" {
+		usernamePostfix = "-" + claims.Github
+	}
+	user := &User{
+		TenantID:  tenant.ID,
+		Username:  claims.Name + usernamePostfix,
+		Nickname:  claims.Name + usernamePostfix,
+		Avatar:    claims.Avatar,
+		Email:     claims.Email,
+		Phone:     claims.Phone,
+		Status:    enum.Enabled,
+		Metadata:  *claims,
+		CreatedAt: time.Now(),
+	}
+	user.UpdatedAt = user.CreatedAt
+	user.ID = primitive.NewObjectID().Hex()
+	_, err = user.C().InsertOne(context.TODO(), user)
+	if err != nil {
+		log.Errorf("insert user error: %s", err)
+		return
+	}
 }

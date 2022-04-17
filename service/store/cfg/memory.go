@@ -9,9 +9,9 @@ package cfg
 
 import (
 	"errors"
-	"store/pkg/storage"
-	"store/pkg/storage/cache"
-	"store/pkg/storage/queue"
+	"github.com/mss-boot-io/mss-boot/service/store/pkg/storage"
+	"github.com/mss-boot-io/mss-boot/service/store/pkg/storage/cache"
+	"github.com/mss-boot-io/mss-boot/service/store/pkg/storage/queue"
 )
 
 type Memory struct {

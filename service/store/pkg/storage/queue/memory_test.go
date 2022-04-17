@@ -7,9 +7,7 @@ import (
 	"testing"
 	"time"
 
-	"github.com/robinjoseph08/redisqueue/v2"
-
-	"store/pkg/storage"
+	"github.com/mss-boot-io/mss-boot/service/store/pkg/storage"
 )
 
 func TestMemory_Append(t *testing.T) {

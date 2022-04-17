@@ -9,7 +9,7 @@ package cfg
 
 import (
 	log "github.com/mss-boot-io/mss-boot/core/logger"
-	"store/pkg/storage"
+	"github.com/mss-boot-io/mss-boot/service/store/pkg/storage"
 	"strings"
 )
 

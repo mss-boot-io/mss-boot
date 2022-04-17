@@ -34,7 +34,13 @@ const (
  */
 func ResolveSearchQuery(q interface{}, condition Condition) {
 	qType := reflect.TypeOf(q)
+	if qType.Kind() == reflect.Ptr {
+		qType = qType.Elem()
+	}
 	qValue := reflect.ValueOf(q)
+	if qValue.Kind() == reflect.Ptr {
+		qValue = qValue.Elem()
+	}
 	var tag string
 	var ok bool
 	var t *resolveSearchTag

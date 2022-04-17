@@ -16,7 +16,6 @@ import (
 	"github.com/gin-gonic/gin"
 	"github.com/gin-gonic/gin/binding"
 	"github.com/go-playground/validator/v10"
-	"github.com/mss-boot-io/mss-boot/core/errcode"
 	"github.com/mss-boot-io/mss-boot/core/logger"
 	"github.com/mss-boot-io/mss-boot/pkg"
 	"github.com/mss-boot-io/mss-boot/pkg/language"
@@ -159,7 +158,7 @@ func (e *Api) Bind(d interface{}, bindings ...binding.Binding) *Api {
 }
 
 // Err 通常错误数据处理
-func (e Api) Err(code errcode.ErrorCoder, err error, msg ...string) {
+func (e Api) Err(code int, err error, msg ...string) {
 	Error(e.Context, code, err, msg...)
 }
 
@@ -169,7 +168,7 @@ func (e Api) OK(data interface{}, msg ...string) {
 }
 
 // PageOK 分页数据处理
-func (e Api) PageOK(result interface{}, count int64, pageIndex int, pageSize int, msg ...string) {
+func (e Api) PageOK(result interface{}, count int64, pageIndex int64, pageSize int64, msg ...string) {
 	PageOK(e.Context, result, count, pageIndex, pageSize, msg...)
 }
 

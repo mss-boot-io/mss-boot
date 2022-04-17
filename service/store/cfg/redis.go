@@ -9,14 +9,16 @@ package cfg
 
 import (
 	"context"
-	"github.com/go-redis/redis/v8"
-	"github.com/mss-boot-io/mss-boot/pkg/config"
-	"github.com/robinjoseph08/redisqueue/v2"
-	"store/pkg/storage"
-	"store/pkg/storage/cache"
-	"store/pkg/storage/locker"
-	"store/pkg/storage/queue"
 	"time"
+
+	"github.com/go-redis/redis/v8"
+	"github.com/robinjoseph08/redisqueue/v2"
+
+	"github.com/mss-boot-io/mss-boot/pkg/config"
+	"github.com/mss-boot-io/mss-boot/service/store/pkg/storage"
+	"github.com/mss-boot-io/mss-boot/service/store/pkg/storage/cache"
+	"github.com/mss-boot-io/mss-boot/service/store/pkg/storage/locker"
+	"github.com/mss-boot-io/mss-boot/service/store/pkg/storage/queue"
 )
 
 type Redis struct {

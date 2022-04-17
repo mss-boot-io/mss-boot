@@ -3,7 +3,7 @@ package queue
 import (
 	"github.com/robinjoseph08/redisqueue/v2"
 
-	"store/pkg/storage"
+	"github.com/mss-boot-io/mss-boot/service/store/pkg/storage"
 )
 
 type Message struct {

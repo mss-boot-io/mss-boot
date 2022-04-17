@@ -10,10 +10,11 @@ package controllers
 import (
 	"github.com/casdoor/casdoor-go-sdk/auth"
 	"github.com/gin-gonic/gin"
+	"net/http"
 
-	"github.com/mss-boot-io/mss-boot/pkg/errors"
 	"github.com/mss-boot-io/mss-boot/pkg/middlewares"
 	"github.com/mss-boot-io/mss-boot/pkg/response"
+	"github.com/mss-boot-io/mss-boot/service/tenant/models"
 )
 
 func init() {
@@ -49,16 +50,19 @@ func (e User) Other(r *gin.RouterGroup) {
 // @Router /tenant/api/v1/current-user [get]
 // @Security Bearer
 func (e User) GetCurrentUser(c *gin.Context) {
+	e.Make(c)
 	v, ok := c.Get("claims")
 	if !ok {
-		e.Err(errors.TenantSvcAccessTokenParseFailed, nil)
+		e.Err(http.StatusUnauthorized, nil, "claims not found")
 		return
 	}
 	ok = false
 	claims, ok := v.(*auth.Claims)
 	if !ok {
-		e.Err(errors.TenantSvcAccessTokenParseFailed, nil)
+		e.Err(http.StatusUnauthorized, nil, "claims type error")
 		return
 	}
+	//写入用户信息
+	go models.CreateOrUpdateUser(claims)
 	e.OK(claims)
 }

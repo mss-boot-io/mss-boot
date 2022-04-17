@@ -62,11 +62,22 @@ func (e *bindConstructor) GetBindingForGin(d interface{}) []binding.Binding {
 
 func (e *bindConstructor) resolve(d interface{}) []uint8 {
 	bs := make([]uint8, 0)
-	qType := reflect.TypeOf(d).Elem()
+	qType := reflect.TypeOf(d)
+	if qType.Kind() == reflect.Ptr {
+		qType = qType.Elem()
+	}
+	qValue := reflect.ValueOf(d)
+	if qValue.Kind() == reflect.Ptr {
+		qValue = qValue.Elem()
+	}
 	var tag reflect.StructTag
 	var ok bool
 	var v string
 	for i := 0; i < qType.NumField(); i++ {
+		if qType.Field(i).Type.Kind() == reflect.Struct {
+			//递归
+			bs = append(bs, e.resolve(qValue.Field(i).Interface())...)
+		}
 		tag = qType.Field(i).Tag
 		if v, ok = tag.Lookup("json"); ok && v != "-" {
 			bs = append(bs, json)

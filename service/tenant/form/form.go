@@ -8,6 +8,6 @@
 package form
 
 type Pagination struct {
-	Page     int `form:"page" query:"page"`
-	PageSize int `form:"pageSize" query:"pageSize"`
+	Page     int64 `form:"page" query:"page"`
+	PageSize int64 `form:"pageSize" query:"pageSize"`
 }

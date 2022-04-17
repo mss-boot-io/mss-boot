@@ -8,42 +8,36 @@
 package controllers
 
 import (
-	"github.com/mss-boot-io/mss-boot/pkg/middlewares"
-	"time"
-
 	"github.com/gin-gonic/gin"
-	"github.com/mss-boot-io/mss-boot/pkg/errors"
+	"github.com/mss-boot-io/mss-boot/pkg/config/mongodb"
+	"github.com/mss-boot-io/mss-boot/pkg/middlewares"
 	"github.com/mss-boot-io/mss-boot/pkg/response"
+	"github.com/mss-boot-io/mss-boot/pkg/response/curd"
 	"github.com/mss-boot-io/mss-boot/pkg/search/mgos"
+	"github.com/mss-boot-io/mss-boot/service/generator/form"
+	"github.com/mss-boot-io/mss-boot/service/generator/models"
 	"go.mongodb.org/mongo-driver/bson"
 	"go.mongodb.org/mongo-driver/bson/primitive"
-	"go.mongodb.org/mongo-driver/mongo"
 	"go.mongodb.org/mongo-driver/mongo/options"
-
-	"generator/form"
-	"generator/models"
+	"net/http"
 )
 
 func init() {
-	response.AppendController(&Service{})
+	e := &Service{}
+	e.TableName = "service"
+	e.Auth = true
+	e.CreateReq = &form.ServiceCreateReq{}
+	e.UpdateReq = &form.ServiceUpdateReq{}
+	e.DeleteReq = &form.ServiceDeleteReq{}
+	e.GetReq = &form.ServiceGetReq{}
+	e.GetResp = &form.ServiceGetResp{}
+	e.ListReq = &form.ServiceListReq{}
+	e.ListResp = make([]form.ServiceListItem, 0)
+	response.AppendController(e)
 }
 
 type Service struct {
-	response.Api
-}
-
-func (Service) C() *mongo.Collection {
-	return (&models.Service{}).C()
-}
-
-func (Service) Path() string {
-	return "/service"
-}
-
-func (e Service) Handlers() []gin.HandlerFunc {
-	return []gin.HandlerFunc{
-		middlewares.AuthMiddleware(),
-	}
+	curd.DefaultController
 }
 
 // Create 创建
@@ -56,31 +50,6 @@ func (e Service) Handlers() []gin.HandlerFunc {
 // @Success 200 {object} response.Response
 // @Router /generator/api/v1/service [post]
 // @Security Bearer
-func (e Service) Create(c *gin.Context) {
-	req := &form.ServiceCreateReq{}
-
-	err := e.Make(c).Bind(req).Error
-	if err != nil {
-		e.Err(errors.GeneratorSvcParamsInvalid, err)
-		return
-	}
-
-	req.CreatedAt = time.Now()
-	req.UpdatedAt = req.CreatedAt
-
-	if _, err = e.C().InsertOne(c, req); err != nil {
-		if mongo.IsDuplicateKeyError(err) {
-			e.Err(errors.GeneratorSvcRecordIsExist, err)
-			return
-		}
-		e.Log.Error(err)
-		e.Err(errors.GeneratorSvcOperateDBFailed, err)
-		return
-	}
-
-	e.OK(nil)
-	return
-}
 
 // Update 更新
 // @Summary 更新service
@@ -93,29 +62,6 @@ func (e Service) Create(c *gin.Context) {
 // @Success 200 {object} response.Response
 // @Router /generator/api/v1/service/{id} [put]
 // @Security Bearer
-func (e Service) Update(c *gin.Context) {
-	req := &form.ServiceUpdateReq{}
-	err := e.Make(c).Bind(req).Error
-	if err != nil {
-		e.Err(errors.GeneratorSvcParamsInvalid, err)
-		return
-	}
-	objID, err := primitive.ObjectIDFromHex(req.ID)
-	_, err = e.C().UpdateByID(c, objID, bson.D{{"$set",
-		bson.D{
-			{"name", req.Name},
-			{"metadata", req.Metadata},
-			{"description", req.Description},
-			{"updatedAt", time.Now()},
-		}}})
-	if err != nil {
-		e.Log.Error(err)
-		e.Err(errors.GeneratorSvcOperateDBFailed, err)
-		return
-	}
-	e.OK(nil)
-	return
-}
 
 // Delete 删除
 // @Summary 删除service
@@ -127,34 +73,6 @@ func (e Service) Update(c *gin.Context) {
 // @Success 200 {object} response.Response
 // @Router /generator/api/v1/service/{id} [delete]
 // @Security Bearer
-func (e Service) Delete(c *gin.Context) {
-	req := &form.ServiceDeleteReq{}
-	err := e.Make(c).Bind(req).Error
-	if err != nil {
-		e.Err(errors.GeneratorSvcParamsInvalid, err)
-		return
-	}
-
-	objID, err := primitive.ObjectIDFromHex(req.ID)
-	if err != nil {
-		e.Log.Error(err)
-		e.Err(errors.GeneratorSvcObjectIDInvalid, err)
-		return
-	}
-	_, err = e.C().DeleteOne(c, bson.M{"_id": objID})
-	if err != nil && errors.Is(err, mongo.ErrNoDocuments) {
-		e.Err(errors.GeneratorSvcRecordNotFound, nil)
-		return
-	}
-
-	if err != nil {
-		e.Log.Error(err)
-		e.Err(errors.GeneratorSvcOperateDBFailed, err)
-		return
-	}
-	e.OK(nil)
-	return
-}
 
 // Get 获取
 // @Summary 获取service
@@ -166,29 +84,6 @@ func (e Service) Delete(c *gin.Context) {
 // @Success 200 {object} response.Response{data=form.ServiceGetResp}
 // @Router /generator/api/v1/service/{id} [get]
 // @Security Bearer
-func (e Service) Get(c *gin.Context) {
-	req := &form.ServiceGetReq{}
-	err := e.Make(c).Bind(req).Error
-	if err != nil {
-		e.Err(errors.GeneratorSvcParamsInvalid, err)
-		return
-	}
-	resp := &form.ServiceGetResp{}
-	objID, err := primitive.ObjectIDFromHex(req.ID)
-	if err != nil {
-		e.Log.Error(err)
-		e.Err(errors.GeneratorSvcObjectIDInvalid, err)
-		return
-	}
-	err = e.C().FindOne(c, bson.M{"_id": objID}).Decode(&resp)
-	if err != nil {
-		e.Log.Error(err)
-		e.Err(errors.GeneratorSvcOperateDBFailed, err)
-		return
-	}
-	e.OK(resp)
-	return
-}
 
 // List 列表
 // @Summary 列表service
@@ -206,7 +101,7 @@ func (e Service) List(c *gin.Context) {
 	req := &form.ServiceListReq{}
 	err := e.Make(c).Bind(req).Error
 	if err != nil {
-		e.Err(errors.GeneratorSvcParamsInvalid, err)
+		e.Err(http.StatusUnprocessableEntity, err)
 		return
 	}
 	filter, sort := mgos.MakeCondition(*req)
@@ -224,16 +119,16 @@ func (e Service) List(c *gin.Context) {
 	ops.SetLimit(int64(req.PageSize))
 	ops.SetSkip(int64(req.PageSize * (req.Page - 1)))
 	var count int64
-	count, err = e.C().CountDocuments(c, filter)
+	count, err = mongodb.DB.Collection(e.TableName).CountDocuments(c, filter)
 	if err != nil {
 		e.Log.Error(err)
-		e.Err(errors.GeneratorSvcOperateDBFailed, err)
+		e.Err(http.StatusInternalServerError, err)
 		return
 	}
-	result, err := e.C().Find(c, filter, ops)
+	result, err := mongodb.DB.Collection(e.TableName).Find(c, filter, ops)
 	if err != nil {
 		e.Log.Error(err)
-		e.Err(errors.GeneratorSvcOperateDBFailed, err)
+		e.Err(http.StatusInternalServerError, err)
 		return
 	}
 	defer result.Close(c)
@@ -241,30 +136,37 @@ func (e Service) List(c *gin.Context) {
 	err = result.All(c, &list)
 	if err != nil {
 		e.Log.Error(err)
-		e.Err(errors.GeneratorSvcOperateDBFailed, err)
+		e.Err(http.StatusInternalServerError, err)
 		return
 	}
 	e.PageOK(list, count, req.Page, req.PageSize)
 	return
 }
 
+// Generate 生成
 func (e Service) Generate(c *gin.Context) {
-	objID, err := primitive.ObjectIDFromHex(c.Param("id"))
+	req := &form.ServiceGetReq{}
+	err := e.Make(c).Bind(req).Error
+	if err != nil {
+		e.Err(http.StatusUnprocessableEntity, err)
+		return
+	}
+	objID, err := primitive.ObjectIDFromHex(req.ID)
 	if err != nil {
 		e.Log.Error(err)
-		e.Err(errors.GeneratorSvcObjectIDInvalid, err)
+		e.Err(http.StatusUnprocessableEntity, err)
 		return
 	}
 	m := &models.Service{}
-	err = e.C().FindOne(c, bson.M{"_id": objID}).Decode(m)
+	err = mongodb.DB.Collection(e.TableName).FindOne(c, bson.M{"_id": objID}).Decode(m)
 	if err != nil {
 		e.Log.Error(err)
-		e.Err(errors.GeneratorSvcOperateDBFailed, err)
+		e.Err(http.StatusInternalServerError, err)
 		return
 	}
 }
 
 func (e Service) Other(r *gin.RouterGroup) {
 	r.Use(middlewares.AuthMiddleware())
-	r.POST("/generate/service/:id", e.Generate)
+	//r.POST("/generate/service/:id", e.Generate)
 }

@@ -8,18 +8,16 @@ import (
 	"github.com/mss-boot-io/mss-boot/core/server"
 	"github.com/mss-boot-io/mss-boot/pkg/config"
 
-	"generator/cfg"
-	"generator/router"
+	"github.com/mss-boot-io/mss-boot/service/generator/cfg"
+	"github.com/mss-boot-io/mss-boot/service/generator/router"
 )
 
 // @title generator API
 // @version 0.0.1
 // @description generator接口文档
-
 // @securityDefinitions.apikey Bearer
 // @in header
 // @name Authorization
-
 // @host localhost:8001
 // @BasePath
 func main() {

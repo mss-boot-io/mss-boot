@@ -8,6 +8,7 @@
 package form
 
 import (
+	"github.com/mss-boot-io/mss-boot/pkg/response/curd"
 	"time"
 
 	"github.com/mss-boot-io/mss-boot/pkg/enum"
@@ -37,8 +38,7 @@ type TenantCreateReq struct {
 }
 
 type TenantUpdateReq struct {
-	//id
-	ID string `uri:"id" json:"-" bson:"_id"`
+	curd.OneID
 	//名称
 	Name string `json:"name" bson:"name"`
 	//邮箱
@@ -56,7 +56,7 @@ type TenantUpdateReq struct {
 }
 
 type TenantGetReq struct {
-	ID string `uri:"id" json:"-" bson:"_id"`
+	curd.OneID
 }
 
 type TenantGetResp struct {
@@ -83,11 +83,11 @@ type TenantGetResp struct {
 }
 
 type TenantDeleteReq struct {
-	ID string `uri:"id" json:"-" bson:"_id"`
+	curd.OneID
 }
 
 type TenantListReq struct {
-	Pagination
+	curd.Pagination
 	//名称
 	Name string `query:"name" form:"name" search:"type:contains;column:name"`
 	//联系方式

@@ -5,7 +5,7 @@ import (
 
 	"github.com/google/uuid"
 
-	"store/pkg/storage"
+	"github.com/mss-boot-io/mss-boot/service/store/pkg/storage"
 )
 
 type queue chan storage.Messager

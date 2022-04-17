@@ -8,18 +8,16 @@ import (
 	"github.com/mss-boot-io/mss-boot/pkg/config"
 	"log"
 
-	"tenant/cfg"
-	"tenant/router"
+	"github.com/mss-boot-io/mss-boot/service/tenant/cfg"
+	"github.com/mss-boot-io/mss-boot/service/tenant/router"
 )
 
 // @title tenant API
 // @version 0.0.1
 // @description tenant接口文档
-
 // @securityDefinitions.apikey Bearer
 // @in header
 // @name Authorization
-
 // @host localhost:9094
 // @BasePath
 func main() {
