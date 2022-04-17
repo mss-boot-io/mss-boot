@@ -12,8 +12,8 @@ import (
 	"github.com/gin-gonic/gin"
 	"github.com/mss-boot-io/mss-boot/pkg/response"
 	"github.com/mss-boot-io/mss-boot/pkg/response/curd"
+	"github.com/mss-boot-io/mss-boot/service/tenant/form"
 	"net/http"
-	"tenant/form"
 )
 
 func init() {

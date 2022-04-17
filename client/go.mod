@@ -2,14 +2,9 @@ module github.com/mss-boot-io/mss-boot/client
 
 go 1.18
 
-replace (
-	github.com/mss-boot-io/mss-boot/core => ../core
-	github.com/mss-boot-io/mss-boot/proto => ../proto
-)
-
 require (
-	github.com/mss-boot-io/mss-boot/core v0.0.0-00010101000000-000000000000
-	github.com/mss-boot-io/mss-boot/proto v0.0.0-00010101000000-000000000000
+	github.com/mss-boot-io/mss-boot/core v0.0.0-20220417134159-a48fc0305f33
+	github.com/mss-boot-io/mss-boot/proto v0.0.0-20220417134159-a48fc0305f33
 )
 
 require (

@@ -8,14 +8,14 @@
 package controllers
 
 import (
-	"generator/form"
-	"generator/models"
 	"github.com/gin-gonic/gin"
 	"github.com/mss-boot-io/mss-boot/pkg/config/mongodb"
 	"github.com/mss-boot-io/mss-boot/pkg/middlewares"
 	"github.com/mss-boot-io/mss-boot/pkg/response"
 	"github.com/mss-boot-io/mss-boot/pkg/response/curd"
 	"github.com/mss-boot-io/mss-boot/pkg/search/mgos"
+	"github.com/mss-boot-io/mss-boot/service/generator/form"
+	"github.com/mss-boot-io/mss-boot/service/generator/models"
 	"go.mongodb.org/mongo-driver/bson"
 	"go.mongodb.org/mongo-driver/bson/primitive"
 	"go.mongodb.org/mongo-driver/mongo/options"

@@ -9,7 +9,7 @@ package handlers
 
 import (
 	"context"
-	"store/pkg/storage"
+	"github.com/mss-boot-io/mss-boot/service/store/pkg/storage"
 	"time"
 
 	pb "github.com/mss-boot-io/mss-boot/proto/store/v1"

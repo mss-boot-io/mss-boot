@@ -3,8 +3,6 @@ package cache
 import (
 	"context"
 	"time"
-
-	"github.com/go-redis/redis/v8"
 )
 
 // NewRedis redis模式

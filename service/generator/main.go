@@ -8,8 +8,8 @@ import (
 	"github.com/mss-boot-io/mss-boot/core/server"
 	"github.com/mss-boot-io/mss-boot/pkg/config"
 
-	"generator/cfg"
-	"generator/router"
+	"github.com/mss-boot-io/mss-boot/service/generator/cfg"
+	"github.com/mss-boot-io/mss-boot/service/generator/router"
 )
 
 // @title generator API

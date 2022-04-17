@@ -9,13 +9,11 @@ package cfg
 
 import (
 	"errors"
-	"store/pkg/storage/queue"
+	"github.com/mss-boot-io/mss-boot/service/store/pkg/storage/queue"
 	"time"
 
 	"github.com/mss-boot-io/mss-boot/pkg/config"
-	"github.com/nsqio/go-nsq"
-
-	"store/pkg/storage"
+	"github.com/mss-boot-io/mss-boot/service/store/pkg/storage"
 )
 
 type NSQ struct {

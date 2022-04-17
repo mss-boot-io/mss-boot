@@ -6,9 +6,9 @@ import (
 	ginSwagger "github.com/swaggo/gin-swagger"
 	"github.com/swaggo/gin-swagger/swaggerFiles"
 
-	_ "generator/controllers"
-	_ "generator/docs"
-	"generator/middleware"
+	_ "github.com/mss-boot-io/mss-boot/service/generator/controllers"
+	_ "github.com/mss-boot-io/mss-boot/service/generator/docs"
+	"github.com/mss-boot-io/mss-boot/service/generator/middleware"
 )
 
 func Init(r *gin.RouterGroup) {

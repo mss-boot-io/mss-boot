@@ -13,9 +13,9 @@ import (
 	ginSwagger "github.com/swaggo/gin-swagger"
 	"github.com/swaggo/gin-swagger/swaggerFiles"
 
-	_ "tenant/controllers"
-	_ "tenant/docs"
-	"tenant/middleware"
+	_ "github.com/mss-boot-io/mss-boot/service/tenant/controllers"
+	_ "github.com/mss-boot-io/mss-boot/service/tenant/docs"
+	"github.com/mss-boot-io/mss-boot/service/tenant/middleware"
 )
 
 func Init(r *gin.RouterGroup) {

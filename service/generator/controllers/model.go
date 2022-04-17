@@ -8,9 +8,9 @@
 package controllers
 
 import (
-	"generator/form"
 	"github.com/mss-boot-io/mss-boot/pkg/response"
 	"github.com/mss-boot-io/mss-boot/pkg/response/curd"
+	"github.com/mss-boot-io/mss-boot/service/generator/form"
 )
 
 func init() {

@@ -9,9 +9,7 @@ package queue
 
 import (
 	json "github.com/json-iterator/go"
-	"github.com/nsqio/go-nsq"
-
-	"store/pkg/storage"
+	"github.com/mss-boot-io/mss-boot/service/store/pkg/storage"
 )
 
 // NewNSQ nsq模式 只能监听一个channel

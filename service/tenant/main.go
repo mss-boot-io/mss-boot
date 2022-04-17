@@ -8,8 +8,8 @@ import (
 	"github.com/mss-boot-io/mss-boot/pkg/config"
 	"log"
 
-	"tenant/cfg"
-	"tenant/router"
+	"github.com/mss-boot-io/mss-boot/service/tenant/cfg"
+	"github.com/mss-boot-io/mss-boot/service/tenant/router"
 )
 
 // @title tenant API

@@ -14,7 +14,7 @@ import (
 
 	"github.com/mss-boot-io/mss-boot/pkg/middlewares"
 	"github.com/mss-boot-io/mss-boot/pkg/response"
-	"tenant/models"
+	"github.com/mss-boot-io/mss-boot/service/tenant/models"
 )
 
 func init() {
