@@ -20,7 +20,6 @@ import (
 	"go.mongodb.org/mongo-driver/mongo/options"
 
 	"github.com/mss-boot-io/mss-boot/pkg/config/mongodb"
-	"github.com/mss-boot-io/mss-boot/pkg/middlewares"
 	"github.com/mss-boot-io/mss-boot/pkg/response"
 	"github.com/mss-boot-io/mss-boot/pkg/search/mgos"
 )
@@ -33,7 +32,7 @@ type DefaultController struct {
 	DeleteReq DeleteRequester
 	GetReq    GetRequester
 	ListReq   ListRequester
-	CreateReq interface{}
+	CreateReq CreateRequester
 	GetResp   interface{}
 	ListResp  interface{}
 }
@@ -45,7 +44,7 @@ func (e *DefaultController) Path() string {
 func (e *DefaultController) Handlers() []gin.HandlerFunc {
 	ms := make([]gin.HandlerFunc, 0)
 	if e.Auth {
-		ms = append(ms, middlewares.AuthMiddleware())
+		ms = append(ms, response.AuthHandler)
 	}
 	return ms
 }

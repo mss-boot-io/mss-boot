@@ -8,12 +8,15 @@
 package controllers
 
 import (
-	"github.com/casdoor/casdoor-go-sdk/auth"
+	"github.com/mss-boot-io/mss-boot/pkg/store"
+	"net/http"
+
 	"github.com/gin-gonic/gin"
+	"golang.org/x/oauth2"
+
 	"github.com/mss-boot-io/mss-boot/pkg/response"
 	"github.com/mss-boot-io/mss-boot/pkg/response/curd"
 	"github.com/mss-boot-io/mss-boot/service/tenant/form"
-	"net/http"
 )
 
 func init() {
@@ -113,11 +116,22 @@ func (e Tenant) GetClient(c *gin.Context) {
 		e.Err(http.StatusUnprocessableEntity, err)
 		return
 	}
+	client, err := store.DefaultOAuth2Store.
+		GetClientByDomain(c, c.Request.Host)
+	if err != nil {
+		e.Err(http.StatusNotFound, err)
+		return
+	}
+	oauth2Config, err := client.GetOAuth2Config(c)
+	if err != nil {
+		e.Log.Error(err)
+		e.Err(http.StatusUnauthorized, err)
+		return
+	}
 	e.OK(form.TenantClientResp{
-		ServerURL:        "http://localhost:8000",
-		ClientID:         "a79e8abd42af97ed7c90",
-		AppName:          "mss-boot",
-		OrganizationName: "mss-boot-io",
+		ServerURL:   client.GetIssuer(),
+		ClientID:    oauth2Config.ClientID,
+		AuthCodeURL: oauth2Config.AuthCodeURL("state-replace", oauth2.AccessTypeOffline),
 	})
 }
 
@@ -141,18 +155,32 @@ func (e Tenant) Callback(c *gin.Context) {
 		e.Err(http.StatusUnprocessableEntity, err)
 		return
 	}
-	token, err := auth.GetOAuthToken(req.Code, req.State)
+	client, err := store.DefaultOAuth2Store.
+		GetClientByDomain(c, c.Request.Host)
+	if err != nil {
+		e.Err(http.StatusNotFound, err)
+		return
+	}
+	oauth2Config, err := client.GetOAuth2Config(c)
+	if err != nil {
+		e.Log.Error(err)
+		e.Err(http.StatusUnauthorized, err)
+		return
+	}
+
+	oauth2Token, err := oauth2Config.Exchange(c, req.Code)
 	if err != nil {
 		e.Err(http.StatusUnauthorized, err)
 		return
 	}
 	resp := &form.TenantCallbackResp{
-		AccessToken:  token.AccessToken,
-		TokenType:    token.TokenType,
-		RefreshToken: token.RefreshToken,
-		Expiry:       token.Expiry,
+		AccessToken:  oauth2Token.AccessToken,
+		TokenType:    oauth2Token.TokenType,
+		RefreshToken: oauth2Token.RefreshToken,
+		Expiry:       oauth2Token.Expiry,
 	}
 	e.OK(resp)
+	return
 }
 
 // RefreshToken 获取accessToken
@@ -172,7 +200,19 @@ func (e Tenant) RefreshToken(c *gin.Context) {
 		e.Err(http.StatusUnprocessableEntity, err)
 		return
 	}
-	token, err := auth.RefreshOAuthToken(req.RefreshToken)
+	client, err := store.DefaultOAuth2Store.
+		GetClientByDomain(c, c.Request.Host)
+	if err != nil {
+		e.Err(http.StatusNotFound, err)
+		return
+	}
+	oauth2Config, err := client.GetOAuth2Config(c)
+	if err != nil {
+		e.Err(http.StatusUnauthorized, err)
+		return
+	}
+
+	token, err := oauth2Config.TokenSource(c, &oauth2.Token{RefreshToken: req.RefreshToken}).Token()
 	if err != nil {
 		e.Err(http.StatusUnauthorized, err)
 		return

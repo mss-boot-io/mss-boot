@@ -9,13 +9,14 @@ package router
 
 import (
 	"github.com/gin-gonic/gin"
-	"github.com/mss-boot-io/mss-boot/pkg/response"
 	ginSwagger "github.com/swaggo/gin-swagger"
 	"github.com/swaggo/gin-swagger/swaggerFiles"
 
+	"github.com/mss-boot-io/mss-boot/pkg/response"
 	_ "github.com/mss-boot-io/mss-boot/service/tenant/controllers"
 	_ "github.com/mss-boot-io/mss-boot/service/tenant/docs"
 	"github.com/mss-boot-io/mss-boot/service/tenant/middleware"
+	_ "github.com/mss-boot-io/mss-boot/service/tenant/models"
 )
 
 func Init(r *gin.RouterGroup) {

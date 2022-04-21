@@ -8,35 +8,27 @@
 package controllers
 
 import (
-	"github.com/casdoor/casdoor-go-sdk/auth"
-	"github.com/gin-gonic/gin"
+	"github.com/mss-boot-io/mss-boot/pkg/response/curd"
 	"net/http"
+
+	"github.com/gin-gonic/gin"
 
 	"github.com/mss-boot-io/mss-boot/pkg/middlewares"
 	"github.com/mss-boot-io/mss-boot/pkg/response"
-	"github.com/mss-boot-io/mss-boot/service/tenant/models"
 )
 
 func init() {
-	response.AppendController(&User{})
+	e := &User{}
+	e.Auth = true
+	response.AppendController(e)
 }
 
 type User struct {
-	response.Api
-}
-
-func (User) Path() string {
-	return "/user"
-}
-
-func (e User) Handlers() []gin.HandlerFunc {
-	return []gin.HandlerFunc{
-		middlewares.AuthMiddleware(),
-	}
+	curd.DefaultController
 }
 
 func (e User) Other(r *gin.RouterGroup) {
-	r.Use(middlewares.AuthMiddleware())
+	r.Use(response.AuthHandler)
 	r.GET("/current-user", e.GetCurrentUser)
 }
 
@@ -51,18 +43,18 @@ func (e User) Other(r *gin.RouterGroup) {
 // @Security Bearer
 func (e User) GetCurrentUser(c *gin.Context) {
 	e.Make(c)
-	v, ok := c.Get("claims")
+	v, ok := c.Get("user")
 	if !ok {
 		e.Err(http.StatusUnauthorized, nil, "claims not found")
 		return
 	}
 	ok = false
-	claims, ok := v.(*auth.Claims)
+	user, ok := v.(*middlewares.User)
 	if !ok {
 		e.Err(http.StatusUnauthorized, nil, "claims type error")
 		return
 	}
 	//写入用户信息
-	go models.CreateOrUpdateUser(claims)
-	e.OK(claims)
+	//go models.CreateOrUpdateUser(user)
+	e.OK(user)
 }

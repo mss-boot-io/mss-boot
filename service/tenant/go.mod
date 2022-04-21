@@ -4,6 +4,7 @@ go 1.18
 
 require (
 	github.com/casdoor/casdoor-go-sdk v0.4.0
+	github.com/coreos/go-oidc/v3 v3.1.0
 	github.com/gin-gonic/gin v1.7.7
 	github.com/mss-boot-io/mss-boot/core v0.0.0-20220417134159-a48fc0305f33
 	github.com/mss-boot-io/mss-boot/pkg v0.0.0-20220417134159-a48fc0305f33
@@ -83,6 +84,7 @@ require (
 	google.golang.org/grpc v1.45.0 // indirect
 	google.golang.org/protobuf v1.28.0 // indirect
 	gopkg.in/ini.v1 v1.66.4 // indirect
+	gopkg.in/square/go-jose.v2 v2.5.1 // indirect
 	gopkg.in/yaml.v2 v2.4.0 // indirect
 	gopkg.in/yaml.v3 v3.0.0-20210107192922-496545a6307b // indirect
 )
