@@ -9,19 +9,20 @@ package response
 
 import (
 	"errors"
-	"github.com/mss-boot-io/mss-boot/pkg/config/mongodb"
-	"github.com/mss-boot-io/mss-boot/pkg/search/mgos"
-	"go.mongodb.org/mongo-driver/bson"
-	"go.mongodb.org/mongo-driver/bson/primitive"
-	"go.mongodb.org/mongo-driver/mongo"
-	"go.mongodb.org/mongo-driver/mongo/options"
 	"net/http"
 	"strings"
 
 	"github.com/gin-gonic/gin"
+	"go.mongodb.org/mongo-driver/bson"
+	"go.mongodb.org/mongo-driver/bson/primitive"
+	"go.mongodb.org/mongo-driver/mongo"
+	"go.mongodb.org/mongo-driver/mongo/options"
 
-	"github.com/mss-boot-io/mss-boot/pkg/middlewares"
+	"github.com/mss-boot-io/mss-boot/pkg/config/mongodb"
+	"github.com/mss-boot-io/mss-boot/pkg/search/mgos"
 )
+
+var AuthHandler gin.HandlerFunc
 
 type DefaultController struct {
 	Api
@@ -43,7 +44,7 @@ func (e *DefaultController) Path() string {
 func (e *DefaultController) Handlers() []gin.HandlerFunc {
 	ms := make([]gin.HandlerFunc, 0)
 	if e.Auth {
-		ms = append(ms, middlewares.AuthMiddleware())
+		ms = append(ms, AuthHandler)
 	}
 	return ms
 }
