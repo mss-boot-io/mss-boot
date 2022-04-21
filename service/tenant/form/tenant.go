@@ -8,10 +8,10 @@
 package form
 
 import (
-	"github.com/mss-boot-io/mss-boot/pkg/response/curd"
 	"time"
 
 	"github.com/mss-boot-io/mss-boot/pkg/enum"
+	"github.com/mss-boot-io/mss-boot/pkg/response/curd"
 )
 
 type TenantCreateReq struct {
@@ -37,6 +37,11 @@ type TenantCreateReq struct {
 	UpdatedAt time.Time `json:"-" bson:"updatedAt"`
 }
 
+func (e *TenantCreateReq) SetCreatedAt() {
+	e.CreatedAt = time.Now()
+	e.UpdatedAt = e.CreatedAt
+}
+
 type TenantUpdateReq struct {
 	curd.OneID
 	//名称
@@ -53,6 +58,10 @@ type TenantUpdateReq struct {
 	ExpiredAt time.Time `json:"expiredAt" bson:"expiredAt" binding:"required"`
 	//更新时间
 	UpdatedAt time.Time `json:"-" bson:"updatedAt"`
+}
+
+func (e *TenantUpdateReq) SetUpdatedAt() {
+	e.UpdatedAt = time.Now()
 }
 
 type TenantGetReq struct {
@@ -139,6 +148,7 @@ type TenantClientResp struct {
 	ClientID         string `json:"clientId"`
 	AppName          string `json:"appName"`
 	OrganizationName string `json:"organizationName"`
+	AuthCodeURL      string `json:"authCodeURL"`
 }
 
 type TenantCallbackReq struct {

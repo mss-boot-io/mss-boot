@@ -22,4 +22,9 @@ type GetRequester interface {
 
 type UpdateRequester interface {
 	GetID() string
+	SetUpdatedAt()
+}
+
+type CreateRequester interface {
+	SetCreatedAt()
 }

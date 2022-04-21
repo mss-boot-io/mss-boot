@@ -30,7 +30,6 @@ type Config struct {
 func (e *Config) Init(handler http.Handler) {
 	e.Logger.Init()
 	e.Database.Init()
-	e.OAuth2.Init()
 
 	runnable := []server.Runnable{
 		listener.New("tenant",
