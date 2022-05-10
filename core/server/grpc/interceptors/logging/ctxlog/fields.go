@@ -7,8 +7,11 @@
 
 package ctxlog
 
+import "sync"
+
 // Fields fields
 type Fields struct {
+	mux   sync.Mutex
 	value map[string]interface{}
 }
 
@@ -19,12 +22,14 @@ func NewFields(key string, value interface{}) *Fields {
 	return f
 }
 
-// Set set field
+// Set field
 func (e *Fields) Set(key string, value interface{}) {
 	if e.value == nil {
 		e.value = make(map[string]interface{})
 	}
+	e.mux.Lock()
 	e.value[key] = value
+	e.mux.Unlock()
 }
 
 // Values return value
