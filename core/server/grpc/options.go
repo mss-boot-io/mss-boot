@@ -10,6 +10,9 @@ package grpc
 import (
 	"context"
 	"crypto/tls"
+	opentracing "github.com/grpc-ecosystem/go-grpc-middleware/tracing/opentracing"
+	"github.com/mss-boot-io/mss-boot/core/server/grpc/interceptors/logging"
+	requesttag "github.com/mss-boot-io/mss-boot/core/server/grpc/interceptors/request_tag"
 	"math"
 	"time"
 
@@ -174,18 +177,18 @@ func defaultOptions() *Options {
 		maxConcurrentStreams:  defaultMaxConcurrentStreams,
 		maxMsgSize:            defaultMaxMsgSize,
 		unaryServerInterceptors: []grpc.UnaryServerInterceptor{
-			//requesttag.UnaryServerInterceptor(),
+			requesttag.UnaryServerInterceptor(),
 			ctxtags.UnaryServerInterceptor(),
-			//opentracing.UnaryServerInterceptor(),
-			//logging.UnaryServerInterceptor(),
+			opentracing.UnaryServerInterceptor(),
+			logging.UnaryServerInterceptor(),
 			prometheus.UnaryServerInterceptor,
 			recovery.UnaryServerInterceptor(recovery.WithRecoveryHandler(customRecovery("", ""))),
 		},
 		streamServerInterceptors: []grpc.StreamServerInterceptor{
-			//requesttag.StreamServerInterceptor(),
+			requesttag.StreamServerInterceptor(),
 			ctxtags.StreamServerInterceptor(),
-			//opentracing.StreamServerInterceptor(),
-			//logging.StreamServerInterceptor(),
+			opentracing.StreamServerInterceptor(),
+			logging.StreamServerInterceptor(),
 			prometheus.StreamServerInterceptor,
 			recovery.StreamServerInterceptor(recovery.WithRecoveryHandler(customRecovery("", ""))),
 		},
