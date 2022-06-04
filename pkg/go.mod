@@ -3,16 +3,19 @@ module github.com/mss-boot-io/mss-boot/pkg
 go 1.18
 
 require (
+	github.com/coreos/go-oidc/v3 v3.2.0
 	github.com/mss-boot-io/mss-boot/client v0.0.0-20220417134159-a48fc0305f33
 	github.com/mss-boot-io/mss-boot/core v0.0.0-20220417134159-a48fc0305f33
 
 )
 
-require github.com/mss-boot-io/mss-boot/proto v0.0.0-20220417134159-a48fc0305f33 // indirect
+require (
+	github.com/mss-boot-io/mss-boot/proto v0.0.0-20220417134159-a48fc0305f33 // indirect
+	gopkg.in/square/go-jose.v2 v2.5.1 // indirect
+)
 
 require (
 	github.com/beorn7/perks v1.0.1 // indirect
-	github.com/casdoor/casdoor-go-sdk v0.4.0
 	github.com/cespare/xxhash/v2 v2.1.2 // indirect
 	github.com/fsnotify/fsnotify v1.5.1
 	github.com/gin-contrib/sse v0.1.0 // indirect
@@ -21,7 +24,6 @@ require (
 	github.com/go-playground/universal-translator v0.18.0
 	github.com/go-playground/validator/v10 v10.10.1
 	github.com/go-stack/stack v1.8.0 // indirect
-	github.com/golang-jwt/jwt/v4 v4.1.0 // indirect
 	github.com/golang/protobuf v1.5.2 // indirect
 	github.com/golang/snappy v0.0.1 // indirect
 	github.com/google/uuid v1.3.0
@@ -63,7 +65,7 @@ require (
 	go.uber.org/zap v1.21.0
 	golang.org/x/crypto v0.0.0-20220411220226-7b82a4e95df4
 	golang.org/x/net v0.0.0-20220412020605-290c469a71a5 // indirect
-	golang.org/x/oauth2 v0.0.0-20220411215720-9780585627b5 // indirect
+	golang.org/x/oauth2 v0.0.0-20220411215720-9780585627b5
 	golang.org/x/sync v0.0.0-20210220032951-036812b2e83c // indirect
 	golang.org/x/sys v0.0.0-20220412211240-33da011f77ad // indirect
 	golang.org/x/text v0.3.7 // indirect

@@ -4,13 +4,14 @@ go 1.18
 
 require (
 	github.com/casdoor/casdoor-go-sdk v0.4.0
-	github.com/coreos/go-oidc/v3 v3.1.0
 	github.com/gin-gonic/gin v1.7.7
 	github.com/mss-boot-io/mss-boot/core v0.0.0-20220417134159-a48fc0305f33
-	github.com/mss-boot-io/mss-boot/pkg v0.0.0-20220417134159-a48fc0305f33
+	github.com/mss-boot-io/mss-boot/pkg v0.0.0-20220510075439-7d6ef1ff3eee
+	github.com/spf13/viper v1.11.0
 	github.com/swaggo/gin-swagger v1.4.1
 	github.com/swaggo/swag v1.7.9
 	go.mongodb.org/mongo-driver v1.9.0
+	golang.org/x/oauth2 v0.0.0-20220411215720-9780585627b5
 )
 
 require (
@@ -19,6 +20,7 @@ require (
 	github.com/PuerkitoBio/urlesc v0.0.0-20170810143723-de5bf2ad4578 // indirect
 	github.com/beorn7/perks v1.0.1 // indirect
 	github.com/cespare/xxhash/v2 v2.1.2 // indirect
+	github.com/coreos/go-oidc/v3 v3.1.0 // indirect
 	github.com/fsnotify/fsnotify v1.5.1 // indirect
 	github.com/gin-contrib/sse v0.1.0 // indirect
 	github.com/go-openapi/jsonpointer v0.19.5 // indirect
@@ -62,7 +64,6 @@ require (
 	github.com/spf13/cast v1.4.1 // indirect
 	github.com/spf13/jwalterweatherman v1.1.0 // indirect
 	github.com/spf13/pflag v1.0.5 // indirect
-	github.com/spf13/viper v1.11.0 // indirect
 	github.com/subosito/gotenv v1.2.0 // indirect
 	github.com/ugorji/go/codec v1.1.7 // indirect
 	github.com/xdg-go/pbkdf2 v1.0.0 // indirect
@@ -74,7 +75,6 @@ require (
 	go.uber.org/zap v1.21.0 // indirect
 	golang.org/x/crypto v0.0.0-20220411220226-7b82a4e95df4 // indirect
 	golang.org/x/net v0.0.0-20220412020605-290c469a71a5 // indirect
-	golang.org/x/oauth2 v0.0.0-20220411215720-9780585627b5 // indirect
 	golang.org/x/sync v0.0.0-20210220032951-036812b2e83c // indirect
 	golang.org/x/sys v0.0.0-20220412211240-33da011f77ad // indirect
 	golang.org/x/text v0.3.7 // indirect
