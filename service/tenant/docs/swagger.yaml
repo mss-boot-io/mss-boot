@@ -143,6 +143,168 @@ definitions:
       weibo:
         type: string
     type: object
+  form.MenuCreateReq:
+    properties:
+      access:
+        description: 权限
+        type: string
+      component:
+        description: 组件
+        type: string
+      icon:
+        description: icon
+        type: string
+      layout:
+        description: Layout
+        type: boolean
+      name:
+        description: 名称
+        type: string
+      parentKeys:
+        description: 父菜单
+        items:
+          type: string
+        type: array
+      path:
+        description: 路径
+        type: string
+      redirect:
+        description: 重定向
+        type: string
+      status:
+        description: 状态
+        type: integer
+      tenantID:
+        description: 租户id
+        type: string
+    required:
+    - access
+    - name
+    - path
+    - tenantID
+    type: object
+  form.MenuGetResp:
+    properties:
+      access:
+        description: 权限
+        type: string
+      component:
+        description: 组件
+        type: string
+      createdAt:
+        description: 创建时间
+        type: string
+      icon:
+        description: icon
+        type: string
+      id:
+        description: id
+        type: string
+      layout:
+        description: Layout
+        type: boolean
+      name:
+        description: 名称
+        type: string
+      parentKeys:
+        description: <no value>
+        items:
+          type: string
+        type: array
+      path:
+        description: 路径
+        type: string
+      redirect:
+        description: 重定向
+        type: string
+      status:
+        description: 状态
+        type: integer
+      tenantID:
+        description: 租户id
+        type: string
+      updatedAt:
+        description: 更新时间
+        type: string
+    type: object
+  form.MenuListItem:
+    properties:
+      access:
+        description: 权限
+        type: string
+      component:
+        description: 组件
+        type: string
+      icon:
+        description: icon
+        type: string
+      id:
+        description: id
+        type: string
+      layout:
+        description: Layout
+        type: boolean
+      name:
+        description: 名称
+        type: string
+      parentKeys:
+        description: <no value>
+        items:
+          type: string
+        type: array
+      path:
+        description: 路径
+        type: string
+      redirect:
+        description: 重定向
+        type: string
+      status:
+        description: 状态
+        type: integer
+      tenantID:
+        description: 租户id
+        type: string
+    type: object
+  form.MenuUpdateReq:
+    properties:
+      access:
+        description: 权限
+        type: string
+      component:
+        description: 组件
+        type: string
+      icon:
+        description: icon
+        type: string
+      layout:
+        description: Layout
+        type: boolean
+      name:
+        description: 名称
+        type: string
+      parentKeys:
+        description: 父菜单
+        items:
+          type: string
+        type: array
+      path:
+        description: 路径
+        type: string
+      redirect:
+        description: 重定向
+        type: string
+      status:
+        description: 状态
+        type: integer
+      tenantID:
+        description: 租户id
+        type: string
+    required:
+    - access
+    - name
+    - path
+    - tenantID
+    type: object
   form.TenantCallbackResp:
     properties:
       accessToken:
@@ -173,6 +335,8 @@ definitions:
   form.TenantClientResp:
     properties:
       appName:
+        type: string
+      authCodeURL:
         type: string
       clientId:
         type: string
@@ -391,7 +555,12 @@ paths:
         "200":
           description: OK
           schema:
-            $ref: '#/definitions/form.TenantClientResp'
+            allOf:
+            - $ref: '#/definitions/response.Response'
+            - properties:
+                data:
+                  $ref: '#/definitions/form.TenantClientResp'
+              type: object
       security:
       - Bearer: []
       summary: 获取client配置
@@ -406,12 +575,145 @@ paths:
         "200":
           description: OK
           schema:
-            $ref: '#/definitions/auth.Claims'
+            allOf:
+            - $ref: '#/definitions/response.Response'
+            - properties:
+                data:
+                  $ref: '#/definitions/auth.Claims'
+              type: object
       security:
       - Bearer: []
       summary: 获取当前用户
       tags:
       - tenant
+  /tenant/api/v1/menu:
+    get:
+      consumes:
+      - application/json
+      description: 列表menu
+      parameters:
+      - description: 租户名称
+        in: query
+        name: name
+        type: string
+      - description: 当前页
+        in: query
+        name: page
+        type: string
+      - description: 每页容量
+        in: query
+        name: pageSize
+        type: string
+      responses:
+        "200":
+          description: OK
+          schema:
+            allOf:
+            - $ref: '#/definitions/response.Page'
+            - properties:
+                data:
+                  items:
+                    $ref: '#/definitions/form.MenuListItem'
+                  type: array
+              type: object
+      security:
+      - Bearer: []
+      summary: 列表menu
+      tags:
+      - menu
+    post:
+      consumes:
+      - application/json
+      description: 创建menu
+      parameters:
+      - description: data
+        in: body
+        name: data
+        required: true
+        schema:
+          $ref: '#/definitions/form.MenuCreateReq'
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/response.Response'
+      security:
+      - Bearer: []
+      summary: 创建menu
+      tags:
+      - menu
+  /tenant/api/v1/menu/{id}:
+    delete:
+      consumes:
+      - application/json
+      description: 删除menu
+      parameters:
+      - description: id
+        in: path
+        name: id
+        required: true
+        type: string
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/response.Response'
+      security:
+      - Bearer: []
+      summary: 删除menu
+      tags:
+      - menu
+    get:
+      consumes:
+      - application/json
+      description: 获取menu
+      parameters:
+      - description: id
+        in: path
+        name: id
+        required: true
+        type: string
+      responses:
+        "200":
+          description: OK
+          schema:
+            allOf:
+            - $ref: '#/definitions/response.Response'
+            - properties:
+                data:
+                  $ref: '#/definitions/form.MenuGetResp'
+              type: object
+      security:
+      - Bearer: []
+      summary: 获取menu
+      tags:
+      - menu
+    put:
+      consumes:
+      - application/json
+      description: 更新menu
+      parameters:
+      - description: id
+        in: path
+        name: id
+        required: true
+        type: string
+      - description: data
+        in: body
+        name: data
+        required: true
+        schema:
+          $ref: '#/definitions/form.MenuUpdateReq'
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/response.Response'
+      security:
+      - Bearer: []
+      summary: 更新menu
+      tags:
+      - menu
   /tenant/api/v1/refresh-token:
     get:
       consumes:
@@ -528,7 +830,12 @@ paths:
         "200":
           description: OK
           schema:
-            $ref: '#/definitions/form.TenantGetResp'
+            allOf:
+            - $ref: '#/definitions/response.Response'
+            - properties:
+                data:
+                  $ref: '#/definitions/form.TenantGetResp'
+              type: object
       security:
       - Bearer: []
       summary: 获取tenant

@@ -9,7 +9,6 @@ package config
 
 import (
 	"context"
-	"fmt"
 
 	"github.com/coreos/go-oidc/v3/oidc"
 	"golang.org/x/oauth2"
@@ -51,7 +50,6 @@ func (e *OAuth2) GetRedirectURL() string {
 
 // GetOAuth2Config returns an oauth2.Config.
 func (e *OAuth2) GetOAuth2Config(c context.Context) (*oauth2.Config, error) {
-	fmt.Println(e.Scopes)
 	provider, err := oidc.NewProvider(c, e.Issuer)
 	if err != nil {
 		return nil, err

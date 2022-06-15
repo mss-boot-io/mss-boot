@@ -47,6 +47,9 @@ type Tenant struct {
 // @Success 200 {object} response.Response
 // @Router /tenant/api/v1/tenant [post]
 // @Security Bearer
+func (e Tenant) Create(c *gin.Context) {
+	e.DefaultController.Create(c)
+}
 
 // Update 更新
 // @Summary 更新tenant
@@ -59,6 +62,9 @@ type Tenant struct {
 // @Success 200 {object} response.Response
 // @Router /tenant/api/v1/tenant/{id} [put]
 // @Security Bearer
+func (e Tenant) Update(c *gin.Context) {
+	e.DefaultController.Update(c)
+}
 
 // Delete 删除
 // @Summary 删除tenant
@@ -70,6 +76,9 @@ type Tenant struct {
 // @Success 200 {object} response.Response
 // @Router /tenant/api/v1/tenant/{id} [delete]
 // @Security Bearer
+func (e Tenant) Delete(c *gin.Context) {
+	e.DefaultController.Delete(c)
+}
 
 // Get 获取
 // @Summary 获取tenant
@@ -81,6 +90,9 @@ type Tenant struct {
 // @Success 200 {object} response.Response{data=form.TenantGetResp}
 // @Router /tenant/api/v1/tenant/{id} [get]
 // @Security Bearer
+func (e Tenant) Get(c *gin.Context) {
+	e.DefaultController.Get(c)
+}
 
 // List 列表
 // @Summary 列表tenant
@@ -94,6 +106,9 @@ type Tenant struct {
 // @Success 200 {object} response.Page{data=[]form.TenantListItem}
 // @Router /tenant/api/v1/tenant [get]
 // @Security Bearer
+func (e Tenant) List(c *gin.Context) {
+	e.DefaultController.List(c)
+}
 
 func (e Tenant) Other(r *gin.RouterGroup) {
 	r.GET("/client", e.GetClient)

@@ -105,7 +105,19 @@ var doc = `{
                     "200": {
                         "description": "OK",
                         "schema": {
-                            "$ref": "#/definitions/form.TenantClientResp"
+                            "allOf": [
+                                {
+                                    "$ref": "#/definitions/response.Response"
+                                },
+                                {
+                                    "type": "object",
+                                    "properties": {
+                                        "data": {
+                                            "$ref": "#/definitions/form.TenantClientResp"
+                                        }
+                                    }
+                                }
+                            ]
                         }
                     }
                 }
@@ -130,7 +142,232 @@ var doc = `{
                     "200": {
                         "description": "OK",
                         "schema": {
-                            "$ref": "#/definitions/auth.Claims"
+                            "allOf": [
+                                {
+                                    "$ref": "#/definitions/response.Response"
+                                },
+                                {
+                                    "type": "object",
+                                    "properties": {
+                                        "data": {
+                                            "$ref": "#/definitions/auth.Claims"
+                                        }
+                                    }
+                                }
+                            ]
+                        }
+                    }
+                }
+            }
+        },
+        "/tenant/api/v1/menu": {
+            "get": {
+                "security": [
+                    {
+                        "Bearer": []
+                    }
+                ],
+                "description": "列表menu",
+                "consumes": [
+                    "application/json"
+                ],
+                "tags": [
+                    "menu"
+                ],
+                "summary": "列表menu",
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "租户名称",
+                        "name": "name",
+                        "in": "query"
+                    },
+                    {
+                        "type": "string",
+                        "description": "当前页",
+                        "name": "page",
+                        "in": "query"
+                    },
+                    {
+                        "type": "string",
+                        "description": "每页容量",
+                        "name": "pageSize",
+                        "in": "query"
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "allOf": [
+                                {
+                                    "$ref": "#/definitions/response.Page"
+                                },
+                                {
+                                    "type": "object",
+                                    "properties": {
+                                        "data": {
+                                            "type": "array",
+                                            "items": {
+                                                "$ref": "#/definitions/form.MenuListItem"
+                                            }
+                                        }
+                                    }
+                                }
+                            ]
+                        }
+                    }
+                }
+            },
+            "post": {
+                "security": [
+                    {
+                        "Bearer": []
+                    }
+                ],
+                "description": "创建menu",
+                "consumes": [
+                    "application/json"
+                ],
+                "tags": [
+                    "menu"
+                ],
+                "summary": "创建menu",
+                "parameters": [
+                    {
+                        "description": "data",
+                        "name": "data",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/form.MenuCreateReq"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/response.Response"
+                        }
+                    }
+                }
+            }
+        },
+        "/tenant/api/v1/menu/{id}": {
+            "get": {
+                "security": [
+                    {
+                        "Bearer": []
+                    }
+                ],
+                "description": "获取menu",
+                "consumes": [
+                    "application/json"
+                ],
+                "tags": [
+                    "menu"
+                ],
+                "summary": "获取menu",
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "id",
+                        "name": "id",
+                        "in": "path",
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "allOf": [
+                                {
+                                    "$ref": "#/definitions/response.Response"
+                                },
+                                {
+                                    "type": "object",
+                                    "properties": {
+                                        "data": {
+                                            "$ref": "#/definitions/form.MenuGetResp"
+                                        }
+                                    }
+                                }
+                            ]
+                        }
+                    }
+                }
+            },
+            "put": {
+                "security": [
+                    {
+                        "Bearer": []
+                    }
+                ],
+                "description": "更新menu",
+                "consumes": [
+                    "application/json"
+                ],
+                "tags": [
+                    "menu"
+                ],
+                "summary": "更新menu",
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "id",
+                        "name": "id",
+                        "in": "path",
+                        "required": true
+                    },
+                    {
+                        "description": "data",
+                        "name": "data",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/form.MenuUpdateReq"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/response.Response"
+                        }
+                    }
+                }
+            },
+            "delete": {
+                "security": [
+                    {
+                        "Bearer": []
+                    }
+                ],
+                "description": "删除menu",
+                "consumes": [
+                    "application/json"
+                ],
+                "tags": [
+                    "menu"
+                ],
+                "summary": "删除menu",
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "id",
+                        "name": "id",
+                        "in": "path",
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/response.Response"
                         }
                     }
                 }
@@ -303,7 +540,19 @@ var doc = `{
                     "200": {
                         "description": "OK",
                         "schema": {
-                            "$ref": "#/definitions/form.TenantGetResp"
+                            "allOf": [
+                                {
+                                    "$ref": "#/definitions/response.Response"
+                                },
+                                {
+                                    "type": "object",
+                                    "properties": {
+                                        "data": {
+                                            "$ref": "#/definitions/form.TenantGetResp"
+                                        }
+                                    }
+                                }
+                            ]
                         }
                     }
                 }
@@ -597,6 +846,226 @@ var doc = `{
                 }
             }
         },
+        "form.MenuCreateReq": {
+            "type": "object",
+            "required": [
+                "access",
+                "name",
+                "path",
+                "tenantID"
+            ],
+            "properties": {
+                "access": {
+                    "description": "权限",
+                    "type": "string"
+                },
+                "component": {
+                    "description": "组件",
+                    "type": "string"
+                },
+                "icon": {
+                    "description": "icon",
+                    "type": "string"
+                },
+                "layout": {
+                    "description": "Layout",
+                    "type": "boolean"
+                },
+                "name": {
+                    "description": "名称",
+                    "type": "string"
+                },
+                "parentKeys": {
+                    "description": "父菜单",
+                    "type": "array",
+                    "items": {
+                        "type": "string"
+                    }
+                },
+                "path": {
+                    "description": "路径",
+                    "type": "string"
+                },
+                "redirect": {
+                    "description": "重定向",
+                    "type": "string"
+                },
+                "status": {
+                    "description": "状态",
+                    "type": "integer"
+                },
+                "tenantID": {
+                    "description": "租户id",
+                    "type": "string"
+                }
+            }
+        },
+        "form.MenuGetResp": {
+            "type": "object",
+            "properties": {
+                "access": {
+                    "description": "权限",
+                    "type": "string"
+                },
+                "component": {
+                    "description": "组件",
+                    "type": "string"
+                },
+                "createdAt": {
+                    "description": "创建时间",
+                    "type": "string"
+                },
+                "icon": {
+                    "description": "icon",
+                    "type": "string"
+                },
+                "id": {
+                    "description": "id",
+                    "type": "string"
+                },
+                "layout": {
+                    "description": "Layout",
+                    "type": "boolean"
+                },
+                "name": {
+                    "description": "名称",
+                    "type": "string"
+                },
+                "parentKeys": {
+                    "description": "\u003cno value\u003e",
+                    "type": "array",
+                    "items": {
+                        "type": "string"
+                    }
+                },
+                "path": {
+                    "description": "路径",
+                    "type": "string"
+                },
+                "redirect": {
+                    "description": "重定向",
+                    "type": "string"
+                },
+                "status": {
+                    "description": "状态",
+                    "type": "integer"
+                },
+                "tenantID": {
+                    "description": "租户id",
+                    "type": "string"
+                },
+                "updatedAt": {
+                    "description": "更新时间",
+                    "type": "string"
+                }
+            }
+        },
+        "form.MenuListItem": {
+            "type": "object",
+            "properties": {
+                "access": {
+                    "description": "权限",
+                    "type": "string"
+                },
+                "component": {
+                    "description": "组件",
+                    "type": "string"
+                },
+                "icon": {
+                    "description": "icon",
+                    "type": "string"
+                },
+                "id": {
+                    "description": "id",
+                    "type": "string"
+                },
+                "layout": {
+                    "description": "Layout",
+                    "type": "boolean"
+                },
+                "name": {
+                    "description": "名称",
+                    "type": "string"
+                },
+                "parentKeys": {
+                    "description": "\u003cno value\u003e",
+                    "type": "array",
+                    "items": {
+                        "type": "string"
+                    }
+                },
+                "path": {
+                    "description": "路径",
+                    "type": "string"
+                },
+                "redirect": {
+                    "description": "重定向",
+                    "type": "string"
+                },
+                "status": {
+                    "description": "状态",
+                    "type": "integer"
+                },
+                "tenantID": {
+                    "description": "租户id",
+                    "type": "string"
+                }
+            }
+        },
+        "form.MenuUpdateReq": {
+            "type": "object",
+            "required": [
+                "access",
+                "name",
+                "path",
+                "tenantID"
+            ],
+            "properties": {
+                "access": {
+                    "description": "权限",
+                    "type": "string"
+                },
+                "component": {
+                    "description": "组件",
+                    "type": "string"
+                },
+                "icon": {
+                    "description": "icon",
+                    "type": "string"
+                },
+                "layout": {
+                    "description": "Layout",
+                    "type": "boolean"
+                },
+                "name": {
+                    "description": "名称",
+                    "type": "string"
+                },
+                "parentKeys": {
+                    "description": "父菜单",
+                    "type": "array",
+                    "items": {
+                        "type": "string"
+                    }
+                },
+                "path": {
+                    "description": "路径",
+                    "type": "string"
+                },
+                "redirect": {
+                    "description": "重定向",
+                    "type": "string"
+                },
+                "status": {
+                    "description": "状态",
+                    "type": "integer"
+                },
+                "tenantID": {
+                    "description": "租户id",
+                    "type": "string"
+                }
+            }
+        },
         "form.TenantCallbackResp": {
             "type": "object",
             "properties": {
@@ -622,6 +1091,9 @@ var doc = `{
             "type": "object",
             "properties": {
                 "appName": {
+                    "type": "string"
+                },
+                "authCodeURL": {
                     "type": "string"
                 },
                 "clientId": {

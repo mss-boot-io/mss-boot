@@ -14,7 +14,9 @@ import (
 	"github.com/mss-boot-io/mss-boot/pkg/response"
 )
 
-func Init(_ *gin.RouterGroup) {
+func Init(r *gin.Engine) {
 	// init middleware
 	response.AuthHandler = (&middlewares.AuthMiddleware{}).AuthMiddleware()
+	r.Use(middlewares.Cors())
+	r.NoRoute(middlewares.Options())
 }

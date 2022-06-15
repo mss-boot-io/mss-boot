@@ -1,12 +1,16 @@
 package cfg
 
 import (
+	"embed"
 	log "github.com/mss-boot-io/mss-boot/core/logger"
 	"github.com/mss-boot-io/mss-boot/core/server"
 	"github.com/mss-boot-io/mss-boot/core/server/grpc"
 	"github.com/mss-boot-io/mss-boot/core/server/listener"
 	"github.com/mss-boot-io/mss-boot/pkg/config"
 )
+
+//go:embed store.yaml
+var Embedded embed.FS
 
 // Config config
 type Config struct {

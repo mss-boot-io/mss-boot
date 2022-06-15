@@ -23,6 +23,7 @@ var ver bool
 func init() {
 	flag.String("c", "cfg/tenant.yaml",
 		"Read configuration from specified `FILE`, supports JSON/YAML/TOML formats")
+	flag.Bool("api-refresh", false, "Refresh API cache")
 	flag.BoolVar(&ver, "v", false, "Print the server version information")
 	flag.Parse()
 	rand.Seed(time.Now().UnixNano())

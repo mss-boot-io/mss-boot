@@ -3,7 +3,6 @@ package main
 import (
 	"context"
 	"flag"
-	"github.com/gin-gonic/gin"
 	"github.com/mss-boot-io/mss-boot/core/server"
 	"github.com/mss-boot-io/mss-boot/pkg/config"
 	"log"
@@ -29,10 +28,7 @@ func main() {
 	}
 	ctx := context.Background()
 
-	r := gin.Default()
-	router.Init(r.Group("/tenant"))
-
-	c.Init(r)
+	c.Init(router.Init("/tenant"))
 
 	log.Println("starting tenant manage")
 

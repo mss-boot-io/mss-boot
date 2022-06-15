@@ -39,10 +39,13 @@ type Menu struct {
 // @Tags menu
 // @Accept  application/json
 // @Product application/json
-// @Param data body form.menuCreateReq true "data"
+// @Param data body form.MenuCreateReq true "data"
 // @Success 200 {object} response.Response
 // @Router /tenant/api/v1/menu [post]
 // @Security Bearer
+func (e Menu) Create(c *gin.Context) {
+	e.DefaultController.Create(c)
+}
 
 // Update 更新
 // @Summary 更新menu
@@ -51,10 +54,13 @@ type Menu struct {
 // @Accept  application/json
 // @Product application/json
 // @Param id path string true "id"
-// @Param data body form.menuUpdateReq true "data"
+// @Param data body form.MenuUpdateReq true "data"
 // @Success 200 {object} response.Response
 // @Router /tenant/api/v1/menu/{id} [put]
 // @Security Bearer
+func (e Menu) Update(c *gin.Context) {
+	e.DefaultController.Update(c)
+}
 
 // Delete 删除
 // @Summary 删除menu
@@ -66,6 +72,9 @@ type Menu struct {
 // @Success 200 {object} response.Response
 // @Router /tenant/api/v1/menu/{id} [delete]
 // @Security Bearer
+func (e Menu) Delete(c *gin.Context) {
+	e.DefaultController.Delete(c)
+}
 
 // Get 获取
 // @Summary 获取menu
@@ -74,9 +83,12 @@ type Menu struct {
 // @Accept  application/json
 // @Product application/json
 // @Param id path string true "id"
-// @Success 200 {object} response.Response{data=form.menuGetResp}
+// @Success 200 {object} response.Response{data=form.MenuGetResp}
 // @Router /tenant/api/v1/menu/{id} [get]
 // @Security Bearer
+func (e Menu) Get(c *gin.Context) {
+	e.DefaultController.Get(c)
+}
 
 // List 列表
 // @Summary 列表menu
@@ -87,9 +99,12 @@ type Menu struct {
 // @Param name query string false "租户名称"
 // @Param page query string false "当前页"
 // @Param pageSize query string false "每页容量"
-// @Success 200 {object} response.Page{data=[]form.menuListItem}
+// @Success 200 {object} response.Page{data=[]form.MenuListItem}
 // @Router /tenant/api/v1/menu [get]
 // @Security Bearer
+func (e Menu) List(c *gin.Context) {
+	e.DefaultController.List(c)
+}
 
 func (e *Menu) Other(r *gin.RouterGroup) {
 }

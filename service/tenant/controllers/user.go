@@ -8,18 +8,19 @@
 package controllers
 
 import (
-	"github.com/mss-boot-io/mss-boot/pkg/response/curd"
 	"net/http"
 
 	"github.com/gin-gonic/gin"
 
 	"github.com/mss-boot-io/mss-boot/pkg/middlewares"
 	"github.com/mss-boot-io/mss-boot/pkg/response"
+	"github.com/mss-boot-io/mss-boot/pkg/response/curd"
 )
 
 func init() {
 	e := &User{}
 	e.Auth = true
+	e.TableName = "user"
 	response.AppendController(e)
 }
 

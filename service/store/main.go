@@ -15,7 +15,7 @@ import (
 
 func main() {
 	c := &cfg.Config{}
-	err := config.Init(flag.Lookup("c").Value.String(), c)
+	err := config.Init(flag.Lookup("stage").Value.String(), c)
 	if err != nil {
 		log.Fatalf("cfg init failed, %s\n", err.Error())
 	}
