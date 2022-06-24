@@ -4,13 +4,13 @@ go 1.18
 
 require (
 	github.com/coreos/go-oidc/v3 v3.2.0
-	github.com/mss-boot-io/mss-boot/client v0.0.0-20220417134159-a48fc0305f33
-	github.com/mss-boot-io/mss-boot/core v0.0.0-20220417134159-a48fc0305f33
+	github.com/mss-boot-io/mss-boot/client v0.0.1
+	github.com/mss-boot-io/mss-boot/core v0.0.1
 
 )
 
 require (
-	github.com/mss-boot-io/mss-boot/proto v0.0.0-20220417134159-a48fc0305f33 // indirect
+	github.com/mss-boot-io/mss-boot/proto v0.0.1 // indirect
 	gopkg.in/square/go-jose.v2 v2.5.1 // indirect
 )
 
