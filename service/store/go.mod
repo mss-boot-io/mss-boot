@@ -8,23 +8,27 @@ require (
 	github.com/bsm/redislock v0.7.2
 	github.com/go-redis/redis/v8 v8.11.5
 	github.com/google/uuid v1.3.0
-	github.com/mss-boot-io/mss-boot/core v0.0.0-20220417134159-a48fc0305f33
-	github.com/mss-boot-io/mss-boot/pkg v0.0.0-20220417134159-a48fc0305f33
-	github.com/mss-boot-io/mss-boot/proto v0.0.0-20220417134159-a48fc0305f33
+	github.com/mss-boot-io/mss-boot/core v0.0.1
+	github.com/mss-boot-io/mss-boot/pkg v0.0.1
+	github.com/mss-boot-io/mss-boot/proto v0.0.1
 	github.com/nsqio/go-nsq v1.1.0
 	github.com/robinjoseph08/redisqueue/v2 v2.1.0
 	github.com/spf13/cast v1.4.1
 )
 
 require (
+	github.com/coreos/go-oidc/v3 v3.2.0 // indirect
+	golang.org/x/crypto v0.0.0-20220411220226-7b82a4e95df4 // indirect
+	gopkg.in/square/go-jose.v2 v2.5.1 // indirect
+)
+
+require (
 	github.com/beorn7/perks v1.0.1 // indirect
-	github.com/casdoor/casdoor-go-sdk v0.4.0 // indirect
 	github.com/cespare/xxhash/v2 v2.1.2 // indirect
 	github.com/dgryski/go-rendezvous v0.0.0-20200823014737-9f7001d12a5f // indirect
 	github.com/fatih/color v1.13.0 // indirect
 	github.com/fsnotify/fsnotify v1.5.1 // indirect
 	github.com/git-chglog/git-chglog v0.0.0-20190611050339-63a4e637021f // indirect
-	github.com/golang-jwt/jwt/v4 v4.1.0 // indirect
 	github.com/golang/protobuf v1.5.2 // indirect
 	github.com/golang/snappy v0.0.1 // indirect
 	github.com/grpc-ecosystem/go-grpc-middleware v1.3.0 // indirect
@@ -42,7 +46,7 @@ require (
 	github.com/mitchellh/mapstructure v1.4.3 // indirect
 	github.com/modern-go/concurrent v0.0.0-20180306012644-bacd9c7ef1dd // indirect
 	github.com/modern-go/reflect2 v1.0.2 // indirect
-	github.com/mss-boot-io/mss-boot/client v0.0.0-20220417134159-a48fc0305f33 // indirect
+	github.com/mss-boot-io/mss-boot/client v0.0.1 // indirect
 	github.com/opentracing/opentracing-go v1.1.0 // indirect
 	github.com/pelletier/go-toml v1.9.4 // indirect
 	github.com/pelletier/go-toml/v2 v2.0.0-beta.8 // indirect
