@@ -19,7 +19,6 @@ import (
 	prometheus "github.com/grpc-ecosystem/go-grpc-prometheus"
 	"github.com/mss-boot-io/mss-boot/core/errcode"
 	log "github.com/mss-boot-io/mss-boot/core/logger"
-	"github.com/mss-boot-io/mss-boot/core/server/grpc/interceptors/logging"
 	requesttag "github.com/mss-boot-io/mss-boot/core/server/grpc/interceptors/request_tag"
 	"google.golang.org/grpc"
 )
@@ -180,7 +179,7 @@ func defaultOptions() *Options {
 			requesttag.UnaryServerInterceptor(),
 			ctxtags.UnaryServerInterceptor(),
 			opentracing.UnaryServerInterceptor(),
-			logging.UnaryServerInterceptor(),
+			//logging.UnaryServerInterceptor(),
 			prometheus.UnaryServerInterceptor,
 			recovery.UnaryServerInterceptor(recovery.WithRecoveryHandler(customRecovery("", ""))),
 		},
@@ -188,7 +187,7 @@ func defaultOptions() *Options {
 			requesttag.StreamServerInterceptor(),
 			ctxtags.StreamServerInterceptor(),
 			opentracing.StreamServerInterceptor(),
-			logging.StreamServerInterceptor(),
+			//logging.StreamServerInterceptor(),
 			prometheus.StreamServerInterceptor,
 			recovery.StreamServerInterceptor(recovery.WithRecoveryHandler(customRecovery("", ""))),
 		},
