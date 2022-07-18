@@ -36,11 +36,15 @@ func (e *Database) Init() {
 	if e.URL == "" {
 		e.URL = "mongodb://localhost:27017"
 	}
+	serverAPIOptions := options.ServerAPI(options.ServerAPIVersion1)
+	clientOptions := options.Client().
+		ApplyURI(e.URL).
+		SetServerAPIOptions(serverAPIOptions)
 	ctx, cancel := context.WithTimeout(
-		context.Background(),
-		e.Timeout*time.Second)
+		context.TODO(),
+		e.Timeout)
 	defer cancel()
-	client, err := mongo.Connect(ctx, options.Client().ApplyURI(e.URL))
+	client, err := mongo.Connect(ctx, clientOptions)
 	if err != nil {
 		log.Fatalln(err)
 	}

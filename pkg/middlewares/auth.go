@@ -27,6 +27,7 @@ type AuthMiddleware struct {
 func (e AuthMiddleware) AuthMiddleware() gin.HandlerFunc {
 	return func(c *gin.Context) {
 		e.Make(c)
+		//登录认证
 		accessToken := getTokenFromHeader(c)
 		if accessToken == "" {
 			e.Err(http.StatusUnauthorized, errors.New("token is empty"))
@@ -55,6 +56,7 @@ func (e AuthMiddleware) AuthMiddleware() gin.HandlerFunc {
 			e.Err(http.StatusUnauthorized, err)
 			return
 		}
+		//鉴权
 		c.Set("user", user)
 		c.Next()
 	}
