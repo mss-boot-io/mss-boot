@@ -8,30 +8,43 @@
 package config
 
 import (
-	"github.com/fsnotify/fsnotify"
-	log "github.com/mss-boot-io/mss-boot/core/logger"
-	"github.com/spf13/viper"
+	"fmt"
+	"io/fs"
+	"os"
+
+	"gopkg.in/yaml.v3"
 )
 
 // Init 初始化配置
-func Init(filename string, cfg Entity) error {
-	var err error
-	viper.SetConfigFile(filename)
-	err = viper.ReadInConfig()
+// fixme 配置刷新功能比较鸡肋，去除
+func Init(f fs.ReadFileFS, cfg interface{}) (err error) {
+	var rb []byte
+	rb, err = f.ReadFile("application.yml")
+	if err != nil {
+		err = nil
+		rb, err = f.ReadFile("application.yaml")
+	}
 	if err != nil {
 		return err
 	}
-	err = viper.Unmarshal(cfg)
+	err = yaml.Unmarshal(rb, cfg)
 	if err != nil {
 		return err
 	}
-	viper.OnConfigChange(func(e fsnotify.Event) {
-		err := viper.Unmarshal(cfg)
+	stage := os.Getenv("stage")
+	if stage == "" {
+		stage = os.Getenv("STAGE")
+	}
+	if stage == "" {
+		stage = "local"
+	}
+	rb, err = f.ReadFile(fmt.Sprintf("application-%s.yml", stage))
+	if err != nil {
+		err = nil
+		rb, err = f.ReadFile(fmt.Sprintf("application-%s.yaml", stage))
 		if err != nil {
-			log.Fatal(err)
+			return nil
 		}
-		cfg.OnChange()
-	})
-	viper.WatchConfig()
-	return err
+	}
+	return yaml.Unmarshal(rb, cfg)
 }
