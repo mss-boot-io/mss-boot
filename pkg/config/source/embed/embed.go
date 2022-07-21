@@ -8,25 +8,26 @@
 package embed
 
 import (
-	"embed"
 	"io/fs"
 )
 
 type Source struct {
-	from embed.FS
+	opt Options
 }
 
 func (s *Source) Open(name string) (fs.File, error) {
-	return s.from.Open(name)
+	return s.opt.fs.Open(name)
 }
 
 func (s *Source) ReadFile(name string) ([]byte, error) {
-	return s.from.ReadFile(name)
+	return s.opt.fs.ReadFile(name)
 }
 
 // New source
-func New(source embed.FS) (*Source, error) {
-	return &Source{
-		from: source,
-	}, nil
+func New(options ...Option) (*Source, error) {
+	s := &Source{}
+	for _, opt := range options {
+		opt(&s.opt)
+	}
+	return s, nil
 }
