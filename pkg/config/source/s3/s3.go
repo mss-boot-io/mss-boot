@@ -13,7 +13,6 @@ import (
 	"fmt"
 	"io/fs"
 	"io/ioutil"
-	"time"
 
 	"github.com/aws/aws-sdk-go-v2/aws"
 	"github.com/aws/aws-sdk-go-v2/config"
@@ -21,10 +20,7 @@ import (
 )
 
 type Source struct {
-	bucket  string
-	dir     string
-	timeout time.Duration
-	client  *s3.Client
+	opt Options
 }
 
 func (s *Source) Open(string) (fs.File, error) {
@@ -32,11 +28,11 @@ func (s *Source) Open(string) (fs.File, error) {
 }
 
 func (s *Source) ReadFile(name string) ([]byte, error) {
-	ctx, cancel := context.WithTimeout(context.TODO(), s.timeout)
+	ctx, cancel := context.WithTimeout(context.TODO(), s.opt.timeout)
 	defer cancel()
-	object, err := s.client.GetObject(ctx, &s3.GetObjectInput{
-		Bucket: aws.String(s.bucket),
-		Key:    aws.String(fmt.Sprintf("%s/%s", s.dir, name)),
+	object, err := s.opt.client.GetObject(ctx, &s3.GetObjectInput{
+		Bucket: aws.String(s.opt.bucket),
+		Key:    aws.String(fmt.Sprintf("%s/%s", s.opt.dir, name)),
 	})
 	if err != nil {
 		return nil, err
@@ -46,18 +42,21 @@ func (s *Source) ReadFile(name string) ([]byte, error) {
 }
 
 // New source
-func New(region, bucket, dir string, timeout time.Duration) (*Source, error) {
-	s := &Source{
-		bucket:  bucket,
-		dir:     dir,
-		timeout: timeout,
+func New(options ...Option) (*Source, error) {
+	s := &Source{}
+	for _, opt := range options {
+		opt(&s.opt)
 	}
-	ctx, cancel := context.WithTimeout(context.TODO(), timeout)
+	if s.opt.client != nil {
+		return s, nil
+	}
+
+	ctx, cancel := context.WithTimeout(context.TODO(), s.opt.timeout)
 	defer cancel()
-	cfg, err := config.LoadDefaultConfig(ctx, config.WithRegion(region))
+	cfg, err := config.LoadDefaultConfig(ctx, config.WithRegion(s.opt.region))
 	if err != nil {
 		return nil, err
 	}
-	s.client = s3.NewFromConfig(cfg)
+	s.opt.client = s3.NewFromConfig(cfg)
 	return s, nil
 }
