@@ -17,8 +17,8 @@ import (
 
 // Client client
 type Client struct {
-	Addr    string `yaml:"addr" json:"addr"`
-	Timeout int    `yaml:"timeout" json:"timeout"`
+	Addr    string        `yaml:"addr" json:"addr"`
+	Timeout time.Duration `yaml:"timeout" json:"timeout"`
 }
 
 // Clients clients
@@ -31,7 +31,7 @@ func (e Clients) Init() error {
 	for k := range e {
 		s := grpc.Service{}
 		err := s.Dial(e[k].Addr,
-			time.Duration(e[k].Timeout)*time.Second)
+			e[k].Timeout)
 		if err != nil {
 			return err
 		}
