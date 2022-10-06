@@ -40,6 +40,10 @@ func (e *Database) Init() {
 	clientOptions := options.Client().
 		ApplyURI(e.URL).
 		SetServerAPIOptions(serverAPIOptions)
+	if e.Timeout == 0 {
+		//set default timeout
+		e.Timeout = 10 * time.Second
+	}
 	ctx, cancel := context.WithTimeout(
 		context.TODO(),
 		e.Timeout)
