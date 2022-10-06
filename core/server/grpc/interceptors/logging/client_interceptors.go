@@ -17,11 +17,6 @@ import (
 	"google.golang.org/grpc"
 )
 
-var (
-	// ClientField default client field
-	ClientField = ctxlog.NewFields("span.kind", "client")
-)
-
 // UnaryClientInterceptor returns a new unary client interceptor
 // that optionally logs the execution of external gRPC calls.
 func UnaryClientInterceptor(opts ...Option) grpc.UnaryClientInterceptor {
@@ -71,11 +66,11 @@ func logFinalClientLine(o *Options, l logger.Logger, start time.Time, err error,
 
 func newClientLoggerFields(
 	_ context.Context,
-	fullMethod string) ctxlog.Fields {
+	fullMethod string) *ctxlog.Fields {
 	service := path.Dir(fullMethod)[1:]
 	method := path.Base(fullMethod)
-	f := *SystemField
-	f.Merge(ClientField)
+	f := ctxlog.NewFields("system", "grpc")
+	f.Merge(ctxlog.NewFields("span.kind", "client"))
 	f.Set("grpc.service", service)
 	f.Set("grpc.method", method)
 	return f

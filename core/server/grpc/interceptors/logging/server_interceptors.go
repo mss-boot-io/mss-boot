@@ -19,14 +19,6 @@ import (
 	"google.golang.org/grpc/metadata"
 )
 
-var (
-	// SystemField is used in every log statement made through grpc_zap. Can be overwritten before any initialization code.
-	SystemField = ctxlog.NewFields("system", "grpc")
-
-	// ServerField is used in every server-side log statement made through grpc_zap.Can be overwritten before initialization.
-	ServerField = ctxlog.NewFields("span.kind", "server")
-)
-
 // UnaryServerInterceptor returns a new unary server interceptors that adds zap.Logger to the context.
 func UnaryServerInterceptor(opts ...Option) grpc.UnaryServerInterceptor {
 	o := evaluateServerOpt(opts)
@@ -70,11 +62,11 @@ func StreamServerInterceptor(opts ...Option) grpc.StreamServerInterceptor {
 	}
 }
 
-func serverCallFields(fullMethodString string) ctxlog.Fields {
+func serverCallFields(fullMethodString string) *ctxlog.Fields {
 	service := path.Dir(fullMethodString)[1:]
 	method := path.Base(fullMethodString)
-	f := *SystemField
-	f.Merge(ServerField)
+	f := ctxlog.NewFields("system", "grpc")
+	f.Merge(ctxlog.NewFields("span.kind", "server"))
 	f.Set("grpc.service", service)
 	f.Set("grpc.method", method)
 	return f
