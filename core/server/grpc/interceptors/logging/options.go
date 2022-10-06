@@ -28,7 +28,7 @@ var (
 	}
 )
 
-//Options Options
+// Options Options
 type Options struct {
 	levelFunc       CodeToLevel
 	shouldLog       grpc_logging.Decider
