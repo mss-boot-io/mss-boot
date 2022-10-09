@@ -4,9 +4,6 @@ on:
   push:
     branches:
       - main
-  delete:
-    branches:
-      - main
 
 jobs:
   mirror_to_gitee:

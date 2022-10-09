@@ -1,7 +1,7 @@
 # mss-boot
 
 ---
-<img style="float:right" width="320" src="https://mss-boot-io.github.io/mss-boot-docs/images/logos/logo-b.png"  alt="https://github.com/mss-boot-io/mss-boot"/>
+<img align="right" width="320" src="https://mss-boot-io.github.io/mss-boot-docs/images/logos/logo-b.png"  alt="https://github.com/mss-boot-io/mss-boot"/>
 
 
 [![License](https://img.shields.io/github/license/mashape/apistatus.svg)](https://github.com/mss-boot-io/mss-boot)
