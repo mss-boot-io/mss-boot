@@ -1,7 +1,7 @@
 # mss-boot
 
 ---
-<img style="float:right" width="320" src="https://mss-boot-io.github.io/mss-boot-docs/images/logos/logo-b.png"  alt="https://github.com/mss-boot-io/mss-boot"/>
+<img align="right" width="320" src="https://mss-boot-io.github.io/mss-boot-docs/images/logos/logo-b.png"  alt="https://github.com/mss-boot-io/mss-boot"/>
 
 
 [![License](https://img.shields.io/github/license/mashape/apistatus.svg)](https://github.com/mss-boot-io/mss-boot)
@@ -13,6 +13,8 @@
 支持grpc、http协议的企业级语言异构微服务解决方案，单服务代码框架坚持极简的原则，同时提供完善的devops流程支撑(gitops)
 
 [在线文档](https://mss-boot-io.github.io/mss-boot-docs/index.html)
+
+[微服务集合](https://github.com/mss-boot-io/mss-boot-monorepo)
 
 ## ✨ 特性
 > - 遵循 RESTful API 设计规范
