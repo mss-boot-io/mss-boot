@@ -14,6 +14,8 @@ An enterprise-level language heterogeneous microservice solution that supports g
 
 [documentation](https://mss-boot-io.github.io/mss-boot-docs/index.html)
 
+[microservices](https://github.com/mss-boot-io/mss-boot-monorepo)
+
 ## ✨ feature
 > - Follow RESTful API Design Specifications
 > - Login support idp(dex)

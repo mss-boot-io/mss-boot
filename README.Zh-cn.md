@@ -14,6 +14,8 @@
 
 [在线文档](https://mss-boot-io.github.io/mss-boot-docs/index.html)
 
+[微服务集合](https://github.com/mss-boot-io/mss-boot-monorepo)
+
 ## ✨ 特性
 > - 遵循 RESTful API 设计规范
 > - 登录支持idp(dex)
