@@ -71,3 +71,12 @@ func getTokenFromHeader(c *gin.Context) string {
 		"bearer",
 		"")
 }
+
+// GetLoginUser 获取登录用户
+func GetLoginUser(c *gin.Context) *User {
+	user, ok := c.Get("user")
+	if !ok {
+		return nil
+	}
+	return user.(*User)
+}
