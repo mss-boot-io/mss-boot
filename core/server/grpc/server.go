@@ -18,6 +18,7 @@ import (
 	prometheus "github.com/grpc-ecosystem/go-grpc-prometheus"
 	log "github.com/mss-boot-io/mss-boot/core/logger"
 	"google.golang.org/grpc"
+	"google.golang.org/grpc/credentials"
 	"google.golang.org/grpc/keepalive"
 	"google.golang.org/grpc/reflection"
 )
@@ -71,7 +72,7 @@ func (e *Server) Register(do func(server *Server)) {
 }
 
 func (e *Server) initGrpcServerOptions() []grpc.ServerOption {
-	return []grpc.ServerOption{
+	opts := []grpc.ServerOption{
 		grpc.ConnectionTimeout(e.options.timeout),
 		grpc.UnaryInterceptor(middleware.ChainUnaryServer(e.options.unaryServerInterceptors...)),
 		grpc.StreamInterceptor(middleware.ChainStreamServer(e.options.streamServerInterceptors...)),
@@ -87,6 +88,14 @@ func (e *Server) initGrpcServerOptions() []grpc.ServerOption {
 			MaxConnectionAgeGrace: e.options.maxConnectionAgeGrace,
 		}),
 	}
+	if e.options.certFile != "" && e.options.keyFile != "" {
+		creds, err := credentials.NewServerTLSFromFile(e.options.certFile, e.options.keyFile)
+		if err != nil {
+			log.Fatalf("Failed to generate credentials %v", err)
+		}
+		opts = append(opts, grpc.Creds(creds))
+	}
+	return opts
 }
 
 // Start run

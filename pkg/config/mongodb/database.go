@@ -12,6 +12,7 @@ import (
 	"log"
 	"time"
 
+	"github.com/kamva/mgm/v3"
 	"go.mongodb.org/mongo-driver/mongo"
 	"go.mongodb.org/mongo-driver/mongo/options"
 	"go.mongodb.org/mongo-driver/mongo/readpref"
@@ -50,15 +51,20 @@ func (e *Database) Init() {
 	defer cancel()
 	client, err := mongo.Connect(ctx, clientOptions)
 	if err != nil {
-		log.Fatalln(err)
+		log.Fatalf("Connect to mongodb error: %s", err.Error())
 	}
 	err = client.Ping(ctx, readpref.Primary())
 	if err != nil {
-		log.Fatalln(err)
+		log.Fatalf("ping mongo error: %s", err.Error())
 	}
 	DB = client.Database(e.Name)
 	for i := range tables {
 		tables[i].Make()
+	}
+	//set mgm default client
+	err = mgm.SetDefaultConfig(&mgm.Config{CtxTimeout: e.Timeout}, e.Name, clientOptions)
+	if err != nil {
+		log.Fatalf("mgm.SetDefaultConfig err: %s", err.Error())
 	}
 }
 
