@@ -11,8 +11,9 @@ import (
 	"context"
 	"errors"
 	"fmt"
+	"io"
 	"io/fs"
-	"io/ioutil"
+	"time"
 
 	"github.com/aws/aws-sdk-go-v2/aws"
 	"github.com/aws/aws-sdk-go-v2/config"
@@ -38,7 +39,7 @@ func (s *Source) ReadFile(name string) ([]byte, error) {
 		return nil, err
 	}
 	defer object.Body.Close()
-	return ioutil.ReadAll(object.Body)
+	return io.ReadAll(object.Body)
 }
 
 // New source
@@ -46,6 +47,9 @@ func New(options ...Option) (*Source, error) {
 	s := &Source{}
 	for _, opt := range options {
 		opt(&s.opt)
+	}
+	if s.opt.timeout == 0 {
+		s.opt.timeout = 5 * time.Second
 	}
 	if s.opt.client != nil {
 		return s, nil
