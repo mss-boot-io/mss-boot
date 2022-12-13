@@ -11,7 +11,6 @@ require (
 	github.com/coreos/go-oidc/v3 v3.2.0
 	github.com/golang/freetype v0.0.0-20170609003504-e2365dfdc4a0
 	github.com/kamva/mgm/v3 v3.5.0
-	github.com/mss-boot-io/mss-boot/client v0.0.1
 	github.com/mss-boot-io/mss-boot/core v0.0.1
 	github.com/skip2/go-qrcode v0.0.0-20200617195104-da1b6568686e
 
@@ -35,7 +34,6 @@ require (
 	github.com/davecgh/go-spew v1.1.1 // indirect
 	github.com/jinzhu/inflection v1.0.0 // indirect
 	github.com/jmespath/go-jmespath v0.4.0 // indirect
-	github.com/mss-boot-io/mss-boot/proto v0.0.1 // indirect
 	github.com/pmezard/go-difflib v1.0.0 // indirect
 	github.com/stretchr/testify v1.7.1 // indirect
 	golang.org/x/image v0.0.0-20190802002840-cff245a6509b // indirect
