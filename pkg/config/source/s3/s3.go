@@ -13,15 +13,18 @@ import (
 	"fmt"
 	"io"
 	"io/fs"
+	"strings"
 	"time"
 
 	"github.com/aws/aws-sdk-go-v2/aws"
 	"github.com/aws/aws-sdk-go-v2/config"
 	"github.com/aws/aws-sdk-go-v2/service/s3"
+
+	"github.com/mss-boot-io/mss-boot/pkg/config/source"
 )
 
 type Source struct {
-	opt Options
+	opt source.Options
 }
 
 func (s *Source) Open(string) (fs.File, error) {
@@ -29,11 +32,11 @@ func (s *Source) Open(string) (fs.File, error) {
 }
 
 func (s *Source) ReadFile(name string) ([]byte, error) {
-	ctx, cancel := context.WithTimeout(context.TODO(), s.opt.timeout)
+	ctx, cancel := context.WithTimeout(context.TODO(), s.opt.Timeout)
 	defer cancel()
-	object, err := s.opt.client.GetObject(ctx, &s3.GetObjectInput{
-		Bucket: aws.String(s.opt.bucket),
-		Key:    aws.String(fmt.Sprintf("%s/%s", s.opt.dir, name)),
+	object, err := s.opt.Client.GetObject(ctx, &s3.GetObjectInput{
+		Bucket: aws.String(s.opt.Bucket),
+		Key:    aws.String(fmt.Sprintf("%s/%s", s.opt.Dir, name)),
 	})
 	if err != nil {
 		return nil, err
@@ -43,24 +46,28 @@ func (s *Source) ReadFile(name string) ([]byte, error) {
 }
 
 // New source
-func New(options ...Option) (*Source, error) {
+func New(options ...source.Option) (*Source, error) {
 	s := &Source{}
 	for _, opt := range options {
 		opt(&s.opt)
 	}
-	if s.opt.timeout == 0 {
-		s.opt.timeout = 5 * time.Second
+	if s.opt.Timeout == 0 {
+		s.opt.Timeout = 5 * time.Second
 	}
-	if s.opt.client != nil {
+	fmt.Println(s.opt.Dir, s.opt.ProjectName)
+	if s.opt.ProjectName != "" {
+		s.opt.Dir = s.opt.Dir[strings.Index(s.opt.Dir, s.opt.ProjectName+"/"):]
+	}
+	if s.opt.Client != nil {
 		return s, nil
 	}
 
-	ctx, cancel := context.WithTimeout(context.TODO(), s.opt.timeout)
+	ctx, cancel := context.WithTimeout(context.TODO(), s.opt.Timeout)
 	defer cancel()
-	cfg, err := config.LoadDefaultConfig(ctx, config.WithRegion(s.opt.region))
+	cfg, err := config.LoadDefaultConfig(ctx, config.WithRegion(s.opt.Region))
 	if err != nil {
 		return nil, err
 	}
-	s.opt.client = s3.NewFromConfig(cfg)
+	s.opt.Client = s3.NewFromConfig(cfg)
 	return s, nil
 }

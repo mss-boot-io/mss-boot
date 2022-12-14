@@ -13,11 +13,43 @@ import (
 	"os"
 
 	"gopkg.in/yaml.v3"
+
+	"github.com/mss-boot-io/mss-boot/pkg/config/source"
+	sourceFS "github.com/mss-boot-io/mss-boot/pkg/config/source/fs"
+	sourceLocal "github.com/mss-boot-io/mss-boot/pkg/config/source/local"
+	sourceS3 "github.com/mss-boot-io/mss-boot/pkg/config/source/s3"
 )
 
 // Init 初始化配置
-// fixme 配置刷新功能比较鸡肋，去除
-func Init(f fs.ReadFileFS, cfg interface{}) (err error) {
+func Init(cfg any, options ...source.Option) (err error) {
+	opts := &source.Options{}
+	for _, opt := range options {
+		opt(opts)
+	}
+	var f fs.ReadFileFS
+	switch opts.Provider {
+	case source.FS:
+		f, err = sourceFS.New(options...)
+	case source.Local:
+		f, err = sourceLocal.New(options...)
+	case source.S3:
+		s := &Storage{
+			Type:            ProviderType(os.Getenv("s3_provider")),
+			SigningMethod:   os.Getenv("s3_signing_method"),
+			Region:          os.Getenv("s3_region"),
+			Bucket:          os.Getenv("s3_bucket"),
+			AccessKeyID:     os.Getenv("s3_access_key_id"),
+			SecretAccessKey: os.Getenv("s3_secret_access_key"),
+		}
+		s.Init()
+		options = append(options,
+			source.WithBucket(s.Bucket), source.WithClient(s.GetClient()))
+		f, err = sourceS3.New(options...)
+	}
+	if err != nil {
+		return err
+	}
+
 	var rb []byte
 	rb, err = f.ReadFile("application.yml")
 	if err != nil {

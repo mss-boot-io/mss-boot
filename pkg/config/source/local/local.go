@@ -9,24 +9,25 @@ package local
 
 import (
 	"io/fs"
-	"io/ioutil"
 	"os"
 	"path/filepath"
+
+	"github.com/mss-boot-io/mss-boot/pkg/config/source"
 )
 
 type Source struct {
-	opt Options
+	opt source.Options
 }
 
 func (s *Source) Open(name string) (fs.File, error) {
-	return os.Open(filepath.Join(s.opt.dir, name))
+	return os.Open(filepath.Join(s.opt.Dir, name))
 }
 
 func (s *Source) ReadFile(name string) ([]byte, error) {
-	return ioutil.ReadFile(filepath.Join(s.opt.dir, name))
+	return os.ReadFile(filepath.Join(s.opt.Dir, name))
 }
 
-func New(options ...Option) (*Source, error) {
+func New(options ...source.Option) (*Source, error) {
 	s := &Source{}
 	for _, opt := range options {
 		opt(&s.opt)

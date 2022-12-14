@@ -5,26 +5,28 @@
  * @Last Modified time: 2022/7/18 10:06:17
  */
 
-package embed
+package fs
 
 import (
 	"io/fs"
+
+	"github.com/mss-boot-io/mss-boot/pkg/config/source"
 )
 
 type Source struct {
-	opt Options
+	opt source.Options
 }
 
 func (s *Source) Open(name string) (fs.File, error) {
-	return s.opt.fs.Open(name)
+	return s.opt.FS.Open(name)
 }
 
 func (s *Source) ReadFile(name string) ([]byte, error) {
-	return s.opt.fs.ReadFile(name)
+	return s.opt.FS.ReadFile(name)
 }
 
 // New source
-func New(options ...Option) (*Source, error) {
+func New(options ...source.Option) (*Source, error) {
 	s := &Source{}
 	for _, opt := range options {
 		opt(&s.opt)
