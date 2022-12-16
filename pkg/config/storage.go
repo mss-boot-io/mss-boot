@@ -10,8 +10,10 @@ package config
 import (
 	"context"
 	"fmt"
+	"log"
 
 	"github.com/aws/aws-sdk-go-v2/aws"
+	"github.com/aws/aws-sdk-go-v2/config"
 	"github.com/aws/aws-sdk-go-v2/service/s3"
 )
 
@@ -68,6 +70,16 @@ func (o *Storage) Init() {
 			endpointResolver = endpointResolverFunc(urlTemplate, o.SigningMethod)
 		}
 	}
+	if o.Region == "" || o.AccessKeyID == "" || o.SecretAccessKey == "" {
+		//use default config
+		cfg, err := config.LoadDefaultConfig(context.TODO())
+		if err != nil {
+			log.Fatalf("failed to load SDK configuration, %v", err)
+		}
+		o.client = s3.NewFromConfig(cfg)
+		return
+	}
+
 	o.client = s3.New(s3.Options{
 		Region: o.Region,
 		Credentials: aws.CredentialsProviderFunc(func(ctx context.Context) (aws.Credentials, error) {
