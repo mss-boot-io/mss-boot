@@ -7,10 +7,9 @@
 
 package mongodb
 
-import "go.mongodb.org/mongo-driver/mongo"
+import "github.com/kamva/mgm/v3"
 
 type Tabler interface {
-	TableName() string
+	mgm.Model
 	Make()
-	C() *mongo.Collection
 }

@@ -70,5 +70,5 @@ func (e *Database) Init() {
 
 // C get table's Collection
 func (e *Database) C(t Tabler) *mongo.Collection {
-	return DB.Collection(t.TableName())
+	return DB.Collection(mgm.CollName(t))
 }

@@ -1,6 +1,7 @@
 package response
 
 import (
+	log "github.com/mss-boot-io/mss-boot/core/logger"
 	"net/http"
 
 	"github.com/gin-gonic/gin"
@@ -8,10 +9,11 @@ import (
 	"github.com/mss-boot-io/mss-boot/pkg"
 )
 
-var Default = &response{}
+var Default Responses = &response{}
 
 // Error 失败数据处理
 func Error(c *gin.Context, code int, err error, msg ...string) {
+	checkContext(c)
 	res := Default.Clone()
 	if msg == nil {
 		msg = make([]string, 0)
@@ -30,6 +32,7 @@ func Error(c *gin.Context, code int, err error, msg ...string) {
 
 // OK 通常成功数据处理
 func OK(c *gin.Context, data interface{}, msg ...string) {
+	checkContext(c)
 	res := Default.Clone()
 	res.SetData(data)
 	res.SetSuccess(true)
@@ -52,6 +55,7 @@ func OK(c *gin.Context, data interface{}, msg ...string) {
 
 // PageOK 分页数据处理
 func PageOK(c *gin.Context, result interface{}, count int64, pageIndex int64, pageSize int64, msg ...string) {
+	checkContext(c)
 	var res page
 	res.Count = count
 	res.Current = pageIndex
@@ -63,4 +67,10 @@ func PageOK(c *gin.Context, result interface{}, count int64, pageIndex int64, pa
 	c.Set("result", res)
 	c.Set("status", http.StatusOK)
 	c.AbortWithStatusJSON(http.StatusOK, res)
+}
+
+func checkContext(c *gin.Context) {
+	if c == nil {
+		log.Fatalf("context is nil, please check, e.g. e.Make(c) add your controller function")
+	}
 }

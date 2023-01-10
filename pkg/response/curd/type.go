@@ -7,7 +7,7 @@
 
 package curd
 
-type ListRequester interface {
+type Searcher interface {
 	GetPage() int64
 	GetPageSize() int64
 }

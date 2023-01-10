@@ -8,10 +8,10 @@
 package mgos
 
 import (
-	"go.mongodb.org/mongo-driver/bson/primitive"
 	"strings"
 
 	"go.mongodb.org/mongo-driver/bson"
+	"go.mongodb.org/mongo-driver/bson/primitive"
 )
 
 // Condition interface
