@@ -21,19 +21,44 @@ const (
 	FS    Provider = "fs"
 	Local Provider = "local"
 	S3    Provider = "s3"
+	MGDB  Provider = "mgdb"
 )
 
 type Option func(*Options)
 
 type Options struct {
-	Provider    Provider
-	Dir         string
-	Region      string
-	Bucket      string
-	ProjectName string
-	Timeout     time.Duration
-	Client      *s3.Client
-	FS          fs.ReadFileFS
+	Provider          Provider
+	Dir               string
+	Region            string
+	Bucket            string
+	ProjectName       string
+	Timeout           time.Duration
+	Client            *s3.Client
+	FS                fs.ReadFileFS
+	MongoDBURL        string
+	MongoDBName       string
+	MongoDBCollection string
+}
+
+// WithMongoDBURL set mongodb url
+func WithMongoDBURL(url string) Option {
+	return func(args *Options) {
+		args.MongoDBURL = url
+	}
+}
+
+// WithMongoDBName set mongodb name
+func WithMongoDBName(name string) Option {
+	return func(args *Options) {
+		args.MongoDBName = name
+	}
+}
+
+// WithMongoDBCollection set mongodb collection
+func WithMongoDBCollection(collection string) Option {
+	return func(args *Options) {
+		args.MongoDBCollection = collection
+	}
 }
 
 // WithProvider set provider

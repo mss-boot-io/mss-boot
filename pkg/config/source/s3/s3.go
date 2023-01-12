@@ -54,7 +54,6 @@ func New(options ...source.Option) (*Source, error) {
 	if s.opt.Timeout == 0 {
 		s.opt.Timeout = 5 * time.Second
 	}
-	fmt.Println(s.opt.Dir, s.opt.ProjectName)
 	if s.opt.ProjectName != "" {
 		s.opt.Dir = s.opt.Dir[strings.Index(s.opt.Dir, s.opt.ProjectName+"/"):]
 	}
