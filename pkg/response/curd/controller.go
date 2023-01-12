@@ -70,8 +70,8 @@ func (e DefaultController) Update(c *gin.Context) {
 		e.Err(http.StatusUnprocessableEntity, err)
 		return
 	}
-	e.Model.SetID(id)
-	err = mgm.Coll(e.Model).UpdateWithCtx(c, m)
+	m.SetID(id)
+	err = mgm.Coll(m).UpdateWithCtx(c, m)
 	if err != nil {
 		if errors.Is(err, mongo.ErrNoDocuments) {
 			e.Err(http.StatusNotFound, err)

@@ -57,14 +57,14 @@ func (e *Database) Init() {
 	if err != nil {
 		log.Fatalf("ping mongo error: %s", err.Error())
 	}
-	DB = client.Database(e.Name)
-	for i := range tables {
-		tables[i].Make()
-	}
 	//set mgm default client
 	err = mgm.SetDefaultConfig(&mgm.Config{CtxTimeout: e.Timeout}, e.Name, clientOptions)
 	if err != nil {
 		log.Fatalf("mgm.SetDefaultConfig err: %s", err.Error())
+	}
+	DB = client.Database(e.Name)
+	for i := range tables {
+		tables[i].Make()
 	}
 }
 
