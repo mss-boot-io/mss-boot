@@ -8,6 +8,8 @@
 package mgdb
 
 import (
+	"encoding/json"
+	"fmt"
 	"github.com/kamva/mgm/v3"
 	"strings"
 
@@ -17,6 +19,7 @@ import (
 type SystemConfig struct {
 	mgm.DefaultModel `bson:",inline"`
 	Name             string `bson:"name" json:"name"`
+	Ext              string `bson:"ext" json:"ext"`
 	Tags             []Tag  `bson:"tags" json:"tags"`
 	Description      string `bson:"description" json:"description"`
 	Metadata         any    `bson:"metadata" json:"metadata"`
@@ -28,13 +31,20 @@ type Tag struct {
 	DataType string `json:"dataType"`
 }
 
-func (c *SystemConfig) GenerateYAML() ([]byte, error) {
+func (c *SystemConfig) GenerateBytes() ([]byte, error) {
 	data := make([]map[string]interface{}, len(c.Tags))
 	for i := range c.Tags {
 		keys := strings.Split(c.Tags[i].Name, ".")
 		data[i] = buildMap(keys, c.Tags[i].Value)
 	}
-	return yaml.Marshal(mergeMapsDepth(data...))
+	switch c.Ext {
+	case "yml", "yaml":
+		return yaml.Marshal(mergeMapsDepth(data...))
+	case "json":
+		return json.Marshal(mergeMapsDepth(data...))
+	default:
+		return nil, fmt.Errorf("not support %s", c.Ext)
+	}
 }
 
 func buildMap(keys []string, value string) map[string]any {

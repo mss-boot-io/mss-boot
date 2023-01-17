@@ -24,10 +24,19 @@ const (
 	MGDB  Provider = "mgdb"
 )
 
+var Extends = []string{"yml", "yaml", "json"}
+
+type Sourcer interface {
+	fs.ReadFileFS
+	GetExtend() string
+}
+
 type Option func(*Options)
 
 type Options struct {
 	Provider          Provider
+	Name              string
+	Extend            string
 	Dir               string
 	Region            string
 	Bucket            string
@@ -38,6 +47,15 @@ type Options struct {
 	MongoDBURL        string
 	MongoDBName       string
 	MongoDBCollection string
+}
+
+// DefaultOptions default options
+func DefaultOptions() *Options {
+	return &Options{
+		Provider: Local,
+		Name:     "application",
+		Dir:      "cfg",
+	}
 }
 
 // WithMongoDBURL set mongodb url
@@ -71,8 +89,14 @@ func WithProvider(provider Provider) Option {
 // WithDir set dir
 func WithDir(dir string) Option {
 	return func(args *Options) {
-		dir = strings.ReplaceAll(dir, "\\", "/")
-		args.Dir = dir
+		args.Dir = strings.ReplaceAll(dir, "\\", "/")
+	}
+}
+
+// WithName set config name
+func WithName(file string) Option {
+	return func(args *Options) {
+		args.Name = strings.ReplaceAll(file, "\\", "/")
 	}
 }
 

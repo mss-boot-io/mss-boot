@@ -21,7 +21,7 @@ import (
 )
 
 type Source struct {
-	opt source.Options
+	opt *source.Options
 }
 
 func (s *Source) Open(string) (fs.File, error) {
@@ -41,14 +41,21 @@ func (s *Source) ReadFile(name string) ([]byte, error) {
 	if err != nil {
 		return nil, err
 	}
-	return m.GenerateYAML()
+	return m.GenerateBytes()
+}
+
+// GetExtend get extend
+func (s *Source) GetExtend() string {
+	return s.opt.Extend
 }
 
 // New source
 func New(options ...source.Option) (*Source, error) {
-	s := &Source{}
+	s := &Source{
+		opt: source.DefaultOptions(),
+	}
 	for _, opt := range options {
-		opt(&s.opt)
+		opt(s.opt)
 	}
 	if s.opt.Timeout == 0 {
 		s.opt.Timeout = 5 * time.Second

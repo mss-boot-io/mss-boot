@@ -8,10 +8,11 @@
 package config
 
 import (
+	"encoding/json"
 	"fmt"
-	"io/fs"
 	"os"
 
+	log "github.com/mss-boot-io/mss-boot/core/logger"
 	"github.com/mss-boot-io/mss-boot/pkg/config/source"
 	sourceFS "github.com/mss-boot-io/mss-boot/pkg/config/source/fs"
 	sourceLocal "github.com/mss-boot-io/mss-boot/pkg/config/source/local"
@@ -23,11 +24,11 @@ import (
 
 // Init 初始化配置
 func Init(cfg any, options ...source.Option) (err error) {
-	opts := &source.Options{}
+	opts := source.DefaultOptions()
 	for _, opt := range options {
 		opt(opts)
 	}
-	var f fs.ReadFileFS
+	var f source.Sourcer
 	switch opts.Provider {
 	case source.FS:
 		f, err = sourceFS.New(options...)
@@ -58,7 +59,7 @@ func Init(cfg any, options ...source.Option) (err error) {
 			return err
 		}
 		var rb []byte
-		rb, err = f.ReadFile("application")
+		rb, err = f.ReadFile(opts.Name)
 		if err != nil {
 			return err
 		}
@@ -68,19 +69,40 @@ func Init(cfg any, options ...source.Option) (err error) {
 		return err
 	}
 
+	stage := getStage()
+
 	var rb []byte
-	rb, err = f.ReadFile("application.yml")
+	rb, err = f.ReadFile(opts.Name)
 	if err != nil {
-		err = nil
-		rb, err = f.ReadFile("application.yaml")
-	}
-	if err != nil {
+		log.Errorf("read file error: %v", err)
 		return err
 	}
-	err = yaml.Unmarshal(rb, cfg)
+	var unm func([]byte, interface{}) error
+	switch f.GetExtend() {
+	case "yml", "yaml":
+		unm = yaml.Unmarshal
+	case "json":
+		unm = json.Unmarshal
+	}
+	err = unm(rb, cfg)
 	if err != nil {
+		log.Errorf("unmarshal error: %v", err)
 		return err
 	}
+
+	rb, err = f.ReadFile(fmt.Sprintf("%s-%s", opts.Name, stage))
+	if err != nil {
+		log.Errorf("read file error: %v", err)
+		return err
+	}
+	err = unm(rb, cfg)
+	if err != nil {
+		log.Errorf("unmarshal error: %v", err)
+	}
+	return err
+}
+
+func getStage() string {
 	stage := os.Getenv("stage")
 	if stage == "" {
 		stage = os.Getenv("STAGE")
@@ -88,13 +110,5 @@ func Init(cfg any, options ...source.Option) (err error) {
 	if stage == "" {
 		stage = "local"
 	}
-	rb, err = f.ReadFile(fmt.Sprintf("application-%s.yml", stage))
-	if err != nil {
-		err = nil
-		rb, err = f.ReadFile(fmt.Sprintf("application-%s.yaml", stage))
-		if err != nil {
-			return nil
-		}
-	}
-	return yaml.Unmarshal(rb, cfg)
+	return stage
 }
