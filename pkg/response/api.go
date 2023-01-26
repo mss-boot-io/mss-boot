@@ -16,12 +16,14 @@ import (
 	"github.com/gin-gonic/gin"
 	"github.com/gin-gonic/gin/binding"
 	"github.com/go-playground/validator/v10"
+
 	"github.com/mss-boot-io/mss-boot/core/logger"
 	"github.com/mss-boot-io/mss-boot/pkg"
 	"github.com/mss-boot-io/mss-boot/pkg/language"
 )
 
 var DefaultLanguage = "zh-CN"
+var AuthHandler gin.HandlerFunc
 
 type Api struct {
 	Context *gin.Context
@@ -79,13 +81,16 @@ func (e *Api) SetEngine(engine *gin.RouterGroup) {
 	e.engine = engine
 }
 
-func (e *Api) AddError(err error) {
+func (e *Api) AddError(err error) *Api {
+	if err == nil {
+		return e
+	}
 	if e.Error == nil {
 		e.Error = err
 	} else if err != nil {
-		e.Log.Error(err)
 		e.Error = fmt.Errorf("%v; %w", e.Error, err)
 	}
+	return e
 }
 
 // Make 设置http上下文
@@ -93,6 +98,14 @@ func (e *Api) Make(c *gin.Context) *Api {
 	e.Context = c
 	e.Log = GetRequestLogger(c)
 	return e
+}
+
+// Make 设置http上下文, 返回api
+func Make(c *gin.Context) *Api {
+	return &Api{
+		Context: c,
+		Log:     GetRequestLogger(c),
+	}
 }
 
 // Bind 参数校验
@@ -158,17 +171,17 @@ func (e *Api) Bind(d interface{}, bindings ...binding.Binding) *Api {
 }
 
 // Err 通常错误数据处理
-func (e Api) Err(code int, err error, msg ...string) {
-	Error(e.Context, code, err, msg...)
+func (e *Api) Err(code int, msg ...string) {
+	Error(e.Context, code, e.Error, msg...)
 }
 
 // OK 通常成功数据处理
-func (e Api) OK(data interface{}, msg ...string) {
+func (e *Api) OK(data interface{}, msg ...string) {
 	OK(e.Context, data, msg...)
 }
 
 // PageOK 分页数据处理
-func (e Api) PageOK(result interface{}, count int64, pageIndex int64, pageSize int64, msg ...string) {
+func (e *Api) PageOK(result interface{}, count int64, pageIndex int64, pageSize int64, msg ...string) {
 	PageOK(e.Context, result, count, pageIndex, pageSize, msg...)
 }
 

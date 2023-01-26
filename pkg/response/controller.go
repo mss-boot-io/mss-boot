@@ -17,19 +17,13 @@ type Controller interface {
 	// Path http path
 	Path() string
 	// Handlers middlewares
-	Handlers() []gin.HandlerFunc
-	// Create create
-	Create(*gin.Context)
-	// Update update
-	Update(*gin.Context)
-	// Delete delete
-	Delete(*gin.Context)
-	// Get get
-	Get(*gin.Context)
-	// List list
-	List(*gin.Context)
-	// Other other
+	Handlers() gin.HandlersChain
+	// GetAction get action
+	GetAction(string) Action
+	// Other handler
 	Other(*gin.RouterGroup)
+	// GetKey get key
+	GetKey() string
 }
 
 // AppendController add controllers to Controllers

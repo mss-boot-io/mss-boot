@@ -19,41 +19,42 @@ import (
 	"github.com/mss-boot-io/mss-boot/pkg/response"
 )
 
-type AuthMiddleware struct {
-	response.Api
-}
-
 // AuthMiddleware 认证中间件
-func (e AuthMiddleware) AuthMiddleware() gin.HandlerFunc {
+func AuthMiddleware() gin.HandlerFunc {
 	return func(c *gin.Context) {
-		e.Make(c)
+		api := response.Make(c)
 		//登录认证
 		accessToken := getTokenFromHeader(c)
 		if accessToken == "" {
-			e.Err(http.StatusUnauthorized, errors.New("token is empty"))
+			api.AddError(errors.New("token is empty"))
+			api.Err(http.StatusUnauthorized)
 			return
 		}
 		client, err := store.DefaultOAuth2Store.
 			GetClientByDomain(c.Request.Context(), c.Request.Host)
 		if err != nil {
-			e.Err(http.StatusUnauthorized, err)
+			api.AddError(err)
+			api.Err(http.StatusUnauthorized)
 			return
 		}
 		provider, err := oidc.NewProvider(c, client.GetIssuer())
 		if err != nil {
-			e.Err(http.StatusUnauthorized, err)
+			api.AddError(err)
+			api.Err(http.StatusUnauthorized)
 			return
 		}
 		idTokenVerifier := provider.Verifier(&oidc.Config{ClientID: client.GetClientID()})
 		idToken, err := idTokenVerifier.Verify(c, accessToken)
 		if err != nil {
-			e.Err(http.StatusUnauthorized, err)
+			api.AddError(err)
+			api.Err(http.StatusUnauthorized)
 			return
 		}
 		user := &User{}
 		err = idToken.Claims(user)
 		if err != nil {
-			e.Err(http.StatusUnauthorized, err)
+			api.AddError(err)
+			api.Err(http.StatusUnauthorized)
 			return
 		}
 		//鉴权
