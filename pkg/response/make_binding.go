@@ -8,10 +8,11 @@
 package response
 
 import (
-	"github.com/gin-gonic/gin/binding"
 	"reflect"
 	"strings"
 	"sync"
+
+	"github.com/gin-gonic/gin/binding"
 )
 
 const (

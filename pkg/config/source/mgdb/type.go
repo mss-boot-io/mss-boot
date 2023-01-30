@@ -31,6 +31,7 @@ type Tag struct {
 	DataType string `json:"dataType"`
 }
 
+// GenerateBytes generate bytes
 func (c *SystemConfig) GenerateBytes() ([]byte, error) {
 	data := make([]map[string]interface{}, len(c.Tags))
 	for i := range c.Tags {
@@ -57,6 +58,7 @@ func buildMap(keys []string, value string) map[string]any {
 	return data
 }
 
+// mergeMapsDepth deep merge multi map
 func mergeMapsDepth(ms ...map[string]any) map[string]any {
 	data := make(map[string]any)
 	for i := range ms {
@@ -65,6 +67,7 @@ func mergeMapsDepth(ms ...map[string]any) map[string]any {
 	return data
 }
 
+// mergeMapDepth deep merge map
 func mergeMapDepth(m1, m2 map[string]any) map[string]any {
 	for k := range m2 {
 		if v, ok := m1[k]; ok {
@@ -80,6 +83,7 @@ func mergeMapDepth(m1, m2 map[string]any) map[string]any {
 	return m1
 }
 
+// mergeMap merge map
 func mergeMap(m1, m2 map[string]any) map[string]any {
 	for k := range m2 {
 		m1[k] = m2[k]

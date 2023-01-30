@@ -3,7 +3,9 @@ package pkg
 import (
 	"github.com/gin-gonic/gin"
 	"github.com/google/uuid"
+	"github.com/kamva/mgm/v3"
 	"golang.org/x/crypto/bcrypt"
+	"reflect"
 )
 
 const (
@@ -27,4 +29,14 @@ func GenerateMsgIDFromContext(c *gin.Context) string {
 		c.Header(TrafficKey, requestId)
 	}
 	return requestId
+}
+
+// ModelDeepCopy model deep copy
+func ModelDeepCopy(m mgm.Model) mgm.Model {
+	return reflect.New(reflect.TypeOf(m).Elem()).Interface().(mgm.Model)
+}
+
+// DeepCopy deep copy
+func DeepCopy(d any) any {
+	return reflect.New(reflect.TypeOf(d).Elem()).Interface()
 }

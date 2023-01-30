@@ -12,6 +12,9 @@ import (
 	"log"
 	"time"
 
+	"github.com/casbin/casbin/v2"
+	"github.com/casbin/casbin/v2/persist"
+	"github.com/casbin/mongodb-adapter/v3"
 	"github.com/kamva/mgm/v3"
 	"go.mongodb.org/mongo-driver/mongo"
 	"go.mongodb.org/mongo-driver/mongo/options"
@@ -19,13 +22,15 @@ import (
 )
 
 var DB *mongo.Database
+var Enforcer casbin.IEnforcer
 
 var tables = make([]Tabler, 0)
 
 type Database struct {
-	URL     string        `yaml:"url" json:"url"`
-	Name    string        `yaml:"name" json:"name"`
-	Timeout time.Duration `yaml:"timeout" json:"timeout"`
+	URL         string        `yaml:"url" json:"url"`
+	Name        string        `yaml:"name" json:"name"`
+	Timeout     time.Duration `yaml:"timeout" json:"timeout"`
+	CasbinModel string        `yaml:"casbinModel" json:"casbinModel"`
 }
 
 // AppendTable append table
@@ -65,6 +70,22 @@ func (e *Database) Init() {
 	DB = client.Database(e.Name)
 	for i := range tables {
 		tables[i].Make()
+	}
+	if e.CasbinModel != "" {
+		//set casbin adapter
+		var a persist.Adapter
+		a, err = mongodbadapter.NewAdapterWithClientOption(clientOptions, e.Name, e.Timeout)
+		if err != nil {
+			log.Fatalf("mongodbadapter.NewAdapterWithClientOption err: %s", err.Error())
+		}
+		Enforcer, err = casbin.NewSyncedEnforcer(casbin.NewEnforceContext(e.CasbinModel), a)
+		if err != nil {
+			log.Fatalf("casbin.NewSyncedEnforcer err: %s", err.Error())
+		}
+		err = Enforcer.LoadPolicy()
+		if err != nil {
+			log.Fatalf("Enforcer.LoadPolicy err: %s", err.Error())
+		}
 	}
 }
 

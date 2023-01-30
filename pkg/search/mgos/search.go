@@ -19,10 +19,18 @@ func MakeCondition(q interface{}) (bson.M, bson.D) {
 	var andFilter bson.M
 	var orFilter bson.M
 	if len(condition.And) > 0 {
-		andFilter = bson.M{"$and": condition.And}
+		if len(condition.And) > 1 {
+			andFilter = bson.M{"$and": condition.And}
+		} else {
+			andFilter = condition.And[0]
+		}
 	}
 	if len(condition.Or) > 0 {
-		orFilter = bson.M{"$or": condition.Or}
+		if len(condition.Or) > 1 {
+			orFilter = bson.M{"$or": condition.Or}
+		} else {
+			orFilter = condition.Or[0]
+		}
 	}
 	if len(condition.And) > 0 && len(condition.Or) > 0 {
 		filter = bson.M{"$and": []bson.M{andFilter, orFilter}}
