@@ -10,6 +10,7 @@ package controller
 import (
 	"strings"
 
+	"github.com/gin-gonic/gin"
 	"github.com/kamva/mgm/v3"
 
 	"github.com/mss-boot-io/mss-boot/pkg/response"
@@ -36,6 +37,14 @@ func NewSimple(options ...Option) *Simple {
 // Path route path
 func (e *Simple) Path() string {
 	return strings.ReplaceAll(strings.ToLower(mgm.CollName(e.options.model)), "_", "-")
+}
+
+// Handlers return handlers
+func (e *Simple) Handlers() gin.HandlersChain {
+	if e.options.auth {
+		return gin.HandlersChain{response.AuthHandler}
+	}
+	return nil
 }
 
 // GetAction get action
