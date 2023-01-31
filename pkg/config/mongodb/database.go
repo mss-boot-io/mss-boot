@@ -13,6 +13,7 @@ import (
 	"time"
 
 	"github.com/casbin/casbin/v2"
+	"github.com/casbin/casbin/v2/model"
 	"github.com/casbin/casbin/v2/persist"
 	"github.com/casbin/mongodb-adapter/v3"
 	"github.com/kamva/mgm/v3"
@@ -78,7 +79,12 @@ func (e *Database) Init() {
 		if err != nil {
 			log.Fatalf("mongodbadapter.NewAdapterWithClientOption err: %s", err.Error())
 		}
-		Enforcer, err = casbin.NewSyncedEnforcer(casbin.NewEnforceContext(e.CasbinModel), a)
+		var m model.Model
+		m, err = model.NewModelFromString(e.CasbinModel)
+		if err != nil {
+			log.Fatalf("model.NewModelFromString err: %s", err.Error())
+		}
+		Enforcer, err = casbin.NewSyncedEnforcer(m, a)
 		if err != nil {
 			log.Fatalf("casbin.NewSyncedEnforcer err: %s", err.Error())
 		}
