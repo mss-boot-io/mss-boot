@@ -1,29 +1,30 @@
 /*
- * @Author: lwnmengjing
- * @Date: 2023/1/13 04:26:39
- * @Last Modified by: lwnmengjing
- * @Last Modified time: 2023/1/13 04:26:39
+ * @Author: lwnmengjing<lwnmengjing@qq.com>
+ * @Date: 2023/2/11 01:22:20
+ * @Last Modified by: lwnmengjing<lwnmengjing@qq.com>
+ * @Last Modified time: 2023/2/11 01:22:20
  */
 
-package mgdb
+package gorm
 
 import (
 	"encoding/json"
 	"fmt"
-	"github.com/mss-boot-io/mss-boot/pkg"
 	"strings"
 
-	"github.com/kamva/mgm/v3"
 	"gopkg.in/yaml.v3"
+	"gorm.io/gorm"
+
+	"github.com/mss-boot-io/mss-boot/pkg"
 )
 
 type SystemConfig struct {
-	mgm.DefaultModel `bson:",inline"`
-	Name             string `bson:"name" json:"name"`
-	Ext              string `bson:"ext" json:"ext"`
-	Tags             []Tag  `bson:"tags" json:"tags"`
-	Description      string `bson:"description" json:"description"`
-	Metadata         any    `bson:"metadata" json:"metadata"`
+	gorm.Model
+	Name        string `gorm:"column:name" json:"name"`
+	Ext         string `gorm:"column:ext" json:"ext"`
+	Description string `gorm:"column:description" json:"description"`
+	Tags        []Tag  `gorm:"-" json:"tags"`
+	Metadata    []byte `gorm:"column:metadata" json:"metadata"`
 }
 
 type Tag struct {
