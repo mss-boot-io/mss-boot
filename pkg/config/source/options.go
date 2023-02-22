@@ -70,6 +70,9 @@ func WithDatasource(datasource string) Option {
 // WithMongoDBURL set mongodb url
 func WithMongoDBURL(url string) Option {
 	return func(args *Options) {
+		if url == "" {
+			url = "mongodb://localhost:27017"
+		}
 		args.MongoDBURL = url
 	}
 }

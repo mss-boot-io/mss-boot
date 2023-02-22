@@ -18,7 +18,6 @@ import (
 	sourceLocal "github.com/mss-boot-io/mss-boot/pkg/config/source/local"
 	"github.com/mss-boot-io/mss-boot/pkg/config/source/mgdb"
 	sourceS3 "github.com/mss-boot-io/mss-boot/pkg/config/source/s3"
-	"github.com/spf13/cast"
 	"gopkg.in/yaml.v3"
 )
 
@@ -48,12 +47,6 @@ func Init(cfg any, options ...source.Option) (err error) {
 			source.WithBucket(s.Bucket), source.WithClient(s.GetClient()))
 		f, err = sourceS3.New(options...)
 	case source.MGDB:
-		options = append(options,
-			source.WithMongoDBURL(os.Getenv("database.url")),
-			source.WithMongoDBName(os.Getenv("database.name")),
-			source.WithTimeout(cast.ToDuration(os.Getenv("database.timeout"))),
-			source.WithMongoDBCollection(os.Getenv("database.collection")),
-		)
 		f, err = mgdb.New(options...)
 		if err != nil {
 			return err

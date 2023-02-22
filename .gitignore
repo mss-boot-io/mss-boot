@@ -22,5 +22,9 @@ vendor/
 
 temp/
 
-go.work
-go.work.sum
+### workspace ###
+go.work*
+
+### vscode ###
+.vscode
+*.code-workspace

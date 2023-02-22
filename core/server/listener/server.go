@@ -94,7 +94,7 @@ func (e *Server) String() string {
 	return e.name
 }
 
-// Start start
+// Start server
 func (e *Server) Start(ctx context.Context) error {
 	l, err := net.Listen("tcp", e.opts.addr)
 	if err != nil {

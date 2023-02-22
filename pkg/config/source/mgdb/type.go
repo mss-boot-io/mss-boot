@@ -10,11 +10,12 @@ package mgdb
 import (
 	"encoding/json"
 	"fmt"
-	"github.com/mss-boot-io/mss-boot/pkg"
 	"strings"
 
 	"github.com/kamva/mgm/v3"
 	"gopkg.in/yaml.v3"
+
+	"github.com/mss-boot-io/mss-boot/pkg"
 )
 
 type SystemConfig struct {
