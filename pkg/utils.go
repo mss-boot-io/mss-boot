@@ -40,3 +40,46 @@ func ModelDeepCopy(m mgm.Model) mgm.Model {
 func DeepCopy(d any) any {
 	return reflect.New(reflect.TypeOf(d).Elem()).Interface()
 }
+
+func BuildMap(keys []string, value string) map[string]any {
+	data := make(map[string]any)
+	if len(keys) > 1 {
+		data[keys[0]] = BuildMap(keys[1:], value)
+	} else {
+		return map[string]any{keys[0]: value}
+	}
+	return data
+}
+
+// MergeMapsDepth deep merge multi map
+func MergeMapsDepth(ms ...map[string]any) map[string]any {
+	data := make(map[string]any)
+	for i := range ms {
+		data = MergeMapDepth(data, ms[i])
+	}
+	return data
+}
+
+// MergeMapDepth deep merge map
+func MergeMapDepth(m1, m2 map[string]any) map[string]any {
+	for k := range m2 {
+		if v, ok := m1[k]; ok {
+			if m, ok := v.(map[string]any); ok {
+				m1[k] = MergeMapDepth(m, m2[k].(map[string]any))
+			} else {
+				m1[k] = m2[k]
+			}
+		} else {
+			m1[k] = m2[k]
+		}
+	}
+	return m1
+}
+
+// MergeMap merge map
+func MergeMap(m1, m2 map[string]any) map[string]any {
+	for k := range m2 {
+		m1[k] = m2[k]
+	}
+	return m1
+}

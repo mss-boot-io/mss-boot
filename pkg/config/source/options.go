@@ -22,6 +22,7 @@ const (
 	Local Provider = "local"
 	S3    Provider = "s3"
 	MGDB  Provider = "mgdb"
+	GORM  Provider = "gorm"
 )
 
 var Extends = []string{"yml", "yaml", "json"}
@@ -47,6 +48,7 @@ type Options struct {
 	MongoDBURL        string
 	MongoDBName       string
 	MongoDBCollection string
+	Datasource        string
 }
 
 // DefaultOptions default options
@@ -58,9 +60,19 @@ func DefaultOptions() *Options {
 	}
 }
 
+// WithDatasource set datasource
+func WithDatasource(datasource string) Option {
+	return func(args *Options) {
+		args.Datasource = datasource
+	}
+}
+
 // WithMongoDBURL set mongodb url
 func WithMongoDBURL(url string) Option {
 	return func(args *Options) {
+		if url == "" {
+			url = "mongodb://localhost:27017"
+		}
 		args.MongoDBURL = url
 	}
 }

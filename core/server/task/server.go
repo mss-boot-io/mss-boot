@@ -1,0 +1,91 @@
+/*
+ * @Author: lwnmengjing<lwnmengjing@qq.com>
+ * @Date: 2023/2/21 15:35:43
+ * @Last Modified by: lwnmengjing<lwnmengjing@qq.com>
+ * @Last Modified time: 2023/2/21 15:35:43
+ */
+
+package task
+
+import (
+	"context"
+	log "github.com/mss-boot-io/mss-boot/core/logger"
+	"github.com/robfig/cron/v3"
+)
+
+var task = &Server{
+	opts: setDefaultOption(),
+}
+
+// Server manage
+type Server struct {
+	ctx  context.Context
+	opts options
+}
+
+// New server
+func New(opts ...Option) *Server {
+	task.Options(opts...)
+	return task
+}
+
+// UpdateJob update or create job
+func UpdateJob(key string, spec string, job cron.Job) error {
+	task.opts.mux.Lock()
+	defer task.opts.mux.Unlock()
+	s, ok := task.opts.schedules[key]
+	if ok {
+		task.opts.task.Remove(s.entryID)
+	}
+	entryID, err := task.opts.task.AddJob(spec, job)
+	if err != nil {
+		log.Errorf("task add job error: %s", err.Error())
+		return err
+	}
+	task.opts.schedules[key] = schedule{
+		spec:    spec,
+		job:     job,
+		entryID: entryID,
+	}
+	return nil
+}
+
+// Options set options
+func (e *Server) Options(opts ...Option) {
+	for _, o := range opts {
+		o(&e.opts)
+	}
+}
+
+// String server name
+func (e *Server) String() string {
+	return "task"
+}
+
+// Start server
+func (e *Server) Start(ctx context.Context) error {
+	var err error
+	e.ctx = ctx
+	for i, s := range e.opts.schedules {
+		s.entryID, err = e.opts.task.AddJob(e.opts.schedules[i].spec, e.opts.schedules[i].job)
+		if err != nil {
+			log.Errorf("task add job error: %s", err.Error())
+			return err
+		}
+		e.opts.schedules[i] = s
+	}
+	go func() {
+		e.opts.task.Run()
+		<-ctx.Done()
+		err = e.Shutdown(ctx)
+		if err != nil {
+			log.Errorf("%S Server shutdown error: %s", e.String(), err.Error())
+		}
+	}()
+	return nil
+}
+
+func (e *Server) Shutdown(_ context.Context) error {
+	e.opts.task.Stop()
+	return nil
+}

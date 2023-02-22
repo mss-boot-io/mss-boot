@@ -8,6 +8,7 @@ require (
 	github.com/grpc-ecosystem/go-grpc-prometheus v1.2.0
 	github.com/json-iterator/go v1.1.12
 	github.com/prometheus/client_golang v1.12.1
+	github.com/robfig/cron/v3 v3.0.1
 	github.com/sirupsen/logrus v1.8.1
 	go.uber.org/zap v1.21.0
 	google.golang.org/grpc v1.45.0
