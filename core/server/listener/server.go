@@ -11,7 +11,7 @@ import (
 	"context"
 	"net"
 	"net/http"
-	"net/http/pprof"
+	_ "net/http/pprof"
 
 	log "github.com/mss-boot-io/mss-boot/core/logger"
 	"github.com/mss-boot-io/mss-boot/core/server"
@@ -89,13 +89,7 @@ func NewPprof(opts ...Option) server.Runnable {
 		opts: setDefaultOption(),
 	}
 	s.opts.addr = ":5000"
-	h := http.NewServeMux()
-	h.HandleFunc("/debug/pprof/", pprof.Index)
-	h.HandleFunc("/debug/pprof/cmdline", pprof.Cmdline)
-	h.HandleFunc("/debug/pprof/profile", pprof.Profile)
-	h.HandleFunc("/debug/pprof/symbol", pprof.Symbol)
-	h.HandleFunc("/debug/pprof/trace", pprof.Trace)
-	s.opts.handler = h
+	s.opts.handler = http.DefaultServeMux
 	s.Options(opts...)
 	return s
 }
