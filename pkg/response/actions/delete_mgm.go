@@ -9,6 +9,7 @@ package actions
 
 import (
 	"errors"
+	"fmt"
 	"net/http"
 
 	"github.com/gin-gonic/gin"
@@ -25,17 +26,17 @@ type Delete struct {
 	Key string
 }
 
-// NewDelete new delete action
-func NewDelete(m mgm.Model, key string) *Delete {
+// NewDeleteMgm new deleteMgm action
+func NewDeleteMgm(m mgm.Model, key string) *Delete {
 	return &Delete{
-		Base: Base{Model: m},
+		Base: Base{ModelMgm: m},
 		Key:  key,
 	}
 }
 
 // String action name
 func (*Delete) String() string {
-	return "delete"
+	return "deleteMgm"
 }
 
 // Handler action handler
@@ -50,18 +51,28 @@ func (e *Delete) Handler() gin.HandlerFunc {
 				return
 			}
 		}
-		e.delete(c, v)
+		if e.ModelMgm != nil {
+			e.deleteMgm(c, v)
+			return
+		}
+		if e.ModelGorm != nil {
+			e.deleteGorm(c, v)
+			return
+		}
+		response.Error(c,
+			http.StatusNotImplemented,
+			fmt.Errorf("not implemented"))
 	}
 }
 
-// delete  batch and single delete
-func (e *Delete) delete(c *gin.Context, ids ...string) {
+// deleteMgm  batch and single deleteMgm
+func (e *Delete) deleteMgm(c *gin.Context, ids ...string) {
 	api := response.Make(c)
 	if len(ids) == 0 {
 		api.OK(nil)
 		return
 	}
-	_, err := mgm.Coll(e.Model).DeleteMany(c, bson.M{"_id": bson.M{"$in": ids}})
+	_, err := mgm.Coll(e.ModelMgm).DeleteMany(c, bson.M{"_id": bson.M{"$in": ids}})
 	if err != nil {
 		if errors.Is(err, mongo.ErrNoDocuments) {
 			api.OK(nil)

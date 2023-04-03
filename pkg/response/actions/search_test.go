@@ -8,9 +8,10 @@
 package actions
 
 import (
+	"testing"
+
 	"github.com/kamva/mgm/v3"
 	"go.mongodb.org/mongo-driver/bson/primitive"
-	"testing"
 )
 
 type testModel struct {
@@ -49,15 +50,15 @@ func Test_getLinkTag(t *testing.T) {
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
-			gotCollectionName, gotLocalField, gotForeignField := getLinkTag(tt.args.model)
-			if gotCollectionName != tt.wantCollectionName {
-				t.Errorf("getLinkTag() gotCollectionName = %v, want %v", gotCollectionName, tt.wantCollectionName)
+			list := getLinkTag(tt.args.model)
+			if list[0].CollectionName != tt.wantCollectionName {
+				t.Errorf("getLinkTag() gotCollectionName = %v, want %v", list[0].CollectionName, tt.wantCollectionName)
 			}
-			if gotLocalField != tt.wantLocalField {
-				t.Errorf("getLinkTag() gotLocalField = %v, want %v", gotLocalField, tt.wantLocalField)
+			if list[0].LocalField != tt.wantLocalField {
+				t.Errorf("getLinkTag() gotLocalField = %v, want %v", list[0].LocalField, tt.wantLocalField)
 			}
-			if gotForeignField != tt.wantForeignField {
-				t.Errorf("getLinkTag() gotForeignField = %v, want %v", gotForeignField, tt.wantForeignField)
+			if list[0].ForeignField != tt.wantForeignField {
+				t.Errorf("getLinkTag() gotForeignField = %v, want %v", list[0].ForeignField, tt.wantForeignField)
 			}
 		})
 	}

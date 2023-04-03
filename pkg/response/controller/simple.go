@@ -55,13 +55,13 @@ func (e *Simple) GetAction(key string) response.Action {
 	// default action
 	switch key {
 	case response.Get:
-		return actions.NewGet(e.options.model, e.GetKey())
+		return actions.NewGetMgm(e.options.model, e.GetKey())
 	case response.Control:
-		return actions.NewControl(e.options.model, e.GetKey())
+		return actions.NewControlMgm(e.options.model, e.GetKey())
 	case response.Delete:
-		return actions.NewDelete(e.options.model, e.GetKey())
+		return actions.NewDeleteMgm(e.options.model, e.GetKey())
 	case response.Search:
-		return actions.NewSearch(e.options.model, e.options.search)
+		return actions.NewSearchMgm(e.options.model, e.options.search)
 	default:
 		return nil
 	}

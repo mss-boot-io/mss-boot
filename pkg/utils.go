@@ -1,11 +1,13 @@
 package pkg
 
 import (
+	"reflect"
+
 	"github.com/gin-gonic/gin"
 	"github.com/google/uuid"
 	"github.com/kamva/mgm/v3"
 	"golang.org/x/crypto/bcrypt"
-	"reflect"
+	"gorm.io/gorm/schema"
 )
 
 const (
@@ -34,6 +36,11 @@ func GenerateMsgIDFromContext(c *gin.Context) string {
 // ModelDeepCopy model deep copy
 func ModelDeepCopy(m mgm.Model) mgm.Model {
 	return reflect.New(reflect.TypeOf(m).Elem()).Interface().(mgm.Model)
+}
+
+// TablerDeepCopy model deep copy
+func TablerDeepCopy(m schema.Tabler) schema.Tabler {
+	return reflect.New(reflect.TypeOf(m).Elem()).Interface().(schema.Tabler)
 }
 
 // DeepCopy deep copy
