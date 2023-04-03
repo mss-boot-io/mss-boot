@@ -11,6 +11,7 @@ import (
 	"context"
 	"net"
 	"net/http"
+	_ "net/http/pprof"
 
 	log "github.com/mss-boot-io/mss-boot/core/logger"
 	"github.com/mss-boot-io/mss-boot/core/server"
@@ -78,6 +79,17 @@ func NewReadyz(opts ...Option) server.Runnable {
 		w.WriteHeader(http.StatusOK)
 	})
 	s.opts.handler = h
+	s.Options(opts...)
+	return s
+}
+
+func NewPprof(opts ...Option) server.Runnable {
+	s := &Server{
+		name: "pprof",
+		opts: setDefaultOption(),
+	}
+	s.opts.addr = ":5000"
+	s.opts.handler = http.DefaultServeMux
 	s.Options(opts...)
 	return s
 }
