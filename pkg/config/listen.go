@@ -16,6 +16,10 @@ type Listen struct {
 	CertFile string `yaml:"certFile" json:"certFile"`
 	KeyFile  string `yaml:"keyFile" json:"keyFile"`
 	Timeout  int    `yaml:"timeout" json:"timeout"` // default: 10s
+	Metrics  bool   `yaml:"metrics" json:"metrics"`
+	Healthz  bool   `yaml:"healthz" json:"healthz"`
+	Readyz   bool   `yaml:"readyz" json:"readyz"`
+	Pprof    bool   `yaml:"pprof" json:"pprof"`
 }
 
 func (e *Listen) Init(opts ...listener.Option) []listener.Option {
@@ -33,6 +37,10 @@ func (e *Listen) Init(opts ...listener.Option) []listener.Option {
 		listener.WithCert(e.CertFile),
 		listener.WithKey(e.KeyFile),
 		listener.WithTimeout(e.Timeout),
+		listener.WithMetrics(e.Metrics),
+		listener.WithHealthz(e.Healthz),
+		listener.WithReadyz(e.Readyz),
+		listener.WithPprof(e.Pprof),
 	)
 	return opts
 }
