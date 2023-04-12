@@ -21,15 +21,51 @@ type options struct {
 	startedHook             func()
 	endHook                 func()
 	timeout                 time.Duration
+	metrics                 bool
+	healthz                 bool
+	readyz                  bool
+	pprof                   bool
+}
+
+func (o *options) needServer() bool {
+	return o.metrics || o.healthz || o.readyz || o.pprof
 }
 
 func setDefaultOption() options {
 	return options{
-		addr:    ":8080",
+		addr:    ":5000",
 		timeout: 10 * time.Second,
 		handler: http.HandlerFunc(func(w http.ResponseWriter, req *http.Request) {
 			w.WriteHeader(http.StatusOK)
 		}),
+	}
+}
+
+// WithMetrics set metrics
+func WithMetrics(enable bool) Option {
+	return func(o *options) {
+		o.metrics = enable
+	}
+}
+
+// WithHealthz set healthz
+func WithHealthz(enable bool) Option {
+	return func(o *options) {
+		o.healthz = enable
+	}
+}
+
+// WithReadyz set readyz
+func WithReadyz(enable bool) Option {
+	return func(o *options) {
+		o.readyz = enable
+	}
+}
+
+// WithPprof set pprof
+func WithPprof(enable bool) Option {
+	return func(o *options) {
+		o.pprof = enable
 	}
 }
 
