@@ -35,11 +35,6 @@ func New(name string, opts ...Option) server.Runnable {
 	}
 	s.Options(opts...)
 
-	//disable all handler
-	if !s.opts.needServer() {
-		return nil
-	}
-
 	s.opts.handler = http.DefaultServeMux
 
 	if s.opts.metrics {

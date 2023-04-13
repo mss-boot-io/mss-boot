@@ -27,10 +27,6 @@ type options struct {
 	pprof                   bool
 }
 
-func (o *options) needServer() bool {
-	return o.metrics || o.healthz || o.readyz || o.pprof
-}
-
 func setDefaultOption() options {
 	return options{
 		addr:    ":5000",
