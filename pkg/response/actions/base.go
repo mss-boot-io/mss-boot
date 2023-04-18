@@ -8,11 +8,11 @@
 package actions
 
 import (
-	"gorm.io/gorm/schema"
 	"net/http"
 
 	"github.com/gin-gonic/gin"
 	"github.com/kamva/mgm/v3"
+	"gorm.io/gorm/schema"
 )
 
 type Base struct {

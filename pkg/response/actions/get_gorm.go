@@ -8,6 +8,7 @@
 package actions
 
 import (
+	"gorm.io/gorm/schema"
 	"net/http"
 
 	"github.com/gin-gonic/gin"
@@ -16,6 +17,14 @@ import (
 	"github.com/mss-boot-io/mss-boot/pkg/config/gormdb"
 	"github.com/mss-boot-io/mss-boot/pkg/response"
 )
+
+// NewGetGorm new get action
+func NewGetGorm(m schema.Tabler, key string) *Control {
+	return &Control{
+		Base: Base{ModelGorm: m},
+		Key:  key,
+	}
+}
 
 // getGorm get one record by id
 func (e *Get) getGorm(c *gin.Context, key string) {

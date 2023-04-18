@@ -8,12 +8,22 @@
 package actions
 
 import (
+	"net/http"
+
 	"github.com/gin-gonic/gin"
 	"github.com/mss-boot-io/mss-boot/pkg"
 	"github.com/mss-boot-io/mss-boot/pkg/config/gormdb"
 	"github.com/mss-boot-io/mss-boot/pkg/response"
-	"net/http"
+	"gorm.io/gorm/schema"
 )
+
+// NewControlGorm new control action
+func NewControlGorm(m schema.Tabler, key string) *Control {
+	return &Control{
+		Base: Base{ModelGorm: m},
+		Key:  key,
+	}
+}
 
 func (e *Control) createGorm(c *gin.Context) {
 	m := pkg.TablerDeepCopy(e.ModelGorm)

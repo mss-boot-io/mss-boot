@@ -52,7 +52,17 @@ func (e *Simple) GetAction(key string) response.Action {
 	if action := e.options.getAction(key); action != nil {
 		return action
 	}
-	// default action
+	switch e.options.modelProvider {
+	case actions.ModelProviderMgm:
+		return e.getActionMgm(key)
+	case actions.ModelProviderGorm:
+		return e.getActionGorm(key)
+	default:
+		return nil
+	}
+}
+
+func (e *Simple) getActionMgm(key string) response.Action {
 	switch key {
 	case response.Get:
 		return actions.NewGetMgm(e.options.model, e.GetKey())
@@ -62,6 +72,21 @@ func (e *Simple) GetAction(key string) response.Action {
 		return actions.NewDeleteMgm(e.options.model, e.GetKey())
 	case response.Search:
 		return actions.NewSearchMgm(e.options.model, e.options.search)
+	default:
+		return nil
+	}
+}
+
+func (e *Simple) getActionGorm(key string) response.Action {
+	switch key {
+	case response.Get:
+		return actions.NewGetGorm(e.options.model, e.GetKey())
+	case response.Control:
+		return actions.NewControlGorm(e.options.model, e.GetKey())
+	case response.Delete:
+		return actions.NewDeleteGorm(e.options.model, e.GetKey())
+	case response.Search:
+		return actions.NewSearchGorm(e.options.model, e.options.search)
 	default:
 		return nil
 	}

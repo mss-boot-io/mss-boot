@@ -14,12 +14,10 @@ import (
 
 	"github.com/gin-gonic/gin"
 	"github.com/kamva/mgm/v3"
-	"go.mongodb.org/mongo-driver/bson/primitive"
-	"go.mongodb.org/mongo-driver/mongo"
-	"gorm.io/gorm/schema"
-
 	"github.com/mss-boot-io/mss-boot/pkg"
 	"github.com/mss-boot-io/mss-boot/pkg/response"
+	"go.mongodb.org/mongo-driver/bson/primitive"
+	"go.mongodb.org/mongo-driver/mongo"
 )
 
 // Control action
@@ -32,14 +30,6 @@ type Control struct {
 func NewControlMgm(m mgm.Model, key string) *Control {
 	return &Control{
 		Base: Base{ModelMgm: m},
-		Key:  key,
-	}
-}
-
-// NewControlGorm new control action
-func NewControlGorm(m schema.Tabler, key string) *Control {
-	return &Control{
-		Base: Base{ModelGorm: m},
 		Key:  key,
 	}
 }

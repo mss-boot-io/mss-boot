@@ -9,6 +9,7 @@ package actions
 
 import (
 	"errors"
+	"github.com/kamva/mgm/v3"
 	"net/http"
 
 	"github.com/gin-gonic/gin"
@@ -18,6 +19,14 @@ import (
 	"github.com/mss-boot-io/mss-boot/pkg/search/gorms"
 	"gorm.io/gorm"
 )
+
+// NewSearchGorm new search action
+func NewSearchGorm(m mgm.Model, search response.Searcher) *Search {
+	return &Search{
+		Base:   Base{ModelMgm: m},
+		Search: search,
+	}
+}
 
 func (e *Search) searchGorm(c *gin.Context) {
 	req := pkg.DeepCopy(e.Search).(response.Searcher)

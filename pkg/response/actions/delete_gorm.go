@@ -8,6 +8,7 @@
 package actions
 
 import (
+	"gorm.io/gorm/schema"
 	"net/http"
 
 	"github.com/gin-gonic/gin"
@@ -15,6 +16,14 @@ import (
 	"github.com/mss-boot-io/mss-boot/pkg/config/gormdb"
 	"github.com/mss-boot-io/mss-boot/pkg/response"
 )
+
+// NewDeleteGorm new delete action
+func NewDeleteGorm(m schema.Tabler, key string) *Control {
+	return &Control{
+		Base: Base{ModelGorm: m},
+		Key:  key,
+	}
+}
 
 func (e *Delete) deleteGorm(c *gin.Context, ids ...string) {
 	api := response.Make(c)

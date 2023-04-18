@@ -8,9 +8,8 @@
 package controller
 
 import (
-	"github.com/kamva/mgm/v3"
-
 	"github.com/mss-boot-io/mss-boot/pkg/response"
+	"github.com/mss-boot-io/mss-boot/pkg/response/actions"
 )
 
 // Option set options
@@ -18,10 +17,11 @@ type Option func(*Options)
 
 // Options options
 type Options struct {
-	actions []response.Action
-	search  response.Searcher
-	model   mgm.Model
-	auth    bool
+	actions       []response.Action
+	search        response.Searcher
+	model         actions.Model
+	auth          bool
+	modelProvider actions.ModelProvider
 }
 
 // getAction get action
@@ -59,7 +59,7 @@ func WithSearch(search response.Searcher) Option {
 }
 
 // WithModel set model
-func WithModel(m mgm.Model) Option {
+func WithModel(m actions.Model) Option {
 	return func(o *Options) {
 		o.model = m
 	}
@@ -69,5 +69,12 @@ func WithModel(m mgm.Model) Option {
 func WithAuth(auth bool) Option {
 	return func(o *Options) {
 		o.auth = auth
+	}
+}
+
+// WithModelProvider set model provider
+func WithModelProvider(provider actions.ModelProvider) Option {
+	return func(o *Options) {
+		o.modelProvider = provider
 	}
 }
