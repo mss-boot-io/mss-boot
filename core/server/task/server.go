@@ -29,6 +29,17 @@ func New(opts ...Option) *Server {
 	return task
 }
 
+// GetJob get job
+func GetJob(key string) (string, cron.Job, bool) {
+	task.opts.mux.Lock()
+	defer task.opts.mux.Unlock()
+	s, ok := task.opts.schedules[key]
+	if !ok {
+		return "", nil, false
+	}
+	return s.spec, s.job, true
+}
+
 // UpdateJob update or create job
 func UpdateJob(key string, spec string, job cron.Job) error {
 	task.opts.mux.Lock()
@@ -47,6 +58,19 @@ func UpdateJob(key string, spec string, job cron.Job) error {
 		job:     job,
 		entryID: entryID,
 	}
+	return nil
+}
+
+// RemoveJob remove job
+func RemoveJob(key string) error {
+	task.opts.mux.Lock()
+	defer task.opts.mux.Unlock()
+	s, ok := task.opts.schedules[key]
+	if !ok {
+		return nil
+	}
+	task.opts.task.Remove(s.entryID)
+	delete(task.opts.schedules, key)
 	return nil
 }
 
