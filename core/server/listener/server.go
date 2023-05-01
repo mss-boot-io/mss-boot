@@ -11,6 +11,7 @@ import (
 	"context"
 	"net"
 	"net/http"
+	_ "net/http/pprof"
 
 	log "github.com/mss-boot-io/mss-boot/core/logger"
 	"github.com/mss-boot-io/mss-boot/core/server"
@@ -33,52 +34,22 @@ func New(name string, opts ...Option) server.Runnable {
 		opts: setDefaultOption(),
 	}
 	s.Options(opts...)
-	return s
-}
 
-// NewMetrics 新建默认监控服务
-func NewMetrics(opts ...Option) server.Runnable {
-	s := &Server{
-		name: "metrics",
-		opts: setDefaultOption(),
-	}
-	s.opts.addr = ":3000"
-	h := http.NewServeMux()
-	h.Handle("/metrics", promhttp.Handler())
-	s.opts.handler = h
-	s.Options(opts...)
-	return s
-}
+	s.opts.handler = http.DefaultServeMux
 
-// NewHealthz default heealthz server
-func NewHealthz(opts ...Option) server.Runnable {
-	s := &Server{
-		name: "healthz",
-		opts: setDefaultOption(),
+	if s.opts.metrics {
+		http.Handle("/metrics", promhttp.Handler())
 	}
-	s.opts.addr = ":4000"
-	h := http.NewServeMux()
-	h.HandleFunc("/healthz", func(w http.ResponseWriter, _ *http.Request) {
-		w.WriteHeader(http.StatusOK)
-	})
-	s.opts.handler = h
-	s.Options(opts...)
-	return s
-}
-
-// NewReadyz default readyz server
-func NewReadyz(opts ...Option) server.Runnable {
-	s := &Server{
-		name: "readyz",
-		opts: setDefaultOption(),
+	if s.opts.healthz {
+		http.HandleFunc("/healthz", func(w http.ResponseWriter, _ *http.Request) {
+			w.WriteHeader(http.StatusOK)
+		})
 	}
-	s.opts.addr = ":2000"
-	h := http.NewServeMux()
-	h.HandleFunc("/readyz", func(w http.ResponseWriter, _ *http.Request) {
-		w.WriteHeader(http.StatusOK)
-	})
-	s.opts.handler = h
-	s.Options(opts...)
+	if s.opts.readyz {
+		http.HandleFunc("/readyz", func(w http.ResponseWriter, _ *http.Request) {
+			w.WriteHeader(http.StatusOK)
+		})
+	}
 	return s
 }
 

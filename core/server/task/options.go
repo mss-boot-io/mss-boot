@@ -39,7 +39,7 @@ func WithSchedule(key string, spec string, job cron.Job) Option {
 
 func setDefaultOption() options {
 	return options{
-		task:      cron.New(cron.WithSeconds()),
+		task:      cron.New(cron.WithSeconds(), cron.WithChain()),
 		schedules: make(map[string]schedule),
 	}
 }
