@@ -8,6 +8,10 @@
 package gormdb
 
 import (
+	"github.com/casbin/casbin/v2"
+	"github.com/casbin/casbin/v2/model"
+	"github.com/casbin/casbin/v2/persist"
+	gormadapter "github.com/casbin/gorm-adapter/v3"
 	log "github.com/mss-boot-io/mss-boot/core/logger"
 	. "github.com/mss-boot-io/mss-boot/pkg/config/gormdb/logger"
 	"gorm.io/gorm"
@@ -16,6 +20,7 @@ import (
 )
 
 var DB *gorm.DB
+var Enforcer casbin.IEnforcer
 
 type Database struct {
 	Driver          string             `yaml:"driver"`
@@ -25,6 +30,7 @@ type Database struct {
 	MaxIdleConns    int                `yaml:"maxIdleConns"`
 	MaxOpenConns    int                `yaml:"maxOpenConns"`
 	Registers       []DBResolverConfig `yaml:"registers"`
+	CasbinModel     string             `yaml:"casbinModel"`
 }
 
 type DBResolverConfig struct {
@@ -66,5 +72,30 @@ func (e *Database) Init() {
 	}, opens[e.Driver])
 	if err != nil {
 		log.Fatalf("%s connect error : %s", e.Driver, err.Error())
+	}
+	// casbin
+	if e.CasbinModel != "" {
+		//set casbin adapter
+		var a persist.Adapter
+		a, err = gormadapter.NewAdapterByDBWithCustomTable(DB, &CasbinRule{})
+		if err != nil {
+			log.Fatalf("gormadapter.NewAdapterByDB error : %s", err.Error())
+		}
+		var m model.Model
+		m, err = model.NewModelFromString(e.CasbinModel)
+		if err != nil {
+			log.Fatalf("model.NewModelFromString error : %s", err.Error())
+		}
+		Enforcer, err = casbin.NewEnforcer(m, a)
+		if err != nil {
+			log.Fatalf("casbin.NewEnforcer error : %s", err.Error())
+		}
+		err = Enforcer.LoadPolicy()
+		if err != nil {
+			log.Fatalf("Enforcer.LoadPolicy error : %s", err.Error())
+		}
+		//Enforcer.EnableAutoSave(true)
+		//Enforcer.EnableAutoBuildRoleLinks(true)
+		//Enforcer.EnableLog(true)
 	}
 }

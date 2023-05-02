@@ -26,8 +26,14 @@ func (s *Source) Open(name string) (fs.File, error) {
 
 func (s *Source) ReadFile(name string) (rb []byte, err error) {
 	for i := range source.Extends {
+		path := filepath.Join(s.opt.Dir,
+			fmt.Sprintf("%s.%s", name, source.Extends[i]))
+		_, err = os.Stat(path)
+		if err != nil {
+			continue
+		}
 		rb, err = os.ReadFile(filepath.Join(s.opt.Dir,
-			fmt.Sprintf("%s.%s", s.opt.Name, source.Extends[i])))
+			fmt.Sprintf("%s.%s", name, source.Extends[i])))
 		if err == nil {
 			s.opt.Extend = source.Extends[i]
 			return rb, nil

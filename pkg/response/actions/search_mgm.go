@@ -9,10 +9,6 @@ package actions
 
 import (
 	"fmt"
-	"github.com/kamva/mgm/v3/builder"
-	"github.com/kamva/mgm/v3/field"
-	"go.mongodb.org/mongo-driver/bson"
-	"go.mongodb.org/mongo-driver/bson/primitive"
 	"net/http"
 	"reflect"
 	"strings"
@@ -20,6 +16,10 @@ import (
 
 	"github.com/gin-gonic/gin"
 	"github.com/kamva/mgm/v3"
+	"github.com/kamva/mgm/v3/builder"
+	"github.com/kamva/mgm/v3/field"
+	"go.mongodb.org/mongo-driver/bson"
+	"go.mongodb.org/mongo-driver/bson/primitive"
 	"go.mongodb.org/mongo-driver/mongo/options"
 
 	"github.com/mss-boot-io/mss-boot/pkg"
@@ -53,10 +53,10 @@ type Search struct {
 	Search response.Searcher
 }
 
-// NewSearch new search action
-func NewSearch(m mgm.Model, search response.Searcher) *Search {
+// NewSearchMgm new search action
+func NewSearchMgm(m mgm.Model, search response.Searcher) *Search {
 	return &Search{
-		Base:   Base{Model: m},
+		Base:   Base{ModelMgm: m},
 		Search: search,
 	}
 }
@@ -69,73 +69,46 @@ func (*Search) String() string {
 // Handler action handler
 func (e *Search) Handler() gin.HandlerFunc {
 	return func(c *gin.Context) {
-		req := pkg.DeepCopy(e.Search).(response.Searcher)
-		api := response.Make(c).Bind(req)
-		if api.Error != nil {
-			api.Err(http.StatusUnprocessableEntity)
+		if e.ModelMgm != nil {
+			e.searchMgm(c)
 			return
 		}
-		filter, sort := mgos.MakeCondition(req)
-
-		count, err := mgm.Coll(e.Model).CountDocuments(c, filter)
-		if err != nil {
-			api.Log.Errorf("count items error, %s", err.Error())
-			api.AddError(err)
-			api.Err(http.StatusInternalServerError)
+		if e.ModelGorm != nil {
+			e.searchGorm(c)
 			return
 		}
-		linkConfigs := getLinkTag(e.Model)
-		if len(linkConfigs) == 0 {
-			ops := options.Find()
-			ops.SetLimit(req.GetPageSize())
-			if len(sort) > 0 {
-				ops.SetSort(sort)
-			}
-			ops.SetSkip(req.GetPageSize() * (req.GetPage() - 1))
+		response.Error(c,
+			http.StatusNotImplemented,
+			fmt.Errorf("not implemented"))
+	}
+}
 
-			result, err := mgm.Coll(e.Model).Find(c, filter, ops)
-			if err != nil {
-				api.Log.Errorf("find items error, %s", err.Error())
-				api.AddError(err)
-				api.Err(http.StatusInternalServerError)
-				return
-			}
-			defer result.Close(c)
-			items := make([]any, 0, req.GetPageSize())
-			for result.Next(c) {
-				m := pkg.ModelDeepCopy(e.Model)
-				err = result.Decode(m)
-				if err != nil {
-					api.AddError(err)
-					api.Err(http.StatusInternalServerError)
-					return
-				}
-				items = append(items, m)
-			}
-			api.PageOK(items, count, req.GetPage(), req.GetPageSize())
+func (e *Search) searchMgm(c *gin.Context) {
+	req := pkg.DeepCopy(e.Search).(response.Searcher)
+	api := response.Make(c).Bind(req)
+	if api.Error != nil {
+		api.Err(http.StatusUnprocessableEntity)
+		return
+	}
+	filter, sort := mgos.MakeCondition(req)
+
+	count, err := mgm.Coll(e.ModelMgm).CountDocuments(c, filter)
+	if err != nil {
+		api.Log.Errorf("count items error, %s", err.Error())
+		api.AddError(err)
+		api.Err(http.StatusInternalServerError)
+		return
+	}
+	linkConfigs := getLinkTag(e.ModelMgm)
+	if len(linkConfigs) == 0 {
+		ops := options.Find()
+		ops.SetLimit(req.GetPageSize())
+		if len(sort) > 0 {
+			ops.SetSort(sort)
 		}
-		//use Aggregate
-		//https://docs.mongodb.com/manual/reference/operator/aggregation/lookup/
-		pipeline := bson.A{
-			//builder.S(builder.Lookup(authorColl.Name(), "author_id", field.ID, "author")),
-		}
-		for i := range linkConfigs {
-			pipeline = append(pipeline,
-				builder.S(
-					builder.Lookup(
-						linkConfigs[i].CollectionName,
-						linkConfigs[i].LocalField,
-						field.ID, linkConfigs[i].ForeignField)))
-		}
-		//limit skip sort
-		pipeline = append(pipeline, bson.D{
-			{"$limit", req.GetPageSize()},
-		}, bson.D{
-			{"$skip", req.GetPageSize() * (req.GetPage() - 1)},
-		}, bson.D{
-			{"$sort", sort},
-		})
-		result, err := mgm.Coll(e.Model).Aggregate(c, pipeline)
+		ops.SetSkip(req.GetPageSize() * (req.GetPage() - 1))
+
+		result, err := mgm.Coll(e.ModelMgm).Find(c, filter, ops)
 		if err != nil {
 			api.Log.Errorf("find items error, %s", err.Error())
 			api.AddError(err)
@@ -145,20 +118,61 @@ func (e *Search) Handler() gin.HandlerFunc {
 		defer result.Close(c)
 		items := make([]any, 0, req.GetPageSize())
 		for result.Next(c) {
-			m := pkg.ModelDeepCopy(e.Model)
-			var bm bson.M
-			err = result.Decode(bm)
+			m := pkg.ModelDeepCopy(e.ModelMgm)
+			err = result.Decode(m)
 			if err != nil {
 				api.AddError(err)
 				api.Err(http.StatusInternalServerError)
 				return
 			}
-			//todo bson.M to model
-			BsonMTransferModel(bm, m)
 			items = append(items, m)
 		}
 		api.PageOK(items, count, req.GetPage(), req.GetPageSize())
 	}
+	//use Aggregate
+	//https://docs.mongodb.com/manual/reference/operator/aggregation/lookup/
+	pipeline := bson.A{
+		//builder.S(builder.Lookup(authorColl.Name(), "author_id", field.ID, "author")),
+	}
+	for i := range linkConfigs {
+		pipeline = append(pipeline,
+			builder.S(
+				builder.Lookup(
+					linkConfigs[i].CollectionName,
+					linkConfigs[i].LocalField,
+					field.ID, linkConfigs[i].ForeignField)))
+	}
+	//limit skip sort
+	pipeline = append(pipeline, bson.D{
+		{"$limit", req.GetPageSize()},
+	}, bson.D{
+		{"$skip", req.GetPageSize() * (req.GetPage() - 1)},
+	}, bson.D{
+		{"$sort", sort},
+	})
+	result, err := mgm.Coll(e.ModelMgm).Aggregate(c, pipeline)
+	if err != nil {
+		api.Log.Errorf("find items error, %s", err.Error())
+		api.AddError(err)
+		api.Err(http.StatusInternalServerError)
+		return
+	}
+	defer result.Close(c)
+	items := make([]any, 0, req.GetPageSize())
+	for result.Next(c) {
+		m := pkg.ModelDeepCopy(e.ModelMgm)
+		var bm bson.M
+		err = result.Decode(bm)
+		if err != nil {
+			api.AddError(err)
+			api.Err(http.StatusInternalServerError)
+			return
+		}
+		//todo bson.M to model
+		BsonMTransferModel(bm, m)
+		items = append(items, m)
+	}
+	api.PageOK(items, count, req.GetPage(), req.GetPageSize())
 }
 
 type LinkConfig struct {

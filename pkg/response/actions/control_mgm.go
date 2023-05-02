@@ -10,15 +10,14 @@ package actions
 import (
 	"errors"
 	"fmt"
-	"go.mongodb.org/mongo-driver/bson/primitive"
 	"net/http"
 
 	"github.com/gin-gonic/gin"
 	"github.com/kamva/mgm/v3"
-	"go.mongodb.org/mongo-driver/mongo"
-
 	"github.com/mss-boot-io/mss-boot/pkg"
 	"github.com/mss-boot-io/mss-boot/pkg/response"
+	"go.mongodb.org/mongo-driver/bson/primitive"
+	"go.mongodb.org/mongo-driver/mongo"
 )
 
 // Control action
@@ -27,10 +26,10 @@ type Control struct {
 	Key string
 }
 
-// NewControl new control action
-func NewControl(m mgm.Model, key string) *Control {
+// NewControlMgm new control action
+func NewControlMgm(m mgm.Model, key string) *Control {
 	return &Control{
-		Base: Base{Model: m},
+		Base: Base{ModelMgm: m},
 		Key:  key,
 	}
 }
@@ -46,26 +45,40 @@ func (e *Control) Handler() gin.HandlerFunc {
 		switch c.Request.Method {
 		case http.MethodPost:
 			//create
-			e.create(c)
+			if e.ModelGorm != nil {
+				e.createGorm(c)
+				break
+			}
+			if e.ModelMgm != nil {
+				e.createMongo(c)
+				break
+			}
 		case http.MethodPut:
 			//update
-			e.update(c)
+			if e.ModelGorm != nil {
+				e.updateGorm(c)
+				break
+			}
+			if e.ModelMgm != nil {
+				e.updateMongo(c)
+				break
+			}
 		default:
 			response.Error(c,
-				http.StatusMethodNotAllowed,
-				fmt.Errorf("method %s not support", c.Request.Method))
+				http.StatusNotImplemented,
+				fmt.Errorf("not implemented"))
 		}
 	}
 }
 
-func (e *Control) create(c *gin.Context) {
-	m := pkg.ModelDeepCopy(e.Model)
+func (e *Control) createMongo(c *gin.Context) {
+	m := pkg.ModelDeepCopy(e.ModelMgm)
 	api := response.Make(c).Bind(m)
 	if api.Error != nil {
 		api.Err(http.StatusUnprocessableEntity)
 		return
 	}
-	err := mgm.Coll(e.Model).CreateWithCtx(c, m)
+	err := mgm.Coll(e.ModelMgm).CreateWithCtx(c, m)
 	if err != nil {
 		api.Log.Error(err)
 		api.AddError(err)
@@ -75,8 +88,8 @@ func (e *Control) create(c *gin.Context) {
 	api.OK(nil)
 }
 
-func (e *Control) update(c *gin.Context) {
-	m := pkg.ModelDeepCopy(e.Model)
+func (e *Control) updateMongo(c *gin.Context) {
+	m := pkg.ModelDeepCopy(e.ModelMgm)
 	api := response.Make(c).Bind(m)
 	if api.Error != nil {
 		api.Err(http.StatusUnprocessableEntity)
@@ -89,7 +102,7 @@ func (e *Control) update(c *gin.Context) {
 		return
 	}
 	m.SetID(id)
-	err = mgm.Coll(e.Model).UpdateWithCtx(c, m)
+	err = mgm.Coll(e.ModelMgm).UpdateWithCtx(c, m)
 	if err != nil {
 		api.AddError(err)
 		if errors.Is(err, mongo.ErrNoDocuments) {

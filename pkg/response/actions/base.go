@@ -12,10 +12,12 @@ import (
 
 	"github.com/gin-gonic/gin"
 	"github.com/kamva/mgm/v3"
+	"gorm.io/gorm/schema"
 )
 
 type Base struct {
-	Model mgm.Model
+	ModelMgm  mgm.Model
+	ModelGorm schema.Tabler
 }
 
 func (*Base) String() string {
