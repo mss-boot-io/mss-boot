@@ -9,7 +9,6 @@ package actions
 
 import (
 	"errors"
-	"github.com/kamva/mgm/v3"
 	"net/http"
 
 	"github.com/gin-gonic/gin"
@@ -21,9 +20,9 @@ import (
 )
 
 // NewSearchGorm new search action
-func NewSearchGorm(m mgm.Model, search response.Searcher) *Search {
+func NewSearchGorm(m Model, search response.Searcher) *Search {
 	return &Search{
-		Base:   Base{ModelMgm: m},
+		Base:   Base{ModelGorm: m},
 		Search: search,
 	}
 }

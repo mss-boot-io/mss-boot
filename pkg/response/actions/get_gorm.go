@@ -19,8 +19,8 @@ import (
 )
 
 // NewGetGorm new get action
-func NewGetGorm(m schema.Tabler, key string) *Control {
-	return &Control{
+func NewGetGorm(m schema.Tabler, key string) *Get {
+	return &Get{
 		Base: Base{ModelGorm: m},
 		Key:  key,
 	}

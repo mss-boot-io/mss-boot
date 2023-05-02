@@ -63,10 +63,11 @@ func (e *Control) Handler() gin.HandlerFunc {
 				e.updateMongo(c)
 				break
 			}
+		default:
+			response.Error(c,
+				http.StatusNotImplemented,
+				fmt.Errorf("not implemented"))
 		}
-		response.Error(c,
-			http.StatusNotImplemented,
-			fmt.Errorf("not implemented"))
 	}
 }
 

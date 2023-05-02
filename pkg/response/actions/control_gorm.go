@@ -8,6 +8,9 @@
 package actions
 
 import (
+	"errors"
+	"fmt"
+	"gorm.io/gorm"
 	"net/http"
 
 	"github.com/gin-gonic/gin"
@@ -44,12 +47,33 @@ func (e *Control) createGorm(c *gin.Context) {
 
 func (e *Control) updateGorm(c *gin.Context) {
 	m := pkg.TablerDeepCopy(e.ModelGorm)
-	api := response.Make(c).Bind(m)
+	id := c.Param(e.Key)
+	api := response.Make(c)
+	if id == "" {
+		api.AddError(errors.New("id is empty"))
+		api.Err(http.StatusUnprocessableEntity)
+		return
+	}
+	//find object
+	err := gormdb.DB.Where(e.Key, id).First(m).Error
+	if err != nil {
+		if errors.Is(err, gorm.ErrRecordNotFound) {
+			api.AddError(fmt.Errorf("%s(%s) record not found", e.Key, id))
+			api.Err(http.StatusNotFound)
+			return
+		}
+		api.Log.Error(err)
+		api.AddError(err)
+		api.Err(http.StatusInternalServerError)
+		return
+	}
+
+	api = api.Bind(m)
 	if api.Error != nil {
 		api.Err(http.StatusUnprocessableEntity)
 		return
 	}
-	err := gormdb.DB.Save(m).Error
+	err = gormdb.DB.Save(m).Error
 	if err != nil {
 		api.Log.Error(err)
 		api.AddError(err)

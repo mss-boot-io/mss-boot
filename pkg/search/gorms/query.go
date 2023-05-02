@@ -30,6 +30,12 @@ const (
 func ResolveSearchQuery(driver string, q interface{}, condition Condition) {
 	qType := reflect.TypeOf(q)
 	qValue := reflect.ValueOf(q)
+	if qType.Kind() == reflect.Ptr {
+		qType = qType.Elem()
+	}
+	if qValue.Kind() == reflect.Ptr {
+		qValue = qValue.Elem()
+	}
 	var tag string
 	var ok bool
 	var t *resolveSearchTag

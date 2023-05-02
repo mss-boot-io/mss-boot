@@ -18,8 +18,8 @@ import (
 )
 
 // NewDeleteGorm new delete action
-func NewDeleteGorm(m schema.Tabler, key string) *Control {
-	return &Control{
+func NewDeleteGorm(m schema.Tabler, key string) *Delete {
+	return &Delete{
 		Base: Base{ModelGorm: m},
 		Key:  key,
 	}

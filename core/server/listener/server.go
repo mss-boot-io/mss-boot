@@ -33,9 +33,9 @@ func New(name string, opts ...Option) server.Runnable {
 		name: name,
 		opts: setDefaultOption(),
 	}
-	s.Options(opts...)
 
 	s.opts.handler = http.DefaultServeMux
+	s.Options(opts...)
 
 	if s.opts.metrics {
 		http.Handle("/metrics", promhttp.Handler())

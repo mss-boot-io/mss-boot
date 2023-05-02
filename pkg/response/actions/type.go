@@ -37,8 +37,8 @@ type ModelGorm struct {
 	DeletedAt gorm.DeletedAt `gorm:"index" bson:"-" json:"-"`
 }
 
-func (e *ModelGorm) PrepareID(id any) (any, error) {
-	if e.ID != "" {
+func (e *ModelGorm) PrepareID(_ any) (any, error) {
+	if e.ID == "" {
 		e.ID = strings.ReplaceAll(uuid.New().String(), "-", "")
 	}
 	return e.ID, nil
