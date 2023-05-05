@@ -20,7 +20,6 @@ import (
 
 // Server server manage
 type Server struct {
-	name    string
 	ctx     context.Context
 	srv     *http.Server
 	opts    options
@@ -28,9 +27,8 @@ type Server struct {
 }
 
 // New 实例化
-func New(name string, opts ...Option) server.Runnable {
+func New(opts ...Option) server.Runnable {
 	s := &Server{
-		name: name,
 		opts: setDefaultOption(),
 	}
 
@@ -62,7 +60,7 @@ func (e *Server) Options(opts ...Option) {
 
 // String string
 func (e *Server) String() string {
-	return e.name
+	return e.opts.name
 }
 
 // Start server
@@ -80,21 +78,21 @@ func (e *Server) Start(ctx context.Context) error {
 	e.srv.BaseContext = func(_ net.Listener) context.Context {
 		return ctx
 	}
-	log.Infof("%s Server listening on %s", e.name, l.Addr().String())
+	log.Infof("%s Server listening on %s", e.opts.name, l.Addr().String())
 	go func() {
 		if e.opts.keyFile == "" || e.opts.certFile == "" {
 			if err = e.srv.Serve(l); err != nil {
-				log.Errorf("%s Server start error: %s", e.name, err.Error())
+				log.Errorf("%s Server start error: %s", e.opts.name, err.Error())
 			}
 		} else {
 			if err = e.srv.ServeTLS(l, e.opts.certFile, e.opts.keyFile); err != nil {
-				log.Errorf("%s Server start error: %s", e.name, err.Error())
+				log.Errorf("%s Server start error: %s", e.opts.name, err.Error())
 			}
 		}
 		<-ctx.Done()
 		err = e.Shutdown(ctx)
 		if err != nil {
-			log.Errorf("%S Server shutdown error: %s", e.name, err.Error())
+			log.Errorf("%S Server shutdown error: %s", e.opts.name, err.Error())
 		}
 	}()
 	if e.opts.startedHook != nil {

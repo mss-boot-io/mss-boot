@@ -16,24 +16,32 @@ import (
 type Option func(*options)
 
 type options struct {
-	addr, certFile, keyFile string
-	handler                 http.Handler
-	startedHook             func()
-	endHook                 func()
-	timeout                 time.Duration
-	metrics                 bool
-	healthz                 bool
-	readyz                  bool
-	pprof                   bool
+	name, addr, certFile, keyFile string
+	handler                       http.Handler
+	startedHook                   func()
+	endHook                       func()
+	timeout                       time.Duration
+	metrics                       bool
+	healthz                       bool
+	readyz                        bool
+	pprof                         bool
 }
 
 func setDefaultOption() options {
 	return options{
+		name:    "http",
 		addr:    ":5000",
 		timeout: 10 * time.Second,
 		handler: http.HandlerFunc(func(w http.ResponseWriter, req *http.Request) {
 			w.WriteHeader(http.StatusOK)
 		}),
+	}
+}
+
+// WithName set name
+func WithName(name string) Option {
+	return func(o *options) {
+		o.name = name
 	}
 }
 

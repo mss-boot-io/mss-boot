@@ -8,10 +8,12 @@
 package config
 
 import (
+	"github.com/mss-boot-io/mss-boot/core/server"
 	"github.com/mss-boot-io/mss-boot/core/server/listener"
 )
 
 type Listen struct {
+	Name     string `yaml:"name" json:"name"`
 	Addr     string `yaml:"addr" json:"addr"`
 	CertFile string `yaml:"certFile" json:"certFile"`
 	KeyFile  string `yaml:"keyFile" json:"keyFile"`
@@ -22,7 +24,7 @@ type Listen struct {
 	Pprof    bool   `yaml:"pprof" json:"pprof"`
 }
 
-func (e *Listen) Init(opts ...listener.Option) []listener.Option {
+func (e *Listen) Init(opts ...listener.Option) server.Runnable {
 	if e == nil {
 		return nil
 	}
@@ -33,6 +35,7 @@ func (e *Listen) Init(opts ...listener.Option) []listener.Option {
 		e.Timeout = 10
 	}
 	opts = append(opts,
+		listener.WithName(e.Name),
 		listener.WithAddr(e.Addr),
 		listener.WithCert(e.CertFile),
 		listener.WithKey(e.KeyFile),
@@ -42,5 +45,5 @@ func (e *Listen) Init(opts ...listener.Option) []listener.Option {
 		listener.WithReadyz(e.Readyz),
 		listener.WithPprof(e.Pprof),
 	)
-	return opts
+	return listener.New(opts...)
 }

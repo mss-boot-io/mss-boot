@@ -84,15 +84,13 @@ func Init(cfg any, options ...source.Option) (err error) {
 	}
 
 	rb, err = f.ReadFile(fmt.Sprintf("%s-%s", opts.Name, stage))
-	if err != nil {
-		log.Errorf("read file error: %v", err)
-		return err
+	if err == nil {
+		err = unm(rb, cfg)
+		if err != nil {
+			log.Errorf("unmarshal error: %v", err)
+		}
 	}
-	err = unm(rb, cfg)
-	if err != nil {
-		log.Errorf("unmarshal error: %v", err)
-	}
-	return err
+	return nil
 }
 
 func getStage() string {
