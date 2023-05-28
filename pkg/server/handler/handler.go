@@ -27,3 +27,10 @@ func (e *Handler) Make(c context.Context) {
 	e.Log = logger.NewHelper(ctxlog.Extract(c))
 	e.RequestID = utils.GetRequestID(c)
 }
+
+// Make 构建
+func Make(c context.Context) *Handler {
+	h := &Handler{}
+	h.Make(c)
+	return h
+}
