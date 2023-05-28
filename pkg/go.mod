@@ -62,7 +62,7 @@ require (
 	github.com/remyoudompheng/bigfft v0.0.0-20200410134404-eec4a21b6bb0 // indirect
 	github.com/smartystreets/assertions v1.2.0 // indirect
 	github.com/stretchr/testify v1.8.1 // indirect
-	golang.org/x/image v0.0.0-20190802002840-cff245a6509b // indirect
+	golang.org/x/image v0.5.0 // indirect
 	gopkg.in/square/go-jose.v2 v2.5.1 // indirect
 	gorm.io/driver/sqlserver v1.4.1 // indirect
 	modernc.org/libc v1.19.0 // indirect
