@@ -6,6 +6,7 @@ run:
     - test
   skip-files:
     - ".*\\_test\\.go$"
+    - ".*\\_string\\.go$"
 linters-settings:
   lll:
     line-length: 170
