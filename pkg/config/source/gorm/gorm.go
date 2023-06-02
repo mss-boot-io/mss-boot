@@ -14,14 +14,17 @@ import (
 	"github.com/mss-boot-io/mss-boot/pkg/config/source"
 )
 
+// Source source
 type Source struct {
 	opt *source.Options
 }
 
+// Open method Get not implemented
 func (s *Source) Open(string) (fs.File, error) {
 	return nil, errors.New("method Get not implemented")
 }
 
+// ReadFile method Get not implemented
 func (s *Source) ReadFile(name string) ([]byte, error) {
 	return nil, errors.New("method Get not implemented")
 }

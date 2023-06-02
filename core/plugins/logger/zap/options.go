@@ -9,12 +9,14 @@ import (
 	"github.com/mss-boot-io/mss-boot/core/logger"
 )
 
+// Options is zap logger options
 type Options struct {
 	logger.Options
 }
 
 type callerSkipKey struct{}
 
+// WithCallerSkip pass caller skip to logger
 func WithCallerSkip(i int) logger.Option {
 	return logger.SetOption(callerSkipKey{}, i)
 }
@@ -42,12 +44,14 @@ func WithEncoder(e zapcore.Encoder) logger.Option {
 
 type namespaceKey struct{}
 
+// WithNamespace set namespace
 func WithNamespace(namespace string) logger.Option {
 	return logger.SetOption(namespaceKey{}, namespace)
 }
 
 type writerKey struct{}
 
+// WithOutput set output
 func WithOutput(out io.Writer) logger.Option {
 	return logger.SetOption(writerKey{}, out)
 }

@@ -1,11 +1,11 @@
+package controller
+
 /*
  * @Author: lwnmengjing
  * @Date: 2023/1/26 11:24:55
  * @Last Modified by: lwnmengjing
  * @Last Modified time: 2023/1/26 11:24:55
  */
-
-package controller
 
 import (
 	"github.com/mss-boot-io/mss-boot/pkg/response"

@@ -9,6 +9,7 @@ package mongodb
 
 import "github.com/kamva/mgm/v3"
 
+// Tabler table interface
 type Tabler interface {
 	mgm.Model
 	Make()

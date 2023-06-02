@@ -22,66 +22,80 @@ import (
 	"github.com/mss-boot-io/mss-boot/pkg/language"
 )
 
+// DefaultLanguage 默认语言
 var DefaultLanguage = "zh-CN"
+
+// AuthHandler 鉴权
 var AuthHandler gin.HandlerFunc
 
-type Api struct {
+// API api接口
+type API struct {
 	Context *gin.Context
 	Log     *logger.Helper
 	Error   error
 	engine  *gin.RouterGroup
 }
 
-func (*Api) Path() string {
+// Path 路径
+func (*API) Path() string {
 	return ""
 }
 
-func (*Api) Handlers() []gin.HandlerFunc {
+// Handlers 路由
+func (*API) Handlers() []gin.HandlerFunc {
 	return []gin.HandlerFunc{}
 }
 
-func (*Api) Create(c *gin.Context) {
+// Create 创建
+func (*API) Create(c *gin.Context) {
 	c.JSON(http.StatusMethodNotAllowed, gin.H{
 		"success":      false,
 		"errorMessage": "Method Not Allowed",
 	})
 }
 
-func (*Api) Update(c *gin.Context) {
+// Update 更新
+func (*API) Update(c *gin.Context) {
 	c.JSON(http.StatusMethodNotAllowed, gin.H{
 		"success":      false,
 		"errorMessage": "Method Not Allowed",
 	})
 }
 
-func (*Api) Delete(c *gin.Context) {
+// Delete 删除
+func (*API) Delete(c *gin.Context) {
 	c.JSON(http.StatusMethodNotAllowed, gin.H{
 		"success":      false,
 		"errorMessage": "Method Not Allowed",
 	})
 }
 
-func (*Api) Get(c *gin.Context) {
+// Get 获取
+func (*API) Get(c *gin.Context) {
 	c.JSON(http.StatusMethodNotAllowed, gin.H{
 		"success":      false,
 		"errorMessage": "Method Not Allowed",
 	})
 }
 
-func (*Api) List(c *gin.Context) {
+// List 列表
+func (*API) List(c *gin.Context) {
 	c.JSON(http.StatusMethodNotAllowed, gin.H{
 		"success":      false,
 		"errorMessage": "Method Not Allowed",
 	})
 }
 
-func (*Api) Other(_ *gin.RouterGroup) {}
+// Other 其他方法
+func (*API) Other(_ *gin.RouterGroup) {}
 
-func (e *Api) SetEngine(engine *gin.RouterGroup) {
+// SetEngine 设置路由组
+func (e *API) SetEngine(engine *gin.RouterGroup) {
 	e.engine = engine
 }
 
-func (e *Api) AddError(err error) *Api {
+// AddError 添加错误
+func (e *API) AddError(err error) *API {
 	if err == nil {
 		return e
 	}
@@ -94,22 +108,22 @@ func (e *Api) AddError(err error) *Api {
 }
 
 // Make 设置http上下文
-func (e *Api) Make(c *gin.Context) *Api {
+func (e *API) Make(c *gin.Context) *API {
 	e.Context = c
 	e.Log = GetRequestLogger(c)
 	return e
 }
 
 // Make 设置http上下文, 返回api
-func Make(c *gin.Context) *Api {
-	return &Api{
+func Make(c *gin.Context) *API {
+	return &API{
 		Context: c,
 		Log:     GetRequestLogger(c),
 	}
 }
 
 // Bind 参数校验
-func (e *Api) Bind(d interface{}, bindings ...binding.Binding) *Api {
+func (e *API) Bind(d interface{}, bindings ...binding.Binding) *API {
 	var err error
 	if len(bindings) == 0 {
 		bindings = constructor.GetBindingForGin(d)
@@ -171,22 +185,22 @@ func (e *Api) Bind(d interface{}, bindings ...binding.Binding) *Api {
 }
 
 // Err 通常错误数据处理
-func (e *Api) Err(code int, msg ...string) {
+func (e *API) Err(code int, msg ...string) {
 	Error(e.Context, code, e.Error, msg...)
 }
 
 // OK 通常成功数据处理
-func (e *Api) OK(data interface{}, msg ...string) {
+func (e *API) OK(data interface{}, msg ...string) {
 	OK(e.Context, data, msg...)
 }
 
 // PageOK 分页数据处理
-func (e *Api) PageOK(result interface{}, count int64, pageIndex int64, pageSize int64, msg ...string) {
+func (e *API) PageOK(result interface{}, count int64, pageIndex int64, pageSize int64, msg ...string) {
 	PageOK(e.Context, result, count, pageIndex, pageSize, msg...)
 }
 
 // getAcceptLanguage 获取当前语言
-func (e *Api) getAcceptLanguage() string {
+func (e *API) getAcceptLanguage() string {
 	languages := language.ParseAcceptLanguage(e.Context.GetHeader("Accept-Language"), nil)
 	if len(languages) == 0 {
 		return DefaultLanguage
@@ -205,9 +219,9 @@ func GetRequestLogger(c *gin.Context) *logger.Helper {
 		}
 	}
 	//如果没有在上下文中放入logger
-	requestId := pkg.GenerateMsgIDFromContext(c)
+	requestID := pkg.GenerateMsgIDFromContext(c)
 	log = logger.NewHelper(logger.DefaultLogger).WithFields(map[string]interface{}{
-		strings.ToLower(pkg.TrafficKey): requestId,
+		strings.ToLower(pkg.TrafficKey): requestID,
 	})
 	return log
 }

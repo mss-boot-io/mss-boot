@@ -20,14 +20,17 @@ import (
 	mongoOptions "go.mongodb.org/mongo-driver/mongo/options"
 )
 
+// Source source
 type Source struct {
 	opt *source.Options
 }
 
+// Open method Get not implemented
 func (s *Source) Open(string) (fs.File, error) {
 	return nil, errors.New("method Get not implemented")
 }
 
+// ReadFile read file
 func (s *Source) ReadFile(name string) ([]byte, error) {
 	if strings.Index(name, ".") > -1 {
 		name = name[:strings.Index(name, ".")]
@@ -45,7 +48,7 @@ func (s *Source) ReadFile(name string) ([]byte, error) {
 }
 
 // GetExtend get extend
-func (s *Source) GetExtend() string {
+func (s *Source) GetExtend() source.Scheme {
 	return s.opt.Extend
 }
 

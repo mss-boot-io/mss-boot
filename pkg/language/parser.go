@@ -1,11 +1,11 @@
+package language
+
 /*
  * @Author: lwnmengjing
  * @Date: 2021/6/9 10:59 上午
  * @Last Modified by: lwnmengjing
  * @Last Modified time: 2021/6/9 10:59 上午
  */
-
-package language
 
 import (
 	"sort"

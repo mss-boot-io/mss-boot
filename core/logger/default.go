@@ -5,6 +5,7 @@ import (
 	"fmt"
 	"log"
 	"os"
+	"path/filepath"
 	"sort"
 	"strings"
 	"sync"
@@ -72,11 +73,11 @@ func logCallerFilePath(loggingFilePath string) string {
 	// and https://github.com/golang/go/issues/18151
 	//
 	// for discussion on the issue on Go side.
-	idx := strings.LastIndexByte(loggingFilePath, '/')
+	idx := strings.LastIndexByte(loggingFilePath, filepath.Separator)
 	if idx == -1 {
 		return loggingFilePath
 	}
-	idx = strings.LastIndexByte(loggingFilePath[:idx], '/')
+	idx = strings.LastIndexByte(loggingFilePath[:idx], filepath.Separator)
 	if idx == -1 {
 		return loggingFilePath
 	}

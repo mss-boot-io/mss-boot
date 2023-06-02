@@ -18,6 +18,7 @@ import (
 	"github.com/mss-boot-io/mss-boot/pkg"
 )
 
+// SystemConfig system config
 type SystemConfig struct {
 	mgm.DefaultModel `bson:",inline"`
 	Name             string `bson:"name" json:"name"`
@@ -27,6 +28,7 @@ type SystemConfig struct {
 	Metadata         any    `bson:"metadata" json:"metadata"`
 }
 
+// Tag tag
 type Tag struct {
 	Name     string `json:"name"`
 	Value    string `json:"value"`

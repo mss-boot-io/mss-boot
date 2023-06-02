@@ -34,10 +34,10 @@ type gormLogger struct {
 }
 
 func (l *gormLogger) getLogger(ctx context.Context) loggerCore.Logger {
-	requestId := ctx.Value("X-Request-Id")
-	if requestId != nil {
+	requestID := ctx.Value("X-Request-ID")
+	if requestID != nil {
 		return loggerCore.DefaultLogger.Fields(map[string]interface{}{
-			"x-request-id": requestId,
+			"x-request-id": requestID,
 		})
 	}
 	return loggerCore.DefaultLogger
@@ -133,6 +133,7 @@ func (l *traceRecorder) Trace(ctx context.Context, begin time.Time, fc func() (s
 	l.Err = err
 }
 
+// New new a logger
 func New(config logger.Config) logger.Interface {
 	var (
 		infoStr      = "%s\n[info] "

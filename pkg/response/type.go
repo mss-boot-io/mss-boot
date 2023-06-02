@@ -7,6 +7,7 @@
 
 package response
 
+// Responses responses
 type Responses interface {
 	SetCode(int32)
 	SetTraceID(string)

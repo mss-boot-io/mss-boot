@@ -1,3 +1,5 @@
+package actions
+
 /*
  * @Author: lwnmengjing<lwnmengjing@qq.com>
  * @Date: 2023/3/4 01:36:12
@@ -5,13 +7,11 @@
  * @Last Modified time: 2023/3/4 01:36:12
  */
 
-package actions
-
 import (
-	"gorm.io/gorm/schema"
 	"net/http"
 
 	"github.com/gin-gonic/gin"
+	"gorm.io/gorm/schema"
 
 	"github.com/mss-boot-io/mss-boot/pkg/config/gormdb"
 	"github.com/mss-boot-io/mss-boot/pkg/response"

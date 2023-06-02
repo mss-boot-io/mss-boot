@@ -15,29 +15,39 @@ import (
 	"github.com/aws/aws-sdk-go-v2/service/s3"
 )
 
+// Provider provider
 type Provider string
 
 const (
-	FS    Provider = "fs"
+	// FS fs
+	FS Provider = "fs"
+	// Local local
 	Local Provider = "local"
-	S3    Provider = "s3"
-	MGDB  Provider = "mgdb"
-	GORM  Provider = "gorm"
+	// S3 s3
+	S3 Provider = "s3"
+	// MGDB mongodb
+	MGDB Provider = "mgdb"
+	// GORM gorm
+	GORM Provider = "gorm"
 )
 
-var Extends = []string{"yml", "yaml", "json"}
+// Extends extends
+var Extends = []Scheme{SchemeYaml, SchemeYml, SchemeJSOM}
 
+// Sourcer source interface
 type Sourcer interface {
 	fs.ReadFileFS
-	GetExtend() string
+	GetExtend() Scheme
 }
 
+// Option option
 type Option func(*Options)
 
+// Options options
 type Options struct {
 	Provider          Provider
 	Name              string
-	Extend            string
+	Extend            Scheme
 	Dir               string
 	Region            string
 	Bucket            string

@@ -1,11 +1,11 @@
+package writer
+
 /*
  * @Author: lwnmengjing
  * @Date: 2021/6/3 8:33 上午
  * @Last Modified by: lwnmengjing
  * @Last Modified time: 2021/6/3 8:33 上午
  */
-
-package writer
 
 // Options 可配置参数
 type Options struct {

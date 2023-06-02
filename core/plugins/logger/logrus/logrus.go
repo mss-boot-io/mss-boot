@@ -1,3 +1,4 @@
+// Package logrus nolint
 package logrus
 
 import (

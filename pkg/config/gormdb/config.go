@@ -7,6 +7,7 @@ import (
 	"gorm.io/plugin/dbresolver"
 )
 
+// DBConfig db config
 type DBConfig struct {
 	dsn             string
 	connMaxIdleTime int

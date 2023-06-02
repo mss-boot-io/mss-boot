@@ -1,11 +1,11 @@
+package actions
+
 /*
  * @Author: lwnmengjing<lwnmengjing@qq.com>
  * @Date: 2023/3/9 00:57:48
  * @Last Modified by: lwnmengjing<lwnmengjing@qq.com>
  * @Last Modified time: 2023/3/9 00:57:48
  */
-
-package actions
 
 import (
 	"errors"

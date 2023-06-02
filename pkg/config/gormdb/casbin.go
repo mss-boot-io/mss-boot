@@ -7,6 +7,7 @@
 
 package gormdb
 
+// CasbinRule casbin rule
 type CasbinRule struct {
 	PType string `json:"pType" gorm:"size:100;"`
 	V0    string `json:"v0" gorm:"size:100;"`
@@ -17,6 +18,7 @@ type CasbinRule struct {
 	V5    string `json:"v5" gorm:"size:100;"`
 }
 
+// TableName table name
 func (*CasbinRule) TableName() string {
 	return "casbin_rule"
 }

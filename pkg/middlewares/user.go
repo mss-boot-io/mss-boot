@@ -25,6 +25,7 @@ package middlewares
 }
 */
 
+// User user
 type User struct {
 	Issuer        string   `json:"iss"`
 	Subject       string   `json:"sub"`

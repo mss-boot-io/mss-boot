@@ -17,20 +17,31 @@ import (
 	"github.com/aws/aws-sdk-go-v2/service/s3"
 )
 
+// ProviderType storage provider type
 type ProviderType string
 
 const (
-	S3   ProviderType = "s3"   //aws s3
-	OSS  ProviderType = "oss"  //aliyun oss
-	OOS  ProviderType = "oos"  //ctyun oos
-	KODO ProviderType = "kodo" //qiniu kodo
-	COS  ProviderType = "cos"  //tencent cos
-	OBS  ProviderType = "obs"  //huawei obs
-	BOS  ProviderType = "bos"  //baidu bos
-	GCS  ProviderType = "gcs"  //google gcs fixme:not tested
-	KS3  ProviderType = "ks3"  //kingsoft ks3
+	// S3 aws s3
+	S3 ProviderType = "s3"
+	// OSS aliyun oss
+	OSS ProviderType = "oss"
+	// OOS ctyun oos
+	OOS ProviderType = "oos"
+	// KODO qiniu kodo
+	KODO ProviderType = "kodo"
+	// COS tencent cos
+	COS ProviderType = "cos"
+	// OBS huawei obs
+	OBS ProviderType = "obs"
+	// BOS baidu bos
+	BOS ProviderType = "bos"
+	// GCS google gcs fixme:not tested
+	GCS ProviderType = "gcs"
+	// KS3 kingsoft ks3
+	KS3 ProviderType = "ks3"
 )
 
+// URLTemplate storage provider url template
 var URLTemplate = map[ProviderType]string{
 	OSS:  "https://%s.aliyuncs.com",
 	OOS:  "https://oos-%s.ctyunapi.cn",
@@ -52,6 +63,7 @@ var endpointResolverFunc = func(urlTemplate, signingMethod string) s3.EndpointRe
 	}
 }
 
+// Storage storage
 type Storage struct {
 	Type            ProviderType `yaml:"type"`
 	SigningMethod   string       `yaml:"signingMethod"`

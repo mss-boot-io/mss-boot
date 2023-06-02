@@ -1,11 +1,11 @@
+package version
+
 /*
  * @Author: lwnmengjing
  * @Date: 2021/5/18 1:06 下午
  * @Last Modified by: lwnmengjing
  * @Last Modified time: 2021/5/18 1:06 下午
  */
-
-package version
 
 // Info contains versioning information.
 // TODO: Add []string of api versions supported? It's still unclear

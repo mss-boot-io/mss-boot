@@ -218,6 +218,7 @@ func loggerToZapLevel(l level.Level) zapcore.Level {
 	}
 }
 
+// zapToLoggerLevel converts zap level to logger level
 func zapToLoggerLevel(l zapcore.Level) level.Level {
 	switch l {
 	case zap.DebugLevel:

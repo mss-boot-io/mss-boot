@@ -1,3 +1,5 @@
+package store
+
 /*
  * @Author: lwnmengjing<lwnmengjing@qq.com>
  * @Date: 2022/4/21 17:20
@@ -5,13 +7,13 @@
  * @Last Modified time: 2022/4/21 17:20
  */
 
-package store
-
 import (
 	"context"
+
 	"golang.org/x/oauth2"
 )
 
+// DefaultOAuth2Store default oauth2 store
 var DefaultOAuth2Store OAuth2Store
 
 // OAuth2Store is the interface for OAuth2 configuration.

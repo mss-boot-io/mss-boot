@@ -33,6 +33,7 @@ type Pagination struct {
 	PageSize int64 `form:"pageSize" query:"pageSize"`
 }
 
+// GetPage get page
 func (e *Pagination) GetPage() int64 {
 	if e.Page <= 0 {
 		return 1
@@ -40,6 +41,7 @@ func (e *Pagination) GetPage() int64 {
 	return e.Page
 }
 
+// GetPageSize get page size
 func (e *Pagination) GetPageSize() int64 {
 	if e.PageSize <= 0 {
 		return 10
@@ -110,8 +112,7 @@ func (e *Search) searchMgm(c *gin.Context) {
 
 		result, err := mgm.Coll(e.ModelMgm).Find(c, filter, ops)
 		if err != nil {
-			api.Log.Errorf("find items error, %s", err.Error())
-			api.AddError(err)
+			api.AddError(err).Log.Errorf("find items error, %s", err.Error())
 			api.Err(http.StatusInternalServerError)
 			return
 		}
@@ -144,11 +145,11 @@ func (e *Search) searchMgm(c *gin.Context) {
 	}
 	//limit skip sort
 	pipeline = append(pipeline, bson.D{
-		{"$limit", req.GetPageSize()},
+		{Key: "$limit", Value: req.GetPageSize()},
 	}, bson.D{
-		{"$skip", req.GetPageSize() * (req.GetPage() - 1)},
+		{Key: "$skip", Value: req.GetPageSize() * (req.GetPage() - 1)},
 	}, bson.D{
-		{"$sort", sort},
+		{Key: "$sort", Value: sort},
 	})
 	result, err := mgm.Coll(e.ModelMgm).Aggregate(c, pipeline)
 	if err != nil {
@@ -168,21 +169,34 @@ func (e *Search) searchMgm(c *gin.Context) {
 			api.Err(http.StatusInternalServerError)
 			return
 		}
+		if bm == nil {
+			continue
+		}
 		//todo bson.M to model
-		BsonMTransferModel(bm, m)
+		err = BsonMTransferModel(bm, m)
+		if err != nil {
+			api.AddError(err).Log.Errorf("transfer bson.M to model error, %s", err.Error())
+			return
+		}
 		items = append(items, m)
 	}
 	api.PageOK(items, count, req.GetPage(), req.GetPageSize())
 }
 
+// LinkConfig link config
 type LinkConfig struct {
-	FieldName      string
+	// FieldName field name
+	FieldName string
+	// CollectionName collection name
 	CollectionName string
-	LocalField     string
-	ForeignField   string
+	// LocalField local field
+	LocalField string
+	// ForeignField foreign field
+	ForeignField string
 }
 
-func BsonMTransferModel(bm bson.M, model any) (err error) {
+// BsonMTransferModel bson.M to model
+func BsonMTransferModel(bm bson.M, model any) error {
 	typeOf := reflect.TypeOf(model).Elem()
 	valueOf := reflect.ValueOf(model).Elem()
 	for i := 0; i < typeOf.NumField(); i++ {
@@ -203,9 +217,9 @@ func BsonMTransferModel(bm bson.M, model any) (err error) {
 				continue
 			}
 			if strings.Contains(tagBson, "inline") {
-				err = BsonMTransferModel(bm, valueOf.Field(i).Interface())
+				err := BsonMTransferModel(bm, valueOf.Field(i).Interface())
 				if err != nil {
-					return
+					return err
 				}
 				continue
 			}
@@ -217,9 +231,9 @@ func BsonMTransferModel(bm bson.M, model any) (err error) {
 			switch ms := bm[tagBson].(type) {
 			case []bson.M:
 				bsonBytes, _ := bson.Marshal(ms)
-				err = bson.Unmarshal(bsonBytes, valueOf.Field(i).Interface())
+				err := bson.Unmarshal(bsonBytes, valueOf.Field(i).Interface())
 				if err != nil {
-					return
+					return err
 				}
 			default:
 				return fmt.Errorf("type %s not is array", reflect.TypeOf(ms).String())
@@ -228,7 +242,7 @@ func BsonMTransferModel(bm bson.M, model any) (err error) {
 		}
 		valueOf.Field(i).Set(reflect.ValueOf(bm[tagBson]))
 	}
-	return
+	return nil
 }
 
 // getLinkTag get link tag from object

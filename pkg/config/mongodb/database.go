@@ -1,3 +1,5 @@
+package mongodb
+
 /*
  * @Author: lwnmengjing
  * @Date: 2022/3/10 13:50
@@ -5,16 +7,18 @@
  * @Last Modified time: 2022/3/10 13:50
  */
 
-package mongodb
-
 import (
 	"context"
 	"log"
 	"time"
 
+	// nolint "github.com/casbin/casbin/v2"
 	"github.com/casbin/casbin/v2"
+	// nolint "github.com/casbin/casbin/v2"
 	"github.com/casbin/casbin/v2/model"
+	// nolint "github.com/casbin/casbin/v2/persist"
 	"github.com/casbin/casbin/v2/persist"
+	// nolint "github.com/casbin/mongodb-adapter/v3"
 	"github.com/casbin/mongodb-adapter/v3"
 	"github.com/kamva/mgm/v3"
 	"go.mongodb.org/mongo-driver/mongo"
@@ -22,16 +26,24 @@ import (
 	"go.mongodb.org/mongo-driver/mongo/readpref"
 )
 
+// DB mongo db
 var DB *mongo.Database
+
+// Enforcer casbin enforcer
 var Enforcer casbin.IEnforcer
 
 var tables = make([]Tabler, 0)
 
+// Database database config
 type Database struct {
-	URL         string        `yaml:"url" json:"url"`
-	Name        string        `yaml:"name" json:"name"`
-	Timeout     time.Duration `yaml:"timeout" json:"timeout"`
-	CasbinModel string        `yaml:"casbinModel" json:"casbinModel"`
+	// URL db url
+	URL string `yaml:"url" json:"url"`
+	// Name db name
+	Name string `yaml:"name" json:"name"`
+	// Timeout connect db timeout
+	Timeout time.Duration `yaml:"timeout" json:"timeout"`
+	// CasbinModel casbin model
+	CasbinModel string `yaml:"casbinModel" json:"casbinModel"`
 }
 
 // AppendTable append table
@@ -39,6 +51,7 @@ func AppendTable(t Tabler) {
 	tables = append(tables, t)
 }
 
+// Init init db
 func (e *Database) Init() {
 	if e.URL == "" {
 		e.URL = "mongodb://localhost:27017"

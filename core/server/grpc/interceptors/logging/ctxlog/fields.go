@@ -1,11 +1,11 @@
+package ctxlog
+
 /*
  * @Author: lwnmengjing
  * @Date: 2021/5/19 11:42 上午
  * @Last Modified by: lwnmengjing
  * @Last Modified time: 2021/5/19 11:42 上午
  */
-
-package ctxlog
 
 import "sync"
 

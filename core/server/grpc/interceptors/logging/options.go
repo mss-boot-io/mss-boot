@@ -11,7 +11,7 @@ import (
 	"context"
 	"time"
 
-	grpc_logging "github.com/grpc-ecosystem/go-grpc-middleware/logging"
+	grpcLogging "github.com/grpc-ecosystem/go-grpc-middleware/logging"
 	"github.com/mss-boot-io/mss-boot/core/logger/level"
 	"github.com/mss-boot-io/mss-boot/core/server/grpc/interceptors/logging/ctxlog"
 	"google.golang.org/grpc/codes"
@@ -20,8 +20,8 @@ import (
 var (
 	defaultOptions = &Options{
 		levelFunc:       DefaultCodeToLevel,
-		shouldLog:       grpc_logging.DefaultDeciderMethod,
-		codeFunc:        grpc_logging.DefaultErrorToCode,
+		shouldLog:       grpcLogging.DefaultDeciderMethod,
+		codeFunc:        grpcLogging.DefaultErrorToCode,
 		durationFunc:    DefaultDurationToField,
 		messageFunc:     DefaultMessageProducer,
 		timestampFormat: time.RFC3339,
@@ -31,8 +31,8 @@ var (
 // Options Options
 type Options struct {
 	levelFunc       CodeToLevel
-	shouldLog       grpc_logging.Decider
-	codeFunc        grpc_logging.ErrorToCode
+	shouldLog       grpcLogging.Decider
+	codeFunc        grpcLogging.ErrorToCode
 	durationFunc    DurationToField
 	messageFunc     MessageProducer
 	timestampFormat string
@@ -48,7 +48,7 @@ type CodeToLevel func(code codes.Code) level.Level
 type DurationToField func(duration time.Duration) ctxlog.Fields
 
 // WithDecider customizes the function for deciding if the gRPC interceptor logs should log.
-func WithDecider(f grpc_logging.Decider) Option {
+func WithDecider(f grpcLogging.Decider) Option {
 	return func(o *Options) {
 		o.shouldLog = f
 	}
@@ -62,7 +62,7 @@ func WithLevels(f CodeToLevel) Option {
 }
 
 // WithCodes customizes the function for mapping errors to error codes.
-func WithCodes(f grpc_logging.ErrorToCode) Option {
+func WithCodes(f grpcLogging.ErrorToCode) Option {
 	return func(o *Options) {
 		o.codeFunc = f
 	}
@@ -90,7 +90,7 @@ func WithTimestampFormat(format string) Option {
 }
 
 // MessageProducer produces a user defined log message
-type MessageProducer func(ctx context.Context, msg string, level level.Level, code codes.Code, err error, duration ctxlog.Fields)
+type MessageProducer func(ctx context.Context, msg string, level level.Level, code codes.Code, err error, duration *ctxlog.Fields)
 
 func evaluateServerOpt(opts []Option) *Options {
 	optCopy := &Options{}
@@ -215,7 +215,7 @@ func durationToMilliseconds(duration time.Duration) float32 {
 }
 
 // DefaultMessageProducer writes the default message
-func DefaultMessageProducer(ctx context.Context, msg string, level level.Level, code codes.Code, err error, duration ctxlog.Fields) {
+func DefaultMessageProducer(ctx context.Context, msg string, level level.Level, code codes.Code, err error, duration *ctxlog.Fields) {
 	// re-extract logger from newCtx, as it may have extra fields that changed in the holder.
 	fields := duration
 	fields.Set("grpc.code", code.String())

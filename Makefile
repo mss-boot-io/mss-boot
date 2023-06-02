@@ -21,4 +21,4 @@ proto:
 
 .PHONY: lint
 lint:
-	golangci-lint run -v ./service/${W}/...;
+	golangci-lint run -v ./...;

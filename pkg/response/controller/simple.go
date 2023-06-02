@@ -1,11 +1,11 @@
+package controller
+
 /*
  * @Author: lwnmengjing
  * @Date: 2023/1/26 01:22:21
  * @Last Modified by: lwnmengjing
  * @Last Modified time: 2023/1/26 01:22:21
  */
-
-package controller
 
 import (
 	"strings"

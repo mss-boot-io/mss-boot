@@ -1,3 +1,5 @@
+package listener
+
 /*
  * @Author: lwnmengjing
  * @Date: 2021/6/8 2:04 下午
@@ -5,13 +7,11 @@
  * @Last Modified time: 2021/6/8 2:04 下午
  */
 
-package listener
-
 import (
 	"context"
 	"net"
 	"net/http"
-	_ "net/http/pprof"
+	"net/http/pprof"
 
 	log "github.com/mss-boot-io/mss-boot/core/logger"
 	"github.com/mss-boot-io/mss-boot/core/server"
@@ -35,6 +35,13 @@ func New(opts ...Option) server.Runnable {
 	s.opts.handler = http.DefaultServeMux
 	s.Options(opts...)
 
+	if s.opts.pprof {
+		http.HandleFunc("/debug/pprof/", pprof.Index)
+		http.HandleFunc("/debug/pprof/cmdline", pprof.Cmdline)
+		http.HandleFunc("/debug/pprof/profile", pprof.Profile)
+		http.HandleFunc("/debug/pprof/symbol", pprof.Symbol)
+		http.HandleFunc("/debug/pprof/trace", pprof.Trace)
+	}
 	if s.opts.metrics {
 		http.Handle("/metrics", promhttp.Handler())
 	}

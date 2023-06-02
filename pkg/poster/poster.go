@@ -13,7 +13,7 @@ import (
 	"github.com/skip2/go-qrcode"
 )
 
-// 新PNG载体
+// Rect 新PNG载体
 type Rect struct {
 	X0 int
 	X1 int

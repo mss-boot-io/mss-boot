@@ -7,4 +7,5 @@
 
 package server
 
+// Manage server
 var Manage = New()
