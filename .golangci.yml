@@ -25,12 +25,12 @@ linters:
   disable-all: true
   enable:
   - misspell
-  - structcheck
-  - golint
+#  - structcheck
+#  - golint
   - govet
-  - deadcode
+#  - deadcode
   - errcheck
-  - varcheck
+#  - varcheck
   - goconst
   - unparam
   - ineffassign
