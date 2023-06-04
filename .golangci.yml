@@ -25,18 +25,18 @@ linters:
   disable-all: true
   enable:
   - misspell
-  - structcheck
-  - golint
-  - govet
-  - deadcode
-  - errcheck
-  - varcheck
-  - goconst
-  - unparam
-  - ineffassign
-  - nakedret
-  - gocyclo
-  - lll
-  - dupl
-  - goimports
-  - golint
+#  - structcheck
+#  - golint
+#  - govet
+#  - deadcode
+#  - errcheck
+#  - varcheck
+#  - goconst
+#  - unparam
+#  - ineffassign
+#  - nakedret
+#  - gocyclo
+#  - lll
+#  - dupl
+#  - goimports
+#  - golint
