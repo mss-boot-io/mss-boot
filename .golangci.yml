@@ -39,4 +39,3 @@ linters:
   - lll
   - dupl
   - goimports
-  - golint
