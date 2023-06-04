@@ -11,12 +11,15 @@ import (
 )
 
 const (
-	TrafficKey = "X-Request-Id"
-	LoggerKey  = "_go-admin-logger-request"
+	// TrafficKey traffic key
+	TrafficKey = "X-Request-ID"
+	// LoggerKey logger key
+	LoggerKey = "_go-admin-logger-request"
 )
 
-func CompareHashAndPassword(e string, p string) (bool, error) {
-	err := bcrypt.CompareHashAndPassword([]byte(e), []byte(p))
+// CompareHashAndPassword compare hash and password
+func CompareHashAndPassword(hash string, password string) (bool, error) {
+	err := bcrypt.CompareHashAndPassword([]byte(hash), []byte(password))
 	if err != nil {
 		return false, err
 	}
@@ -25,12 +28,12 @@ func CompareHashAndPassword(e string, p string) (bool, error) {
 
 // GenerateMsgIDFromContext 生成msgID
 func GenerateMsgIDFromContext(c *gin.Context) string {
-	requestId := c.GetHeader(TrafficKey)
-	if requestId == "" {
-		requestId = uuid.New().String()
-		c.Header(TrafficKey, requestId)
+	requestID := c.GetHeader(TrafficKey)
+	if requestID == "" {
+		requestID = uuid.New().String()
+		c.Header(TrafficKey, requestID)
 	}
-	return requestId
+	return requestID
 }
 
 // ModelDeepCopy model deep copy
@@ -48,6 +51,7 @@ func DeepCopy(d any) any {
 	return reflect.New(reflect.TypeOf(d).Elem()).Interface()
 }
 
+// BuildMap build map
 func BuildMap(keys []string, value string) map[string]any {
 	data := make(map[string]any)
 	if len(keys) > 1 {

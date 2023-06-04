@@ -2,6 +2,7 @@ package zap
 
 import (
 	"fmt"
+	"go.uber.org/zap/zapcore"
 	"testing"
 
 	"github.com/mss-boot-io/mss-boot/core/logger"
@@ -85,4 +86,30 @@ func TestFile(t *testing.T) {
 	})
 	fmt.Println(logger.DefaultLogger)
 	logger.DefaultLogger.Log(level.Info, "hello")
+}
+
+func Test_zapToLoggerLevel(t *testing.T) {
+	type args struct {
+		l zapcore.Level
+	}
+	tests := []struct {
+		name string
+		args args
+		want level.Level
+	}{
+		{
+			name: "test zapToLoggerLevel",
+			args: args{
+				l: zapcore.DebugLevel,
+			},
+			want: level.Debug,
+		},
+	}
+	for _, tt := range tests {
+		t.Run(tt.name, func(t *testing.T) {
+			if got := zapToLoggerLevel(tt.args.l); got != tt.want {
+				t.Errorf("zapToLoggerLevel() = %v, want %v", got, tt.want)
+			}
+		})
+	}
 }

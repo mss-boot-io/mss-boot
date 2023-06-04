@@ -1,5 +1,6 @@
-// Package errcode provides a way to return detailed information for an RPC request error. The error is normally JSON encoded.
 package errcode
+
+// Package errcode provides a way to return detailed information for an RPC request error. The error is normally JSON encoded.
 
 import (
 	"fmt"

@@ -14,10 +14,15 @@ import (
 )
 
 const (
-	Get     = "get"
-	Base    = "base"
-	Delete  = "delete"
-	Search  = "search"
+	// Get action
+	Get = "get"
+	// Base action
+	Base = "base"
+	// Delete action
+	Delete = "delete"
+	// Search action
+	Search = "search"
+	// Control action
 	Control = "control"
 )
 

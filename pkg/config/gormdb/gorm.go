@@ -13,33 +13,51 @@ import (
 	"github.com/casbin/casbin/v2/persist"
 	gormadapter "github.com/casbin/gorm-adapter/v3"
 	log "github.com/mss-boot-io/mss-boot/core/logger"
-	. "github.com/mss-boot-io/mss-boot/pkg/config/gormdb/logger"
+	gormLogger "github.com/mss-boot-io/mss-boot/pkg/config/gormdb/logger"
 	"gorm.io/gorm"
 	"gorm.io/gorm/logger"
 	"gorm.io/gorm/schema"
 )
 
+// DB gorm db
 var DB *gorm.DB
+
+// Enforcer casbin enforcer
 var Enforcer casbin.IEnforcer
 
+// Database database config
 type Database struct {
-	Driver          string             `yaml:"driver"`
-	Source          string             `yaml:"source"`
-	ConnMaxIdleTime int                `yaml:"connMaxIdleTime"`
-	ConnMaxLifeTime int                `yaml:"connMaxLifeTime"`
-	MaxIdleConns    int                `yaml:"maxIdleConns"`
-	MaxOpenConns    int                `yaml:"maxOpenConns"`
-	Registers       []DBResolverConfig `yaml:"registers"`
-	CasbinModel     string             `yaml:"casbinModel"`
+	// Driver db type
+	Driver string `yaml:"driver"`
+	// Source db source
+	Source string `yaml:"source"`
+	// ConnMaxIdleTime conn max idle time
+	ConnMaxIdleTime int `yaml:"connMaxIdleTime"`
+	// ConnMaxLifeTime conn max lifetime
+	ConnMaxLifeTime int `yaml:"connMaxLifeTime"`
+	// MaxIdleConns max idle conns
+	MaxIdleConns int `yaml:"maxIdleConns"`
+	// MaxOpenConns max open conns
+	MaxOpenConns int `yaml:"maxOpenConns"`
+	// Registers db registers
+	Registers []DBResolverConfig `yaml:"registers"`
+	// CasbinModel casbin model
+	CasbinModel string `yaml:"casbinModel"`
 }
 
+// DBResolverConfig db resolver config
 type DBResolverConfig struct {
-	Sources  []string `yaml:"sources"`
+	// Sources db sources
+	Sources []string `yaml:"sources"`
+	// Replicas db replicas
 	Replicas []string `yaml:"replicas"`
-	Policy   string   `yaml:"policy"`
-	Tables   []string `yaml:"tables"`
+	// Policy db policy
+	Policy string `yaml:"policy"`
+	// Tables db tables
+	Tables []string `yaml:"tables"`
 }
 
+// Init init db
 func (e *Database) Init() {
 	var err error
 	registers := make([]ResolverConfigure, len(e.Registers))
@@ -61,7 +79,7 @@ func (e *Database) Init() {
 		NamingStrategy: schema.NamingStrategy{
 			SingularTable: true,
 		},
-		Logger: New(
+		Logger: gormLogger.New(
 			logger.Config{
 				//SlowThreshold: time.Second,
 				Colorful: true,

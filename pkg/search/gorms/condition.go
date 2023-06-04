@@ -2,6 +2,7 @@ package gorms
 
 import "strings"
 
+// Condition interface
 type Condition interface {
 	SetWhere(k string, v []interface{})
 	SetOr(k string, v []interface{})
@@ -9,27 +10,40 @@ type Condition interface {
 	SetJoinOn(t, on string) Condition
 }
 
+// GormCondition gorm condition
 type GormCondition struct {
+	// GormPublic gorm public
 	GormPublic
+	// Join gorm join
 	Join []*GormJoin
 }
 
+// GormPublic gorm public
 type GormPublic struct {
+	// Where and condition
 	Where map[string][]interface{}
+	// Order order
 	Order []string
-	Or    map[string][]interface{}
+	// Or condition
+	Or map[string][]interface{}
 }
 
+// GormJoin gorm join
 type GormJoin struct {
-	Type   string
+	// Type join type
+	Type string
+	// JoinOn Table join table
 	JoinOn string
+	// GormPublic On join on
 	GormPublic
 }
 
+// SetJoinOn set join on
 func (e *GormJoin) SetJoinOn(t, on string) Condition {
 	return nil
 }
 
+// SetWhere set where
 func (e *GormPublic) SetWhere(k string, v []interface{}) {
 	if e.Where == nil {
 		e.Where = make(map[string][]interface{})
@@ -37,6 +51,7 @@ func (e *GormPublic) SetWhere(k string, v []interface{}) {
 	e.Where[k] = v
 }
 
+// SetOr set or condition
 func (e *GormPublic) SetOr(k string, v []interface{}) {
 	if e.Or == nil {
 		e.Or = make(map[string][]interface{})
@@ -44,6 +59,7 @@ func (e *GormPublic) SetOr(k string, v []interface{}) {
 	e.Or[k] = v
 }
 
+// SetOrder set order
 func (e *GormPublic) SetOrder(k string) {
 	if e.Order == nil {
 		e.Order = make([]string, 0)
@@ -51,6 +67,7 @@ func (e *GormPublic) SetOrder(k string) {
 	e.Order = append(e.Order, k)
 }
 
+// SetJoinOn set join on
 func (e *GormCondition) SetJoinOn(t, on string) Condition {
 	if e.Join == nil {
 		e.Join = make([]*GormJoin, 0)

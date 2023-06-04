@@ -72,9 +72,9 @@ func Init(cfg any, options ...source.Option) (err error) {
 	}
 	var unm func([]byte, interface{}) error
 	switch f.GetExtend() {
-	case "yml", "yaml":
+	case source.SchemeYaml, source.SchemeYml:
 		unm = yaml.Unmarshal
-	case "json":
+	case source.SchemeJSOM:
 		unm = json.Unmarshal
 	}
 	err = unm(rb, cfg)

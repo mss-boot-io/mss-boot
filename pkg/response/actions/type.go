@@ -18,25 +18,35 @@ import (
 	"gorm.io/gorm/schema"
 )
 
+// ModelProvider model provider
 type ModelProvider string
 
 const (
-	ModelProviderMgm  ModelProvider = "mgm"
+	// ModelProviderMgm mgm model provider
+	ModelProviderMgm ModelProvider = "mgm"
+	// ModelProviderGorm gorm model provider
 	ModelProviderGorm ModelProvider = "gorm"
 )
 
+// Model gorm and mgm model
 type Model interface {
 	mgm.Model
 	schema.Tabler
 }
 
+// ModelGorm model gorm
 type ModelGorm struct {
-	ID        string         `gorm:"primarykey" json:"id" bson:"_id,omitempty" form:"id" query:"id"`
-	CreatedAt time.Time      `json:"createdAt" bson:"createdAt"`
-	UpdatedAt time.Time      `json:"updatedAt" bson:"updatedAt"`
+	// ID primary key
+	ID string `gorm:"primarykey" json:"id" bson:"_id,omitempty" form:"id" query:"id"`
+	// CreatedAt create time
+	CreatedAt time.Time `json:"createdAt" bson:"createdAt"`
+	// UpdatedAt update time
+	UpdatedAt time.Time `json:"updatedAt" bson:"updatedAt"`
+	// DeletedAt delete time soft delete
 	DeletedAt gorm.DeletedAt `gorm:"index" bson:"-" json:"-"`
 }
 
+// PrepareID prepare id
 func (e *ModelGorm) PrepareID(_ any) (any, error) {
 	if e.ID == "" {
 		e.ID = strings.ReplaceAll(uuid.New().String(), "-", "")
@@ -44,14 +54,17 @@ func (e *ModelGorm) PrepareID(_ any) (any, error) {
 	return e.ID, nil
 }
 
+// GetID get id
 func (e *ModelGorm) GetID() any {
 	return e.ID
 }
 
+// SetID set id
 func (e *ModelGorm) SetID(id any) {
 	e.ID = cast.ToString(id)
 }
 
+// TableName return table name
 func (e *ModelGorm) TableName() string {
 	return "mss-boot-base"
 }

@@ -1,11 +1,11 @@
+package mgos
+
 /*
  * @Author: lwnmengjing
  * @Date: 2022/3/11 16:43
  * @Last Modified by: lwnmengjing
  * @Last Modified time: 2022/3/11 16:43
  */
-
-package mgos
 
 import (
 	"go.mongodb.org/mongo-driver/bson"

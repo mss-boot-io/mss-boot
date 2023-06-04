@@ -15,11 +15,13 @@ import (
 	"gorm.io/gorm/schema"
 )
 
+// Base action
 type Base struct {
 	ModelMgm  mgm.Model
 	ModelGorm schema.Tabler
 }
 
+// String string
 func (*Base) String() string {
 	return "base"
 }

@@ -13,23 +13,28 @@ import (
 	"github.com/mss-boot-io/mss-boot/pkg/response"
 )
 
+// DefaultKey default key
 var DefaultKey = "id"
 
-type Base struct {
-}
+// Base controller
+type Base struct{}
 
+// Path http path
 func (e *Base) Path() string {
 	return ""
 }
 
+// Handlers middlewares
 func (e *Base) Handlers() gin.HandlersChain {
 	return nil
 }
 
+// GetAction get action
 func (e *Base) GetAction(_ string) response.Action {
 	return nil
 }
 
+// Other handler
 func (e *Base) Other(_ *gin.RouterGroup) {}
 
 // GetKey get key

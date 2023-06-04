@@ -9,6 +9,7 @@ import (
 	"github.com/mss-boot-io/mss-boot/pkg"
 )
 
+// Default 默认返回
 var Default Responses = &response{}
 
 // Error 失败数据处理

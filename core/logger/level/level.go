@@ -1,11 +1,11 @@
+package level
+
 /*
  * @Author: lwnmengjing
  * @Date: 2021/6/15 5:58 下午
  * @Last Modified by: lwnmengjing
  * @Last Modified time: 2021/6/15 5:58 下午
  */
-
-package level
 
 import (
 	"fmt"

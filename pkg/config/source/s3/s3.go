@@ -17,20 +17,23 @@ import (
 	"time"
 
 	"github.com/aws/aws-sdk-go-v2/aws"
-	"github.com/aws/aws-sdk-go-v2/config"
+	s3config "github.com/aws/aws-sdk-go-v2/config"
 	"github.com/aws/aws-sdk-go-v2/service/s3"
 
 	"github.com/mss-boot-io/mss-boot/pkg/config/source"
 )
 
+// Source is a s3 file source
 type Source struct {
 	opt *source.Options
 }
 
+// Open a file for reading
 func (s *Source) Open(string) (fs.File, error) {
 	return nil, errors.New("method Get not implemented")
 }
 
+// ReadFile read file
 func (s *Source) ReadFile(name string) (rb []byte, err error) {
 	ctx, cancel := context.WithTimeout(context.TODO(), s.opt.Timeout)
 	defer cancel()
@@ -56,7 +59,7 @@ func (s *Source) ReadFile(name string) (rb []byte, err error) {
 }
 
 // GetExtend get extend
-func (s *Source) GetExtend() string {
+func (s *Source) GetExtend() source.Scheme {
 	return s.opt.Extend
 }
 
@@ -80,7 +83,7 @@ func New(options ...source.Option) (*Source, error) {
 
 	ctx, cancel := context.WithTimeout(context.TODO(), s.opt.Timeout)
 	defer cancel()
-	cfg, err := config.LoadDefaultConfig(ctx, config.WithRegion(s.opt.Region))
+	cfg, err := s3config.LoadDefaultConfig(ctx, s3config.WithRegion(s.opt.Region))
 	if err != nil {
 		return nil, err
 	}

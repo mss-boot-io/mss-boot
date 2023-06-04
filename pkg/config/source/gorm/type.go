@@ -16,8 +16,10 @@ import (
 	"gorm.io/gorm"
 
 	"github.com/mss-boot-io/mss-boot/pkg"
+	"github.com/mss-boot-io/mss-boot/pkg/config/source"
 )
 
+// SystemConfig system config
 type SystemConfig struct {
 	gorm.Model
 	Name        string `gorm:"column:name" json:"name"`
@@ -27,6 +29,7 @@ type SystemConfig struct {
 	Metadata    []byte `gorm:"column:metadata" json:"metadata"`
 }
 
+// Tag tag
 type Tag struct {
 	Name     string `json:"name"`
 	Value    string `json:"value"`
@@ -41,9 +44,9 @@ func (c *SystemConfig) GenerateBytes() ([]byte, error) {
 		data[i] = pkg.BuildMap(keys, c.Tags[i].Value)
 	}
 	switch c.Ext {
-	case "yml", "yaml":
+	case source.SchemeYaml.String(), source.SchemeYml.String():
 		return yaml.Marshal(pkg.MergeMapsDepth(data...))
-	case "json":
+	case source.SchemeJSOM.String():
 		return json.Marshal(pkg.MergeMapsDepth(data...))
 	default:
 		return nil, fmt.Errorf("not support %s", c.Ext)

@@ -35,7 +35,7 @@ func UnaryServerInterceptor(opts ...Option) grpc.UnaryServerInterceptor {
 		level := o.levelFunc(code)
 		duration := o.durationFunc(time.Since(startTime))
 
-		o.messageFunc(newCtx, "finished unary call with code "+code.String(), level, code, err, duration)
+		o.messageFunc(newCtx, "finished unary call with code "+code.String(), level, code, err, &duration)
 		return resp, err
 	}
 }
@@ -57,7 +57,7 @@ func StreamServerInterceptor(opts ...Option) grpc.StreamServerInterceptor {
 		level := o.levelFunc(code)
 		duration := o.durationFunc(time.Since(startTime))
 
-		o.messageFunc(newCtx, "finished streaming call with code "+code.String(), level, code, err, duration)
+		o.messageFunc(newCtx, "finished streaming call with code "+code.String(), level, code, err, &duration)
 		return err
 	}
 }

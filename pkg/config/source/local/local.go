@@ -16,14 +16,17 @@ import (
 	"github.com/mss-boot-io/mss-boot/pkg/config/source"
 )
 
+// Source is a local file source
 type Source struct {
 	opt *source.Options
 }
 
+// Open a file for reading
 func (s *Source) Open(name string) (fs.File, error) {
 	return os.Open(filepath.Join(s.opt.Dir, name))
 }
 
+// ReadFile read file
 func (s *Source) ReadFile(name string) (rb []byte, err error) {
 	for i := range source.Extends {
 		path := filepath.Join(s.opt.Dir,
@@ -43,10 +46,11 @@ func (s *Source) ReadFile(name string) (rb []byte, err error) {
 }
 
 // GetExtend get extend
-func (s *Source) GetExtend() string {
+func (s *Source) GetExtend() source.Scheme {
 	return s.opt.Extend
 }
 
+// New returns a new source
 func New(options ...source.Option) (*Source, error) {
 	s := &Source{
 		opt: source.DefaultOptions(),

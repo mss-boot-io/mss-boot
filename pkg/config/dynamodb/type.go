@@ -9,6 +9,7 @@ package dynamodb
 
 import "github.com/aws/aws-sdk-go-v2/service/dynamodb"
 
+// Tabler ddb model interface
 type Tabler interface {
 	TableName() string
 	Make()

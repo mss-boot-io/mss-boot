@@ -1,11 +1,11 @@
+package language
+
 /*
  * @Author: lwnmengjing
  * @Date: 2021/6/9 10:59 上午
  * @Last Modified by: lwnmengjing
  * @Last Modified time: 2021/6/9 10:59 上午
  */
-
-package language
 
 import (
 	"sort"
@@ -54,7 +54,9 @@ func ParseAcceptLanguage(languages string, supportedLanguages []string) []string
 
 	for i, rawPreferredLanguage := range preferredLanguages {
 		// Format strings.
-		preferredLanguage := strings.Replace(strings.ToLower(strings.TrimSpace(rawPreferredLanguage)), "_", "-", 0)
+		preferredLanguage := strings.ReplaceAll(
+			strings.ToLower(strings.TrimSpace(rawPreferredLanguage)),
+			"_", "-")
 
 		if preferredLanguage == "" {
 			continue

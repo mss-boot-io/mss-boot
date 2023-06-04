@@ -31,9 +31,13 @@ const (
 const (
 	// GeneratorSvcParamsInvalid generator参数校验失败
 	GeneratorSvcParamsInvalid ErrCode = iota + GeneratorSvcBaseErrCode
+	// GeneratorSvcOperateDBFailed generator数据库操作失败
 	GeneratorSvcOperateDBFailed
+	// GeneratorSvcRecordIsExist generator记录已经存在
 	GeneratorSvcRecordIsExist
+	// GeneratorSvcRecordNotFound generator记录不存在
 	GeneratorSvcRecordNotFound
+	// GeneratorSvcObjectIDInvalid generator记录不存在
 	GeneratorSvcObjectIDInvalid
 )
 
@@ -42,10 +46,15 @@ const (
 	TenantSvcParamsInvalid ErrCode = iota + TenantSvcBaseErrCode
 	// TenantSvcOperateDBFailed tenant数据库操作失败
 	TenantSvcOperateDBFailed
+	// TenantSvcRecordIsExist tenant记录已经存在
 	TenantSvcRecordIsExist
+	// TenantSvcRecordNotFound tenant记录不存在
 	TenantSvcRecordNotFound
+	// TenantSvcObjectIDInvalid  tenant记录不存在
 	TenantSvcObjectIDInvalid
+	// TenantSvcGetAuthTokenFailed tenant获取token失败
 	TenantSvcGetAuthTokenFailed
+	// TenantSvcAccessTokenParseFailed tenant解析token失败
 	TenantSvcAccessTokenParseFailed
 )
 

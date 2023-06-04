@@ -17,7 +17,7 @@ func Error(c *gin.Context, errCode string, errMsg string, showType string) {
 	if showType != "" {
 		res.ShowType = showType
 	}
-	res.TraceId = pkg.GenerateMsgIDFromContext(c)
+	res.TraceID = pkg.GenerateMsgIDFromContext(c)
 	res.ErrorCode = errCode
 	c.Set("result", res)
 	c.Set("status", errCode)
@@ -29,7 +29,7 @@ func OK(c *gin.Context, data interface{}) {
 	var res response
 	res.Data = data
 	res.Success = true
-	res.TraceId = pkg.GenerateMsgIDFromContext(c)
+	res.TraceID = pkg.GenerateMsgIDFromContext(c)
 	c.Set("result", res)
 	c.Set("status", http.StatusOK)
 	c.AbortWithStatusJSON(http.StatusOK, res)

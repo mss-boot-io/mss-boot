@@ -11,17 +11,20 @@ import (
 	"gorm.io/gorm"
 )
 
+// Driver db type
 var Driver = "mysql"
 
+// GeneralDelDto  general delete dto
 type GeneralDelDto struct {
-	Id  int   `uri:"id" json:"id" validate:"required"`
+	ID  int   `uri:"id" json:"id" validate:"required"`
 	Ids []int `json:"ids"`
 }
 
+// GetIds get ids
 func (g GeneralDelDto) GetIds() []int {
 	ids := make([]int, 0)
-	if g.Id != 0 {
-		ids = append(ids, g.Id)
+	if g.ID != 0 {
+		ids = append(ids, g.ID)
 	}
 	if len(g.Ids) > 0 {
 		for _, id := range g.Ids {
@@ -30,8 +33,8 @@ func (g GeneralDelDto) GetIds() []int {
 			}
 		}
 	} else {
-		if g.Id > 0 {
-			ids = append(ids, g.Id)
+		if g.ID > 0 {
+			ids = append(ids, g.ID)
 		}
 	}
 	if len(ids) <= 0 {
@@ -41,10 +44,12 @@ func (g GeneralDelDto) GetIds() []int {
 	return ids
 }
 
+// GeneralGetDto general get dto
 type GeneralGetDto struct {
-	Id int `uri:"id" json:"id" validate:"required"`
+	ID int `uri:"id" json:"id" validate:"required"`
 }
 
+// MakeCondition  make condition
 func MakeCondition(q interface{}) func(db *gorm.DB) *gorm.DB {
 	return func(db *gorm.DB) *gorm.DB {
 		condition := &GormCondition{
@@ -80,6 +85,7 @@ func MakeCondition(q interface{}) func(db *gorm.DB) *gorm.DB {
 	}
 }
 
+// Paginate pagination
 func Paginate(pageSize, pageIndex int) func(db *gorm.DB) *gorm.DB {
 	return func(db *gorm.DB) *gorm.DB {
 		offset := (pageIndex - 1) * pageSize

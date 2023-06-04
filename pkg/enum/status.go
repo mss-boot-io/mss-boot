@@ -14,7 +14,10 @@ type Status uint8
 
 const (
 	_ Status = iota
+	// Enabled enabled
 	Enabled
+	// Disabled disabled
 	Disabled
+	// Locked lock status
 	Locked
 )

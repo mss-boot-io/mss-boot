@@ -1,11 +1,11 @@
+package version
+
 /*
  * @Author: lwnmengjing
  * @Date: 2021/5/18 1:18 下午
  * @Last Modified by: lwnmengjing
  * @Last Modified time: 2021/5/18 1:18 下午
  */
-
-package version
 
 var (
 	// TODO: Deprecate gitMajor and gitMinor, use only gitVersion

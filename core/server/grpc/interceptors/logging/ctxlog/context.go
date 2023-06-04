@@ -1,9 +1,10 @@
+// Package ctxlog nolint
 package ctxlog
 
 import (
 	"context"
 
-	grpc_ctxtags "github.com/grpc-ecosystem/go-grpc-middleware/tags"
+	grpcCtxTags "github.com/grpc-ecosystem/go-grpc-middleware/tags"
 	"github.com/mss-boot-io/mss-boot/core/logger"
 	"github.com/mss-boot-io/mss-boot/core/logger/level"
 )
@@ -48,7 +49,7 @@ func Extract(ctx context.Context) logger.Logger {
 
 // TagsToFields transforms the Tags on the supplied context into logger fields.
 func TagsToFields(ctx context.Context) map[string]interface{} {
-	return grpc_ctxtags.Extract(ctx).Values()
+	return grpcCtxTags.Extract(ctx).Values()
 }
 
 // ToContext adds the logger.Logger to the context for extraction later.

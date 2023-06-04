@@ -1,13 +1,15 @@
 package logrus
 
 import (
-	"github.com/sirupsen/logrus"
 	"runtime"
 	"strconv"
+
+	"github.com/sirupsen/logrus"
 
 	"github.com/mss-boot-io/mss-boot/core/logger"
 )
 
+// Options Options
 type Options struct {
 	logger.Options
 	Formatter logrus.Formatter

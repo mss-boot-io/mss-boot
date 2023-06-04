@@ -17,10 +17,12 @@ import (
 	"github.com/aws/aws-sdk-go-v2/service/dynamodb"
 )
 
+// DB dynamodb client
 var DB *dynamodb.Client
 
 var tables = make([]Tabler, 0)
 
+// Database database
 type Database struct {
 	Region          string        `yaml:"region" json:"region"`
 	AccessKeyID     string        `yaml:"accessKeyID" json:"accessKeyID"`
@@ -33,6 +35,7 @@ func AppendTable(t Tabler) {
 	tables = append(tables, t)
 }
 
+// Init init
 func (e *Database) Init() {
 	if e.Timeout == 0 {
 		//set default timeout

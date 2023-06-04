@@ -1,3 +1,5 @@
+package task
+
 /*
  * @Author: lwnmengjing<lwnmengjing@qq.com>
  * @Date: 2023/2/21 15:35:43
@@ -5,12 +7,12 @@
  * @Last Modified time: 2023/2/21 15:35:43
  */
 
-package task
-
 import (
 	"context"
-	log "github.com/mss-boot-io/mss-boot/core/logger"
+
 	"github.com/robfig/cron/v3"
+
+	log "github.com/mss-boot-io/mss-boot/core/logger"
 )
 
 var task = &Server{
@@ -109,6 +111,7 @@ func (e *Server) Start(ctx context.Context) error {
 	return nil
 }
 
+// Shutdown server
 func (e *Server) Shutdown(_ context.Context) error {
 	e.opts.task.Stop()
 	return nil

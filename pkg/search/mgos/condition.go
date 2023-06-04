@@ -1,11 +1,11 @@
+package mgos
+
 /*
  * @Author: lwnmengjing
  * @Date: 2022/3/11 15:52
  * @Last Modified by: lwnmengjing
  * @Last Modified time: 2022/3/11 15:52
  */
-
-package mgos
 
 import (
 	"strings"

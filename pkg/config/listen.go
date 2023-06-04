@@ -12,6 +12,7 @@ import (
 	"github.com/mss-boot-io/mss-boot/core/server/listener"
 )
 
+// Listen tcp listener config
 type Listen struct {
 	Name     string `yaml:"name" json:"name"`
 	Addr     string `yaml:"addr" json:"addr"`
@@ -24,6 +25,7 @@ type Listen struct {
 	Pprof    bool   `yaml:"pprof" json:"pprof"`
 }
 
+// Init tcp listener
 func (e *Listen) Init(opts ...listener.Option) server.Runnable {
 	if e == nil {
 		return nil

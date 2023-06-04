@@ -1,3 +1,5 @@
+package task
+
 /*
  * @Author: lwnmengjing<lwnmengjing@qq.com>
  * @Date: 2023/2/21 16:23:53
@@ -5,13 +7,13 @@
  * @Last Modified time: 2023/2/21 16:23:53
  */
 
-package task
-
 import (
-	"github.com/robfig/cron/v3"
 	"sync"
+
+	"github.com/robfig/cron/v3"
 )
 
+// Option params set
 type Option func(*options)
 
 type schedule struct {
@@ -26,6 +28,7 @@ type options struct {
 	mux       sync.Mutex
 }
 
+// WithSchedule set schedule
 func WithSchedule(key string, spec string, job cron.Job) Option {
 	return func(o *options) {
 		o.mux.Lock()

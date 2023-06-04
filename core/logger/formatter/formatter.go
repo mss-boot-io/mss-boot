@@ -1,5 +1,6 @@
-// Package formatter provides debug logging
 package formatter
+
+// Package formatter provides debug logging
 
 import (
 	"encoding/json"

@@ -6,6 +6,7 @@ run:
     - test
   skip-files:
     - ".*\\_test\\.go$"
+    - ".*\\_string\\.go$"
 linters-settings:
   lll:
     line-length: 170
@@ -24,12 +25,12 @@ linters:
   disable-all: true
   enable:
   - misspell
-  - structcheck
-  - golint
+#  - structcheck
+#  - golint
   - govet
-  - deadcode
+#  - deadcode
   - errcheck
-  - varcheck
+#  - varcheck
   - goconst
   - unparam
   - ineffassign
@@ -38,4 +39,3 @@ linters:
   - lll
   - dupl
   - goimports
-  - golint

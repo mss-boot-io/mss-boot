@@ -1,3 +1,4 @@
+// Package security nolint
 package security
 
 import (
