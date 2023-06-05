@@ -1,11 +1,11 @@
+package mgdb
+
 /*
  * @Author: lwnmengjing
  * @Date: 2023/1/13 04:03:10
  * @Last Modified by: lwnmengjing
  * @Last Modified time: 2023/1/13 04:03:10
  */
-
-package mgdb
 
 import (
 	"context"

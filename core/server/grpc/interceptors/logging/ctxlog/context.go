@@ -1,4 +1,3 @@
-// Package ctxlog nolint
 package ctxlog
 
 import (

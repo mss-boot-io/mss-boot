@@ -1,11 +1,11 @@
+package gorms
+
 /*
  * @Author: lwnmengjing<lwnmengjing@qq.com>
  * @Date: 2023/3/9 01:16:26
  * @Last Modified by: lwnmengjing<lwnmengjing@qq.com>
  * @Last Modified time: 2023/3/9 01:16:26
  */
-
-package gorms
 
 import (
 	"gorm.io/gorm"

@@ -1,11 +1,11 @@
+package config
+
 /*
  * @Author: lwnmengjing
  * @Date: 2021/5/18 12:31 下午
  * @Last Modified by: lwnmengjing
  * @Last Modified time: 2021/5/18 12:31 下午
  */
-
-package config
 
 import (
 	"encoding/json"

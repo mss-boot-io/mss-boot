@@ -1,11 +1,11 @@
+package config
+
 /*
  * @Author: lwnmengjing
  * @Date: 2021/6/17 4:25 下午
  * @Last Modified by: lwnmengjing
  * @Last Modified time: 2021/6/17 4:25 下午
  */
-
-package config
 
 import (
 	"github.com/mss-boot-io/mss-boot/core/server"

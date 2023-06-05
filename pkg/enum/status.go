@@ -1,11 +1,11 @@
+package enum
+
 /*
  * @Author: lwnmengjing
  * @Date: 2022/3/14 9:10
  * @Last Modified by: lwnmengjing
  * @Last Modified time: 2022/3/14 9:10
  */
-
-package enum
 
 //go:generate stringer -type Status -output status_string.go
 

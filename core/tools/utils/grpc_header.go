@@ -1,4 +1,3 @@
-// Package utils nolint
 package utils
 
 import (

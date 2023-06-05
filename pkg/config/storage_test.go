@@ -1,11 +1,11 @@
+package config
+
 /*
  * @Author: lwnmengjing<lwnmengjing@qq.com>
  * @Date: 2022/12/14 03:12:11
  * @Last Modified by: lwnmengjing<lwnmengjing@qq.com>
  * @Last Modified time: 2022/12/14 03:12:11
  */
-
-package config
 
 import (
 	"bytes"

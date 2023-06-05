@@ -1,4 +1,3 @@
-// Package config nolint
 package config
 
 import (

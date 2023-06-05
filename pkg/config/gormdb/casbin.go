@@ -1,11 +1,11 @@
+package gormdb
+
 /*
  * @Author: lwnmengjing<lwnmengjing@qq.com>
  * @Date: 2023/3/4 00:24:48
  * @Last Modified by: lwnmengjing<lwnmengjing@qq.com>
  * @Last Modified time: 2023/3/4 00:24:48
  */
-
-package gormdb
 
 // CasbinRule casbin rule
 type CasbinRule struct {

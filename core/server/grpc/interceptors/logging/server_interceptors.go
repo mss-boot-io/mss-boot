@@ -1,11 +1,11 @@
+package logging
+
 /*
  * @Author: lwnmengjing
  * @Date: 2021/5/18 9:13 下午
  * @Last Modified by: lwnmengjing
  * @Last Modified time: 2021/5/18 9:13 下午
  */
-
-package logging
 
 import (
 	"context"

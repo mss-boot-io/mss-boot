@@ -1,11 +1,11 @@
+package fs
+
 /*
  * @Author: lwnmengjing
  * @Date: 2022/7/18 10:06:17
  * @Last Modified by: lwnmengjing
  * @Last Modified time: 2022/7/18 10:06:17
  */
-
-package fs
 
 import (
 	"fmt"

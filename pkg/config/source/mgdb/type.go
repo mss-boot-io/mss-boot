@@ -1,11 +1,11 @@
+package mgdb
+
 /*
  * @Author: lwnmengjing
  * @Date: 2023/1/13 04:26:39
  * @Last Modified by: lwnmengjing
  * @Last Modified time: 2023/1/13 04:26:39
  */
-
-package mgdb
 
 import (
 	"encoding/json"

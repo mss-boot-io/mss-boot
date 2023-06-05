@@ -1,4 +1,3 @@
-// Package logger nolint
 package logger
 
 import (

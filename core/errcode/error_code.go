@@ -1,4 +1,3 @@
-// Package errcode nolint
 package errcode
 
 //go:generate stringer -type ErrCode -output error_code_string.go

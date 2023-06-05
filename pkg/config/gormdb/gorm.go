@@ -1,11 +1,11 @@
+package gormdb
+
 /*
  * @Author: lwnmengjing<lwnmengjing@qq.com>
  * @Date: 2023/2/21 17:02:39
  * @Last Modified by: lwnmengjing<lwnmengjing@qq.com>
  * @Last Modified time: 2023/2/21 17:02:39
  */
-
-package gormdb
 
 import (
 	"github.com/casbin/casbin/v2"

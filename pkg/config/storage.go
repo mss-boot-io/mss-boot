@@ -1,11 +1,11 @@
+package config
+
 /*
  * @Author: lwnmengjing<lwnmengjing@qq.com>
  * @Date: 2022/12/11 07:33:01
  * @Last Modified by: lwnmengjing<lwnmengjing@qq.com>
  * @Last Modified time: 2022/12/11 07:33:01
  */
-
-package config
 
 import (
 	"context"

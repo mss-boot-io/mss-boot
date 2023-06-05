@@ -1,4 +1,3 @@
-// Package formatter nolint
 package formatter
 
 import "time"

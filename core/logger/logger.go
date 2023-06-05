@@ -1,4 +1,3 @@
-// Package logger provides a log interface nolint
 package logger
 
 import (

@@ -1,11 +1,11 @@
+package local
+
 /*
  * @Author: lwnmengjing<lwnmengjing@qq.com>
  * @Date: 2022/10/21 18:25:06
  * @Last Modified by: lwnmengjing<lwnmengjing@qq.com>
  * @Last Modified time: 2022/10/21 18:25:06
  */
-
-package local
 
 import (
 	"fmt"

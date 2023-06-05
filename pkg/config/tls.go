@@ -1,11 +1,11 @@
+package config
+
 /*
  * @Author: lwnmengjing
  * @Date: 2022/3/21 19:05
  * @Last Modified by: lwnmengjing
  * @Last Modified time: 2022/3/21 19:05
  */
-
-package config
 
 import (
 	"crypto/tls"

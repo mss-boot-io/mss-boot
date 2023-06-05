@@ -1,4 +1,3 @@
-//notlint
 //go:build !sqlite3
 
 package gormdb

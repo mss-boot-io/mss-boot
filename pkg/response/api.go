@@ -1,11 +1,11 @@
+package response
+
 /*
  * @Author: lwnmengjing
  * @Date: 2021/6/22 4:48 下午
  * @Last Modified by: lwnmengjing
  * @Last Modified time: 2021/6/22 4:48 下午
  */
-
-package response
 
 import (
 	"errors"

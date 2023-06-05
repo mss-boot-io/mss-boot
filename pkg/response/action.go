@@ -1,11 +1,11 @@
+package response
+
 /*
  * @Author: lwnmengjing
  * @Date: 2023/1/25 20:05:14
  * @Last Modified by: lwnmengjing
  * @Last Modified time: 2023/1/25 20:05:14
  */
-
-package response
 
 import (
 	"fmt"

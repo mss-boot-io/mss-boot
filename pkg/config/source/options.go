@@ -1,11 +1,11 @@
+package source
+
 /*
  * @Author: lwnmengjing<lwnmengjing@qq.com>
  * @Date: 2022/10/21 18:31:13
  * @Last Modified by: lwnmengjing<lwnmengjing@qq.com>
  * @Last Modified time: 2022/10/21 18:31:13
  */
-
-package source
 
 import (
 	"io/fs"

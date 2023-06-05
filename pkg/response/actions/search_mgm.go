@@ -1,11 +1,11 @@
+package actions
+
 /*
  * @Author: lwnmengjing
  * @Date: 2023/1/25 17:14:19
  * @Last Modified by: lwnmengjing
  * @Last Modified time: 2023/1/25 17:14:19
  */
-
-package actions
 
 import (
 	"fmt"

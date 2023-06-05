@@ -1,11 +1,11 @@
+package logger
+
 /*
  * @Author: lwnmengjing<lwnmengjing@qq.com>
  * @Date: 2023/5/29 07:20:43
  * @Last Modified by: lwnmengjing<lwnmengjing@qq.com>
  * @Last Modified time: 2023/5/29 07:20:43
  */
-
-package logger
 
 import "testing"
 

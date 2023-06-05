@@ -1,11 +1,11 @@
+package dynamodb
+
 /*
  * @Author: lwnmengjing<lwnmengjing@qq.com>
  * @Date: 2022/10/6 22:12:16
  * @Last Modified by: lwnmengjing<lwnmengjing@qq.com>
  * @Last Modified time: 2022/10/6 22:12:16
  */
-
-package dynamodb
 
 import (
 	"testing"

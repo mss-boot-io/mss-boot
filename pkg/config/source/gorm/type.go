@@ -1,11 +1,11 @@
+package gorm
+
 /*
  * @Author: lwnmengjing<lwnmengjing@qq.com>
  * @Date: 2023/2/11 01:22:20
  * @Last Modified by: lwnmengjing<lwnmengjing@qq.com>
  * @Last Modified time: 2023/2/11 01:22:20
  */
-
-package gorm
 
 import (
 	"encoding/json"

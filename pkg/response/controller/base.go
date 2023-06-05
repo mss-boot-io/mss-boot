@@ -1,11 +1,11 @@
+package controller
+
 /*
  * @Author: lwnmengjing
  * @Date: 2023/1/26 01:15:07
  * @Last Modified by: lwnmengjing
  * @Last Modified time: 2023/1/26 01:15:07
  */
-
-package controller
 
 import (
 	"github.com/gin-gonic/gin"

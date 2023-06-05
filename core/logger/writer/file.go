@@ -1,4 +1,3 @@
-// Package writer nolint
 package writer
 
 import (
