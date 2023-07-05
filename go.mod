@@ -25,7 +25,7 @@ require (
 	github.com/smartystreets/goconvey v1.7.2
 	github.com/spf13/cast v1.5.0
 	go.uber.org/zap v1.21.0
-	google.golang.org/grpc v1.45.0
+	google.golang.org/grpc v1.53.0
 	google.golang.org/protobuf v1.30.0
 	gorm.io/driver/mysql v1.4.7
 	gorm.io/driver/postgres v1.4.8
@@ -62,7 +62,7 @@ require (
 	github.com/aws/aws-sdk-go-v2/service/sts v1.16.9 // indirect
 	github.com/aws/smithy-go v1.13.3 // indirect
 	github.com/beorn7/perks v1.0.1 // indirect
-	github.com/cespare/xxhash/v2 v2.1.2 // indirect
+	github.com/cespare/xxhash/v2 v2.2.0 // indirect
 	github.com/davecgh/go-spew v1.1.1 // indirect
 	github.com/gin-contrib/sse v0.1.0 // indirect
 	github.com/gin-gonic/gin v1.9.1
@@ -113,12 +113,12 @@ require (
 	golang.org/x/crypto v0.9.0
 	golang.org/x/image v0.5.0 // indirect
 	golang.org/x/net v0.10.0 // indirect
-	golang.org/x/oauth2 v0.0.0-20220411215720-9780585627b5
+	golang.org/x/oauth2 v0.4.0
 	golang.org/x/sync v0.1.0 // indirect
 	golang.org/x/sys v0.8.0 // indirect
 	golang.org/x/text v0.9.0 // indirect
 	google.golang.org/appengine v1.6.7 // indirect
-	google.golang.org/genproto v0.0.0-20220407144326-9054f6ed7bac // indirect
+	google.golang.org/genproto v0.0.0-20230110181048-76db0878b65f // indirect
 	gopkg.in/square/go-jose.v2 v2.5.1 // indirect
 	gopkg.in/yaml.v3 v3.0.1
 	gorm.io/driver/sqlserver v1.4.1 // indirect
