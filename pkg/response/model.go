@@ -17,7 +17,7 @@ type Response struct {
 
 type response struct {
 	Response
-	Data interface{} `json:"data"`
+	List interface{} `json:"list,omitempty"`
 }
 
 // Page page
@@ -34,7 +34,7 @@ type page struct {
 
 // SetData set data
 func (e *response) SetData(data interface{}) {
-	e.Data = data
+	e.List = data
 }
 
 // Clone clone

@@ -42,15 +42,15 @@ func OK(c *gin.Context, data interface{}, msg ...string) {
 	switch c.Request.Method {
 	case http.MethodDelete:
 		res.SetCode(http.StatusNoContent)
-		c.AbortWithStatusJSON(http.StatusNoContent, res)
+		c.AbortWithStatusJSON(http.StatusNoContent, data)
 		return
 	case http.MethodPost:
 		res.SetCode(http.StatusCreated)
-		c.AbortWithStatusJSON(http.StatusCreated, res)
+		c.AbortWithStatusJSON(http.StatusCreated, data)
 		return
 	default:
 		res.SetCode(http.StatusOK)
-		c.AbortWithStatusJSON(http.StatusOK, res)
+		c.AbortWithStatusJSON(http.StatusOK, data)
 	}
 }
 
@@ -62,9 +62,9 @@ func PageOK(c *gin.Context, result interface{}, count int64, pageIndex int64, pa
 	res.Current = pageIndex
 	res.PageSize = pageSize
 	res.response.SetData(result)
-	res.response.SetMsg(msg...)
+	//res.response.SetMsg(msg...)
 	res.response.SetTraceID(pkg.GenerateMsgIDFromContext(c))
-	res.response.SetCode(http.StatusOK)
+	//res.response.SetCode(http.StatusOK)
 	c.Set("result", res)
 	c.Set("status", http.StatusOK)
 	c.AbortWithStatusJSON(http.StatusOK, res)

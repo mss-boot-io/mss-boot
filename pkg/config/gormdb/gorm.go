@@ -95,7 +95,7 @@ func (e *Database) Init() {
 	if e.CasbinModel != "" {
 		//set casbin adapter
 		var a persist.Adapter
-		a, err = gormadapter.NewAdapterByDBWithCustomTable(DB, &CasbinRule{})
+		a, err = gormadapter.NewAdapterByDB(DB)
 		if err != nil {
 			log.Fatalf("gormadapter.NewAdapterByDB error : %s", err.Error())
 		}

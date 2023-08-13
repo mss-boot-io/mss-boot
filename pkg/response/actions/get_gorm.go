@@ -30,7 +30,7 @@ func NewGetGorm(m schema.Tabler, key string) *Get {
 func (e *Get) getGorm(c *gin.Context, key string) {
 	api := response.Make(c)
 	m := pkg.TablerDeepCopy(e.ModelGorm)
-	err := gormdb.DB.First(m, c.Param(key)).Error
+	err := gormdb.DB.First(m, "id = ?", c.Param(key)).Error
 	if err != nil {
 		api.Log.Error(err)
 		api.AddError(err)
