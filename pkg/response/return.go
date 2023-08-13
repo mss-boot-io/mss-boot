@@ -24,8 +24,8 @@ func Error(c *gin.Context, code int, err error, msg ...string) {
 	}
 	res.SetMsg(msg...)
 	res.SetTraceID(pkg.GenerateMsgIDFromContext(c))
-	res.SetCode(int32(code))
-	res.SetSuccess(false)
+	res.SetCode(code)
+	res.SetStatus("error")
 	c.Set("result", res)
 	c.Set("status", code)
 	c.AbortWithStatusJSON(code, res)
@@ -35,9 +35,7 @@ func Error(c *gin.Context, code int, err error, msg ...string) {
 func OK(c *gin.Context, data interface{}, msg ...string) {
 	checkContext(c)
 	res := Default.Clone()
-	res.SetData(data)
-	res.SetSuccess(true)
-	res.SetMsg(msg...)
+	res.SetList(data)
 	res.SetTraceID(pkg.GenerateMsgIDFromContext(c))
 	switch c.Request.Method {
 	case http.MethodDelete:
@@ -61,7 +59,7 @@ func PageOK(c *gin.Context, result interface{}, count int64, pageIndex int64, pa
 	res.Count = count
 	res.Current = pageIndex
 	res.PageSize = pageSize
-	res.response.SetData(result)
+	res.response.SetList(result)
 	//res.response.SetMsg(msg...)
 	res.response.SetTraceID(pkg.GenerateMsgIDFromContext(c))
 	//res.response.SetCode(http.StatusOK)

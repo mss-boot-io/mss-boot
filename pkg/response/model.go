@@ -1,13 +1,14 @@
 package response
 
 import (
-	"strconv"
 	"strings"
 )
 
 // Response response
 type Response struct {
 	Success      bool   `json:"success,omitempty"`
+	Status       string `json:"status,omitempty"`
+	Code         int    `json:"code,omitempty"`
 	ErrorCode    string `json:"errorCode,omitempty"`
 	ErrorMessage string `json:"errorMessage,omitempty"`
 	ShowType     uint8  `json:"showType,omitempty"`
@@ -33,7 +34,7 @@ type page struct {
 }
 
 // SetData set data
-func (e *response) SetData(data interface{}) {
+func (e *response) SetList(data interface{}) {
 	e.List = data
 }
 
@@ -54,11 +55,10 @@ func (e *response) SetMsg(s ...string) {
 }
 
 // SetCode set code
-func (e *response) SetCode(code int32) {
-	e.ErrorCode = strconv.Itoa(int(code))
+func (e *response) SetCode(code int) {
+	e.Code = code
 }
 
-// SetSuccess set success
-func (e *response) SetSuccess(success bool) {
-	e.Success = success
+func (e *response) SetStatus(status string) {
+	e.Status = status
 }

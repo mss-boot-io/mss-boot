@@ -8,6 +8,8 @@ package actions
  */
 
 import (
+	"errors"
+	"gorm.io/gorm"
 	"net/http"
 
 	"github.com/gin-gonic/gin"
@@ -32,6 +34,10 @@ func (e *Get) getGorm(c *gin.Context, key string) {
 	m := pkg.TablerDeepCopy(e.ModelGorm)
 	err := gormdb.DB.First(m, "id = ?", c.Param(key)).Error
 	if err != nil {
+		if errors.Is(err, gorm.ErrRecordNotFound) {
+			api.Err(http.StatusNotFound)
+			return
+		}
 		api.Log.Error(err)
 		api.AddError(err)
 		api.Err(http.StatusInternalServerError)
