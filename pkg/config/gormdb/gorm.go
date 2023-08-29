@@ -95,7 +95,7 @@ func (e *Database) Init() {
 	if e.CasbinModel != "" {
 		//set casbin adapter
 		var a persist.Adapter
-		a, err = gormadapter.NewAdapterByDBUseTableName(DB, "mss_boot", "casbin_rule")
+		a, err = gormadapter.NewAdapterByDBWithCustomTable(DB, &CasbinRule{})
 		if err != nil {
 			log.Fatalf("gormadapter.NewAdapterByDB error : %s", err.Error())
 		}
@@ -112,8 +112,8 @@ func (e *Database) Init() {
 		if err != nil {
 			log.Fatalf("Enforcer.LoadPolicy error : %s", err.Error())
 		}
-		Enforcer.EnableAutoSave(true)
-		Enforcer.EnableAutoBuildRoleLinks(true)
-		Enforcer.EnableLog(true)
+		//Enforcer.EnableAutoSave(true)
+		//Enforcer.EnableAutoBuildRoleLinks(true)
+		//Enforcer.EnableLog(true)
 	}
 }

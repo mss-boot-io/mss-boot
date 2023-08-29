@@ -11,12 +11,6 @@ import (
 	"gorm.io/gorm/utils"
 )
 
-var log loggerCore.Logger
-
-func init() {
-	log = loggerCore.NewLogger()
-}
-
 // Colors
 const (
 	Reset       = "\033[0m"
@@ -42,11 +36,11 @@ type gormLogger struct {
 func (l *gormLogger) getLogger(ctx context.Context) loggerCore.Logger {
 	requestID := ctx.Value("X-Request-ID")
 	if requestID != nil {
-		return log.Fields(map[string]interface{}{
+		return loggerCore.DefaultLogger.Fields(map[string]interface{}{
 			"x-request-id": requestID,
 		})
 	}
-	return log
+	return loggerCore.DefaultLogger
 }
 
 // LogMode log mode

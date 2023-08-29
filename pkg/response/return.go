@@ -24,8 +24,8 @@ func Error(c *gin.Context, code int, err error, msg ...string) {
 	}
 	res.SetMsg(msg...)
 	res.SetTraceID(pkg.GenerateMsgIDFromContext(c))
-	res.SetCode(code)
-	res.SetStatus("error")
+	res.SetCode(int32(code))
+	res.SetSuccess(false)
 	c.Set("result", res)
 	c.Set("status", code)
 	c.AbortWithStatusJSON(code, res)
@@ -35,20 +35,22 @@ func Error(c *gin.Context, code int, err error, msg ...string) {
 func OK(c *gin.Context, data interface{}, msg ...string) {
 	checkContext(c)
 	res := Default.Clone()
-	res.SetList(data)
+	res.SetData(data)
+	res.SetSuccess(true)
+	res.SetMsg(msg...)
 	res.SetTraceID(pkg.GenerateMsgIDFromContext(c))
 	switch c.Request.Method {
 	case http.MethodDelete:
 		res.SetCode(http.StatusNoContent)
-		c.AbortWithStatusJSON(http.StatusNoContent, data)
+		c.AbortWithStatusJSON(http.StatusNoContent, res)
 		return
 	case http.MethodPost:
 		res.SetCode(http.StatusCreated)
-		c.AbortWithStatusJSON(http.StatusCreated, data)
+		c.AbortWithStatusJSON(http.StatusCreated, res)
 		return
 	default:
 		res.SetCode(http.StatusOK)
-		c.AbortWithStatusJSON(http.StatusOK, data)
+		c.AbortWithStatusJSON(http.StatusOK, res)
 	}
 }
 
@@ -59,10 +61,10 @@ func PageOK(c *gin.Context, result interface{}, count int64, pageIndex int64, pa
 	res.Count = count
 	res.Current = pageIndex
 	res.PageSize = pageSize
-	res.response.SetList(result)
-	//res.response.SetMsg(msg...)
+	res.response.SetData(result)
+	res.response.SetMsg(msg...)
 	res.response.SetTraceID(pkg.GenerateMsgIDFromContext(c))
-	//res.response.SetCode(http.StatusOK)
+	res.response.SetCode(http.StatusOK)
 	c.Set("result", res)
 	c.Set("status", http.StatusOK)
 	c.AbortWithStatusJSON(http.StatusOK, res)
