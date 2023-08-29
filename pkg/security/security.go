@@ -14,5 +14,5 @@ type Verifier interface {
 	GetRoleID() string
 	GetEmail() string
 	GetUsername() string
-	Verify(tenantID string, username string, password string) (bool, Verifier, error)
+	Verify() (bool, Verifier, error)
 }
