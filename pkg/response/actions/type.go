@@ -46,6 +46,11 @@ type ModelGorm struct {
 	DeletedAt gorm.DeletedAt `gorm:"index" bson:"-" json:"-"`
 }
 
+func (e *ModelGorm) BeforeCreate(_ *gorm.DB) (err error) {
+	_, err = e.PrepareID(nil)
+	return err
+}
+
 // PrepareID prepare id
 func (e *ModelGorm) PrepareID(_ any) (any, error) {
 	if e.ID == "" {
