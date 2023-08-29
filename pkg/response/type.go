@@ -9,10 +9,10 @@ package response
 
 // Responses responses
 type Responses interface {
-	SetCode(int)
+	SetCode(int32)
 	SetTraceID(string)
 	SetMsg(...string)
-	SetList(interface{})
-	SetStatus(string)
+	SetData(interface{})
+	SetSuccess(bool)
 	Clone() Responses
 }

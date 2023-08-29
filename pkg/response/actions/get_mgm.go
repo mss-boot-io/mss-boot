@@ -44,8 +44,8 @@ func (*Get) String() string {
 // Handler action handler
 func (e *Get) Handler() gin.HandlerFunc {
 	return func(c *gin.Context) {
-		if e.ModelGorm != nil {
-			e.getGorm(c, e.Key)
+		if e.ModelMgm != nil {
+			e.getMgm(c, e.Key)
 			return
 		}
 		if e.ModelMgm != nil {
