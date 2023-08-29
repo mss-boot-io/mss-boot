@@ -47,7 +47,7 @@ type pages struct {
 }
 
 // SetCode 设置错误码
-func (e *response) SetCode(code int32) {
+func (e *response) SetCode(code int) {
 	switch code {
 	case 200, 0:
 	default:
@@ -65,14 +65,17 @@ func (e *response) SetMsg(msg ...string) {
 	e.ErrorMessage = strings.Join(msg, ",")
 }
 
-// SetData 设置返回数据
-func (e *response) SetData(data interface{}) {
+// SetList 设置返回数据
+func (e *response) SetList(data interface{}) {
 	e.Data = data
 }
 
-// SetSuccess 设置是否成功
-func (e *response) SetSuccess(success bool) {
-	e.Success = success
+// SetStatus 设置是否成功
+func (e *response) SetStatus(status string) {
+	switch strings.ToLower(status) {
+	case "ok", "success", "1", "t", "true":
+		e.Success = true
+	}
 }
 
 // Clone 复制当前对象

@@ -33,7 +33,7 @@ type page struct {
 	response
 }
 
-// SetData set data
+// SetList set data
 func (e *response) SetList(data interface{}) {
 	e.List = data
 }
