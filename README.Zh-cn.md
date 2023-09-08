@@ -26,7 +26,7 @@
 ## todo list
 > - [ ] 支持租户
 > - [ ] 支持dynamodb
-> - [ ] 支持config provider
+> - [x] 支持config provider
 > - [ ] 支持istio链路追踪
 > - [ ] 开箱即用支持
 

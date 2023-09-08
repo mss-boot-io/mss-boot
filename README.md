@@ -26,7 +26,7 @@ An enterprise-level language heterogeneous microservice solution that supports g
 ## todo list
 > - [ ] Support tenants
 > - [ ] Support dynamodb
-> - [ ] Support config provider
+> - [x] Support config provider
 > - [ ] Support istio traces
 > - [ ] Out-of-the-box support
 
