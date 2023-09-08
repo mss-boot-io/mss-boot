@@ -2,8 +2,9 @@ package zap
 
 import (
 	"fmt"
-	"go.uber.org/zap/zapcore"
 	"testing"
+
+	"go.uber.org/zap/zapcore"
 
 	"github.com/mss-boot-io/mss-boot/core/logger"
 	"github.com/mss-boot-io/mss-boot/core/logger/level"

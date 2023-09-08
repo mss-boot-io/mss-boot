@@ -10,7 +10,7 @@ package actions
 import (
 	"testing"
 
-	"github.com/kamva/mgm/v3"
+	mgm "github.com/kamva/mgm/v3"
 	"go.mongodb.org/mongo-driver/bson/primitive"
 )
 
