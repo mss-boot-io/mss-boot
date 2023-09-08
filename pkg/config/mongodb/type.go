@@ -7,7 +7,7 @@ package mongodb
  * @Last Modified time: 2022/3/14 9:32
  */
 
-import "github.com/kamva/mgm/v3"
+import mgm "github.com/kamva/mgm/v3"
 
 // Tabler table interface
 type Tabler interface {

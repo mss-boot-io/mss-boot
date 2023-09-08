@@ -12,7 +12,7 @@ import (
 	"fmt"
 	"strings"
 
-	"github.com/kamva/mgm/v3"
+	mgm "github.com/kamva/mgm/v3"
 	"gopkg.in/yaml.v3"
 
 	"github.com/mss-boot-io/mss-boot/pkg"

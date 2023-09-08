@@ -5,7 +5,7 @@ import (
 
 	"github.com/gin-gonic/gin"
 	"github.com/google/uuid"
-	"github.com/kamva/mgm/v3"
+	mgm "github.com/kamva/mgm/v3"
 	"golang.org/x/crypto/bcrypt"
 	"gorm.io/gorm/schema"
 )

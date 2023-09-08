@@ -14,7 +14,7 @@ import (
 	"strings"
 	"time"
 
-	"github.com/kamva/mgm/v3"
+	mgm "github.com/kamva/mgm/v3"
 	"github.com/mss-boot-io/mss-boot/pkg/config/source"
 	"go.mongodb.org/mongo-driver/bson"
 	mongoOptions "go.mongodb.org/mongo-driver/mongo/options"

@@ -12,7 +12,7 @@ import (
 	"time"
 
 	"github.com/google/uuid"
-	"github.com/kamva/mgm/v3"
+	mgm "github.com/kamva/mgm/v3"
 	"github.com/spf13/cast"
 	"gorm.io/gorm"
 	"gorm.io/gorm/schema"
