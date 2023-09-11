@@ -5,6 +5,7 @@ import (
 	"fmt"
 	"github.com/gin-gonic/gin"
 	"github.com/google/uuid"
+	"github.com/sanity-io/litter"
 	"gorm.io/driver/mysql"
 	"gorm.io/gorm"
 	"net/http"
@@ -234,6 +235,62 @@ func TestModel_Delete(t *testing.T) {
 			}
 			if tt.wantError != (err != nil) {
 				t.Errorf("Delete() error = %v, wantError %v", err, tt.wantError)
+			}
+		})
+	}
+}
+
+func TestModel_List(t *testing.T) {
+	tests := []struct {
+		name      string
+		path      string
+		dsn       string
+		wantError bool
+	}{
+		{
+			name:      "test",
+			path:      "../../testdata/test.yml",
+			dsn:       "root:123456@tcp(127.0.0.1:3306)/test?charset=utf8mb4&parseTime=True&loc=Local",
+			wantError: false,
+		},
+	}
+	for _, tt := range tests {
+		t.Run(tt.name, func(t *testing.T) {
+			rb, err := os.ReadFile(tt.path)
+			if err != nil {
+				t.Fatalf("ReadFile() error = %v", err)
+			}
+			m := &Model{}
+			err = yaml.Unmarshal(rb, m)
+			if err != nil {
+				t.Fatalf("Unmarshal() error = %v", err)
+			}
+			db, err := gorm.Open(mysql.New(mysql.Config{
+				DSN: tt.dsn,
+			}))
+			if err != nil {
+				t.Fatalf("Open() error = %v", err)
+			}
+			// 创建一个虚拟的 HTTP 请求和响应
+			w := httptest.NewRecorder()
+			req, _ := http.NewRequest(http.MethodGet, "/test", nil)
+			r := gin.Default()
+			r.GET("/test", func(ctx *gin.Context) {
+				items := m.MakeList()
+				litter.Dump(items)
+				if err = db.Scopes(m.TableScope).Find(items).Error; err != nil {
+					ctx.Status(http.StatusInternalServerError)
+					t.Fatalf("Find() error = %v", err)
+				}
+				litter.Dump(items)
+				ctx.Status(http.StatusOK)
+			})
+			r.ServeHTTP(w, req)
+			if w.Code != http.StatusOK {
+				t.Errorf("Expected status code %d, but got %d", http.StatusOK, w.Code)
+			}
+			if tt.wantError != (err != nil) {
+				t.Errorf("List() error = %v, wantError %v", err, tt.wantError)
 			}
 		})
 	}

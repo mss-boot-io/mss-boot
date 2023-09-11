@@ -73,7 +73,14 @@ func (m *Model) MakeModel() any {
 		fieldTypes = append(fieldTypes, m.Fields[i].MakeField())
 	}
 	return reflect.New(reflect.StructOf(fieldTypes)).Interface()
+}
 
+func (m *Model) MakeList() any {
+	fieldTypes := make([]reflect.StructField, 0)
+	for i := range m.Fields {
+		fieldTypes = append(fieldTypes, m.Fields[i].MakeField())
+	}
+	return reflect.New(reflect.SliceOf(reflect.StructOf(fieldTypes))).Interface()
 }
 
 func (m *Model) TableScope(db *gorm.DB) *gorm.DB {
