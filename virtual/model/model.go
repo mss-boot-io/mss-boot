@@ -96,3 +96,60 @@ func (m *Model) URI(ctx *gin.Context) (f func(*gorm.DB) *gorm.DB) {
 		return db
 	}
 }
+
+func (m *Model) Pagination(ctx *gin.Context, p PaginationImp) (f func(*gorm.DB) *gorm.DB) {
+	err := ctx.ShouldBindQuery(p)
+	return func(db *gorm.DB) *gorm.DB {
+		if err != nil {
+			_ = db.AddError(err)
+			return db
+		}
+		var count int64
+		db.Count(&count)
+		offset := (p.GetCurrent() - 1) * p.GetPageSize()
+		return db.Offset(offset).Limit(p.GetPageSize())
+	}
+}
+
+func (m *Model) Search(ctx *gin.Context) (f func(*gorm.DB) *gorm.DB) {
+	return func(db *gorm.DB) *gorm.DB {
+		for i := range m.Fields {
+			v, ok := ctx.GetQuery(m.Fields[i].JsonTag)
+			if !ok {
+				continue
+			}
+			switch m.Fields[i].Search {
+			case "exact", "iexact":
+				db = db.Where(fmt.Sprintf("`%s`.`%s` = ?", m.Table, m.Fields[i].Name), v)
+			case "contains", "icontains":
+				db = db.Where(fmt.Sprintf("`%s`.`%s` like ?", m.Table, m.Fields[i].Name), "%"+v+"%")
+			case "gt":
+				db = db.Where(fmt.Sprintf("`%s`.`%s` > ?", m.Table, m.Fields[i].Name), v)
+			case "gte":
+				db = db.Where(fmt.Sprintf("`%s`.`%s` >= ?", m.Table, m.Fields[i].Name), v)
+			case "lt":
+				db = db.Where(fmt.Sprintf("`%s`.`%s` < ?", m.Table, m.Fields[i].Name), v)
+			case "lte":
+				db = db.Where(fmt.Sprintf("`%s`.`%s` <= ?", m.Table, m.Fields[i].Name), v)
+			case "startWith", "istartWith":
+				db = db.Where(fmt.Sprintf("`%s`.`%s` like ?", m.Table, m.Fields[i].Name), v+"%")
+			case "endWith", "iendWith":
+				db = db.Where(fmt.Sprintf("`%s`.`%s` like ?", m.Table, m.Fields[i].Name), "%"+v)
+			case "in":
+				arr, ok := ctx.GetQueryArray(m.Fields[i].JsonTag)
+				if !ok {
+					continue
+				}
+				db = db.Where(fmt.Sprintf("`%s`.`%s` in (?)", m.Table, m.Fields[i].JsonTag), arr)
+			case "isnull":
+				db = db.Where(fmt.Sprintf("`%s`.`%s` isnull", m.Table, m.Fields[i].JsonTag))
+			case "order":
+				switch v {
+				case "desc", "asc":
+					db = db.Order(fmt.Sprintf("`%s`.`%s` %s", m.Table, m.Fields[i].JsonTag, v))
+				}
+			}
+		}
+		return db
+	}
+}

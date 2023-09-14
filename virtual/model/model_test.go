@@ -26,6 +26,12 @@ import (
 
 var id = strings.ReplaceAll(uuid.New().String(), "-", "")
 
+type PaginationTest struct {
+	PageSize int   `query:"pageSize" form:"pageSize"`
+	Total    int64 `query:"total" form:"total"`
+	Current  int   `query:"current" form:"current"`
+}
+
 func TestModel_TableName(t *testing.T) {
 	tests := []struct {
 		name string
@@ -278,7 +284,7 @@ func TestModel_List(t *testing.T) {
 			r.GET("/test", func(ctx *gin.Context) {
 				items := m.MakeList()
 				litter.Dump(items)
-				if err = db.Scopes(m.TableScope).Find(items).Error; err != nil {
+				if err = db.Scopes(m.TableScope, m.Search(ctx), m.Pagination(ctx)).Find(items).Error; err != nil {
 					ctx.Status(http.StatusInternalServerError)
 					t.Fatalf("Find() error = %v", err)
 				}

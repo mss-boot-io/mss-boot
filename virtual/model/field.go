@@ -35,6 +35,7 @@ type Field struct {
 	Size                   int             `json:"size" yaml:"size"`
 	Precision              int             `json:"precision" yaml:"precision"`
 	Scale                  int             `json:"scale" yaml:"scale"`
+	Search                 string          `json:"search" yaml:"search"`
 }
 
 type DefaultFN string
