@@ -3,16 +3,17 @@ package model
 import (
 	"bytes"
 	"fmt"
-	"github.com/gin-gonic/gin"
-	"github.com/google/uuid"
-	"github.com/sanity-io/litter"
-	"gorm.io/driver/mysql"
-	"gorm.io/gorm"
 	"net/http"
 	"net/http/httptest"
 	"os"
 	"strings"
 	"testing"
+
+	"github.com/gin-gonic/gin"
+	"github.com/google/uuid"
+	"github.com/sanity-io/litter"
+	"gorm.io/driver/mysql"
+	"gorm.io/gorm"
 
 	"gopkg.in/yaml.v3"
 )
