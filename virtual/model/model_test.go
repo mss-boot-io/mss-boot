@@ -32,6 +32,30 @@ type PaginationTest struct {
 	Current  int   `query:"current" form:"current"`
 }
 
+func (p *PaginationTest) SetPageSize(size int) {
+	p.PageSize = size
+}
+
+func (p *PaginationTest) GetPageSize() int {
+	return p.PageSize
+}
+
+func (p *PaginationTest) SetTotal(total int64) {
+	p.Total = total
+}
+
+func (p *PaginationTest) GetTotal() int64 {
+	return p.Total
+}
+
+func (p *PaginationTest) SetCurrent(current int) {
+	p.Current = current
+}
+
+func (p *PaginationTest) GetCurrent() int {
+	return p.Current
+}
+
 func TestModel_TableName(t *testing.T) {
 	tests := []struct {
 		name string
@@ -279,16 +303,20 @@ func TestModel_List(t *testing.T) {
 			}
 			// 创建一个虚拟的 HTTP 请求和响应
 			w := httptest.NewRecorder()
-			req, _ := http.NewRequest(http.MethodGet, "/test", nil)
+			req, _ := http.NewRequest(http.MethodGet, "/test?pageSize=10&current=1", nil)
 			r := gin.Default()
 			r.GET("/test", func(ctx *gin.Context) {
 				items := m.MakeList()
 				litter.Dump(items)
-				if err = db.Scopes(m.TableScope, m.Search(ctx), m.Pagination(ctx)).Find(items).Error; err != nil {
+				page := &PaginationTest{}
+				var count int64
+				if err = db.Scopes(m.TableScope, m.Search(ctx), m.Pagination(ctx, page)).Find(items).Limit(-1).Count(&count).Error; err != nil {
 					ctx.Status(http.StatusInternalServerError)
 					t.Fatalf("Find() error = %v", err)
 				}
+				page.SetTotal(count)
 				litter.Dump(items)
+				litter.Dump(page)
 				ctx.Status(http.StatusOK)
 			})
 			r.ServeHTTP(w, req)

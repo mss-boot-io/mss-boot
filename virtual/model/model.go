@@ -104,8 +104,6 @@ func (m *Model) Pagination(ctx *gin.Context, p PaginationImp) (f func(*gorm.DB) 
 			_ = db.AddError(err)
 			return db
 		}
-		var count int64
-		db.Count(&count)
 		offset := (p.GetCurrent() - 1) * p.GetPageSize()
 		return db.Offset(offset).Limit(p.GetPageSize())
 	}
