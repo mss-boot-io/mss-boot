@@ -304,7 +304,7 @@ func TestModel_List(t *testing.T) {
 			}
 			// 创建一个虚拟的 HTTP 请求和响应
 			w := httptest.NewRecorder()
-			req, _ := http.NewRequest(http.MethodGet, "/test?pageSize=10&current=1", nil)
+			req, _ := http.NewRequest(http.MethodGet, "/test?pageSize=10&current=1&name=test1", nil)
 			r := gin.Default()
 			r.GET("/test", func(ctx *gin.Context) {
 				items := m.MakeList()

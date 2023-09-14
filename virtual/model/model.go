@@ -76,6 +76,7 @@ func (m *Model) MakeModel() any {
 }
 
 func (m *Model) MakeList() any {
+	m.Init()
 	fieldTypes := make([]reflect.StructField, 0)
 	for i := range m.Fields {
 		fieldTypes = append(fieldTypes, m.Fields[i].MakeField())
@@ -112,6 +113,9 @@ func (m *Model) Pagination(ctx *gin.Context, p PaginationImp) (f func(*gorm.DB) 
 func (m *Model) Search(ctx *gin.Context) (f func(*gorm.DB) *gorm.DB) {
 	return func(db *gorm.DB) *gorm.DB {
 		for i := range m.Fields {
+			if m.Fields[i].Search == "" {
+				continue
+			}
 			v, ok := ctx.GetQuery(m.Fields[i].JsonTag)
 			if !ok {
 				continue
