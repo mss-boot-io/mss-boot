@@ -143,8 +143,10 @@ func (m *Model) Search(ctx *gin.Context) (f func(*gorm.DB) *gorm.DB) {
 				db = db.Where(fmt.Sprintf("`%s`.`%s` isnull", m.Table, m.Fields[i].JsonTag))
 			case "order":
 				switch v {
-				case "desc", "asc":
-					db = db.Order(fmt.Sprintf("`%s`.`%s` %s", m.Table, m.Fields[i].JsonTag, v))
+				case "desc":
+					db = db.Order(fmt.Sprintf("`%s`.`%s` desc", m.Table, m.Fields[i].JsonTag))
+				case "asc":
+					db = db.Order(fmt.Sprintf("`%s`.`%s` asc", m.Table, m.Fields[i].JsonTag))
 				}
 			}
 		}
