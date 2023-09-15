@@ -87,6 +87,42 @@ func TestModel_TableName(t *testing.T) {
 	}
 }
 
+func TestModel_Migrate(t *testing.T) {
+	tests := []struct {
+		name      string
+		path      string
+		dsn       string
+		wantError bool
+	}{
+		{
+			name:      "test0",
+			path:      "../../testdata/test.yml",
+			dsn:       "root:123456@tcp(127.0.0.1:3306)/test?charset=utf8mb4&parseTime=True&loc=Local",
+			wantError: false,
+		},
+	}
+	for _, tt := range tests {
+		rb, err := os.ReadFile(tt.path)
+		if err != nil {
+			t.Fatalf("ReadFile() error = %v", err)
+		}
+		m := &Model{}
+		err = yaml.Unmarshal(rb, m)
+		if err != nil {
+			t.Fatalf("Unmarshal() error = %v", err)
+		}
+		db, err := gorm.Open(mysql.New(mysql.Config{
+			DSN: tt.dsn,
+		}))
+		if err != nil {
+			t.Fatalf("Open() error = %v", err)
+		}
+		if err = m.Migrate(db); (err != nil) != tt.wantError {
+			t.Errorf("Migrate() error = %v, wantError %v", err, tt.wantError)
+		}
+	}
+}
+
 func TestModel_Create(t *testing.T) {
 	tests := []struct {
 		name string
@@ -254,7 +290,7 @@ func TestModel_Delete(t *testing.T) {
 			req, _ := http.NewRequest(http.MethodDelete, "/test/"+id, nil)
 			r := gin.Default()
 			r.DELETE("/test/:id", func(ctx *gin.Context) {
-				if err = db.Scopes(m.URI(ctx)).Delete(nil).Error; err != nil {
+				if err = db.Scopes(m.URI(ctx)).Delete(m.MakeModel()).Error; err != nil {
 					ctx.Status(http.StatusInternalServerError)
 					t.Fatalf("Delete() error = %v", err)
 				}

@@ -4,10 +4,10 @@ import (
 	"fmt"
 	"reflect"
 	"strings"
+	"time"
 
 	"github.com/gin-gonic/gin"
 	"gorm.io/gorm"
-	"gorm.io/gorm/schema"
 )
 
 /*
@@ -18,11 +18,9 @@ import (
  */
 
 type Model struct {
-	Table          string          `json:"tableName" yaml:"tableName" binding:"required"`
-	AutoCreateTime schema.TimeType `json:"autoCreateTime" yaml:"autoCreateTime"`
-	AutoUpdateTime schema.TimeType `json:"autoUpdateTime" yaml:"autoUpdateTime"`
-	HardDeleted    bool            `json:"hardDeleted" yaml:"hardDeleted"`
-	Fields         []*Field        `json:"fields" yaml:"fields" binding:"required"`
+	Table       string   `json:"tableName" yaml:"tableName" binding:"required"`
+	HardDeleted bool     `json:"hardDeleted" yaml:"hardDeleted"`
+	Fields      []*Field `json:"fields" yaml:"fields" binding:"required"`
 }
 
 // TableName get table name
@@ -42,12 +40,6 @@ func (m *Model) PrimaryKeys() []string {
 }
 
 func (m *Model) Init() {
-	if m.AutoCreateTime == 0 {
-		m.AutoCreateTime = schema.UnixSecond
-	}
-	if m.AutoUpdateTime == 0 {
-		m.AutoUpdateTime = schema.UnixSecond
-	}
 	for i := range m.Fields {
 		m.Fields[i].Init()
 	}
@@ -68,20 +60,49 @@ func (m *Model) Default(data any) {
 
 // MakeModel make virtual model
 func (m *Model) MakeModel() any {
-	fieldTypes := make([]reflect.StructField, 0)
-	for i := range m.Fields {
-		fieldTypes = append(fieldTypes, m.Fields[i].MakeField())
-	}
-	return reflect.New(reflect.StructOf(fieldTypes)).Interface()
+	m.Init()
+	s := reflect.New(reflect.StructOf(m.MakeField()))
+	return s.Interface()
 }
 
 func (m *Model) MakeList() any {
 	m.Init()
+	return reflect.New(reflect.SliceOf(reflect.StructOf(m.MakeField()))).Interface()
+}
+
+func (m *Model) Migrate(db *gorm.DB) error {
+	return db.Table(m.TableName()).AutoMigrate(m.MakeModel())
+}
+
+func (m *Model) MakeField() []reflect.StructField {
 	fieldTypes := make([]reflect.StructField, 0)
 	for i := range m.Fields {
 		fieldTypes = append(fieldTypes, m.Fields[i].MakeField())
 	}
-	return reflect.New(reflect.SliceOf(reflect.StructOf(fieldTypes))).Interface()
+	fieldTypes = append(fieldTypes, m.MakeTimeField()...)
+	return fieldTypes
+}
+
+func (m *Model) MakeTimeField() []reflect.StructField {
+	fieldTypes := []reflect.StructField{
+		{
+			Name: "CreatedAt",
+			Type: reflect.TypeOf(time.Time{}),
+			Tag:  "json:\"createdAt,omitempty\"",
+		}, {
+			Name: "UpdatedAt",
+			Type: reflect.TypeOf(time.Time{}),
+			Tag:  "json:\"updatedAt,omitempty\"",
+		},
+	}
+	if !m.HardDeleted {
+		fieldTypes = append(fieldTypes, reflect.StructField{
+			Name: "DeletedAt",
+			Type: reflect.TypeOf(gorm.DeletedAt{}),
+			Tag:  "json:\"deletedAt,omitempty\" gorm:\"index\"",
+		})
+	}
+	return fieldTypes
 }
 
 func (m *Model) TableScope(db *gorm.DB) *gorm.DB {
