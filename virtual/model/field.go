@@ -30,7 +30,7 @@ type Field struct {
 	DefaultValue           string          `json:"defaultValue" yaml:"defaultValue"`
 	DefaultValueFN         func() string   `json:"-" yaml:"-"`
 	NotNull                bool            `json:"notNull" yaml:"notNull"`
-	Unique                 bool            `json:"unique" yaml:"unique"`
+	Unique                 string          `json:"unique" yaml:"unique"`
 	Index                  string          `json:"index" yaml:"index"`
 	Comment                string          `json:"comment" yaml:"comment"`
 	Size                   int             `json:"size" yaml:"size"`
@@ -71,9 +71,22 @@ func (f *Field) GetName() string {
 }
 
 func (f *Field) MakeField() reflect.StructField {
+	gormTag := fmt.Sprintf(`gorm:"column:%s`, f.Name)
+	if f.Size > 0 {
+		gormTag = fmt.Sprintf(`%s;size:%d`, gormTag, f.Size)
+	}
+	if f.Index != "" {
+		gormTag = fmt.Sprintf(`%s;index:%s`, gormTag, f.Index)
+	}
+	if f.NotNull {
+		gormTag = fmt.Sprintf(`%s;not null`, gormTag)
+	}
+	if f.Unique != "" {
+		gormTag = fmt.Sprintf(`%s;unique:%s`, gormTag, f.Unique)
+	}
 	field := reflect.StructField{
 		Name: f.GetName(),
-		Tag:  reflect.StructTag(fmt.Sprintf(`json:"%s" gorm:"column:%s"`, f.JsonTag, f.Name)),
+		Tag:  reflect.StructTag(fmt.Sprintf(`json:"%s,omitempty" %s"`, f.JsonTag, gormTag)),
 	}
 	switch f.DataType {
 	case schema.Bool:
