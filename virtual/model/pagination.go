@@ -8,10 +8,6 @@
 package model
 
 type PaginationImp interface {
-	SetPageSize(int)
-	SetCurrent(int)
-	SetTotal(int64)
-	GetCurrent() int
-	GetPageSize() int
-	GetTotal() int64
+	GetPage() int64
+	GetPageSize() int64
 }

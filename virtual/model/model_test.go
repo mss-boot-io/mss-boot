@@ -27,34 +27,26 @@ import (
 
 var id = strings.ReplaceAll(uuid.New().String(), "-", "")
 
+// PaginationTest pagination params
 type PaginationTest struct {
-	PageSize int   `query:"pageSize" form:"pageSize"`
-	Total    int64 `query:"total" form:"total"`
-	Current  int   `query:"current" form:"current"`
+	Page     int64 `form:"page" query:"page"`
+	PageSize int64 `form:"pageSize" query:"pageSize"`
 }
 
-func (p *PaginationTest) SetPageSize(size int) {
-	p.PageSize = size
+// GetPage get page
+func (e *PaginationTest) GetPage() int64 {
+	if e.Page <= 0 {
+		return 1
+	}
+	return e.Page
 }
 
-func (p *PaginationTest) GetPageSize() int {
-	return p.PageSize
-}
-
-func (p *PaginationTest) SetTotal(total int64) {
-	p.Total = total
-}
-
-func (p *PaginationTest) GetTotal() int64 {
-	return p.Total
-}
-
-func (p *PaginationTest) SetCurrent(current int) {
-	p.Current = current
-}
-
-func (p *PaginationTest) GetCurrent() int {
-	return p.Current
+// GetPageSize get page size
+func (e *PaginationTest) GetPageSize() int64 {
+	if e.PageSize <= 0 {
+		return 10
+	}
+	return e.PageSize
 }
 
 func TestModel_TableName(t *testing.T) {
@@ -351,7 +343,7 @@ func TestModel_List(t *testing.T) {
 					ctx.Status(http.StatusInternalServerError)
 					t.Fatalf("Find() error = %v", err)
 				}
-				page.SetTotal(count)
+				fmt.Println(count)
 				litter.Dump(items)
 				litter.Dump(page)
 				ctx.Status(http.StatusOK)
