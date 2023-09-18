@@ -26,6 +26,10 @@ const (
 	Search = "search"
 	// Control action
 	Control = "control"
+	// Create action
+	Create = "create"
+	// Update action
+	Update = "update"
 )
 
 // Action interface

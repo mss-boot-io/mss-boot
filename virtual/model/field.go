@@ -2,6 +2,7 @@ package model
 
 import (
 	"fmt"
+	"github.com/spf13/cast"
 	"reflect"
 	"strings"
 	"time"
@@ -21,7 +22,7 @@ type Field struct {
 	Name                   string          `json:"name" yaml:"name" binding:"required"`
 	JsonTag                string          `json:"jsonTag" yaml:"jsonTag"`
 	DataType               schema.DataType `json:"type" yaml:"type" binding:"required"`
-	PrimaryKey             bool            `json:"primaryKey" yaml:"primaryKey"`
+	PrimaryKey             string          `json:"primaryKey" yaml:"primaryKey"`
 	AutoIncrement          bool            `json:"autoIncrement" yaml:"autoIncrement"`
 	AutoIncrementIncrement int64           `json:"autoIncrementIncrement" yaml:"autoIncrementIncrement"`
 	Creatable              bool            `json:"creatable" yaml:"creatable"`
@@ -58,7 +59,7 @@ func (f *Field) Init() {
 	if f.JsonTag == "" {
 		f.JsonTag = f.Name
 	}
-	if f.PrimaryKey {
+	if f.PrimaryKey != "" && f.Name == "id" {
 		f.DefaultValueFN = UUIDFN
 	}
 	if f.DataType == schema.Time && f.NotNull {
@@ -83,6 +84,13 @@ func (f *Field) MakeField() reflect.StructField {
 	}
 	if f.Unique != "" {
 		gormTag = fmt.Sprintf(`%s;unique:%s`, gormTag, f.Unique)
+	}
+	if f.PrimaryKey != "" {
+		if y, err := cast.ToBoolE(f.PrimaryKey); err == nil && y {
+			gormTag = fmt.Sprintf(`%s;primaryKey`, gormTag)
+		} else {
+			gormTag = fmt.Sprintf(`%s;primaryKey:%s`, gormTag, f.PrimaryKey)
+		}
 	}
 	field := reflect.StructField{
 		Name: f.GetName(),

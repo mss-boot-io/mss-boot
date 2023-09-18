@@ -28,11 +28,11 @@ func (m *Model) TableName() string {
 	return m.Table
 }
 
-// PrimaryKeys get primary keys
+// PrimaryKeys get primary keys support multi keys
 func (m *Model) PrimaryKeys() []string {
 	var keys []string
 	for i := range m.Fields {
-		if m.Fields[i].PrimaryKey {
+		if m.Fields[i].PrimaryKey != "" {
 			keys = append(keys, m.Fields[i].Name)
 		}
 	}
