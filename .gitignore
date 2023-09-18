@@ -28,3 +28,8 @@ go.work*
 ### vscode ###
 .vscode
 *.code-workspace
+
+### web ide ###
+.gitpod.yml
+.gitpod.yaml
+.sumi
