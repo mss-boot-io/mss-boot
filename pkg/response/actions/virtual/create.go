@@ -41,7 +41,7 @@ func (e *Create) Handler() gin.HandlerFunc {
 			api := response.Make(c)
 			//create
 			m := e.GetModel(c)
-			if m != nil {
+			if m == nil {
 				// no set model
 				api.Err(http.StatusNotFound)
 				return

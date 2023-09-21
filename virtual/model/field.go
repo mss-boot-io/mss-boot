@@ -2,12 +2,12 @@ package model
 
 import (
 	"fmt"
-	"github.com/spf13/cast"
 	"reflect"
 	"strings"
 	"time"
 
 	"github.com/google/uuid"
+	"github.com/spf13/cast"
 	"gorm.io/gorm/schema"
 )
 
@@ -19,6 +19,7 @@ import (
  */
 
 type Field struct {
+	ModelID                string          `json:"modelID,omitempty" yaml:"modelID" binding:"required" gorm:"column:model_id;type:varchar(64);not null;comment:模型id"`
 	Name                   string          `json:"name" yaml:"name" binding:"required"`
 	JsonTag                string          `json:"jsonTag" yaml:"jsonTag"`
 	DataType               schema.DataType `json:"type" yaml:"type" binding:"required"`
@@ -73,6 +74,7 @@ func (f *Field) GetName() string {
 
 func (f *Field) MakeField() reflect.StructField {
 	gormTag := fmt.Sprintf(`gorm:"column:%s`, f.Name)
+	uriTag := ""
 	if f.Size > 0 {
 		gormTag = fmt.Sprintf(`%s;size:%d`, gormTag, f.Size)
 	}
@@ -91,10 +93,11 @@ func (f *Field) MakeField() reflect.StructField {
 		} else {
 			gormTag = fmt.Sprintf(`%s;primaryKey:%s`, gormTag, f.PrimaryKey)
 		}
+		uriTag = fmt.Sprintf(` uri:"%s"`, f.JsonTag)
 	}
 	field := reflect.StructField{
 		Name: f.GetName(),
-		Tag:  reflect.StructTag(fmt.Sprintf(`json:"%s,omitempty" %s"`, f.JsonTag, gormTag)),
+		Tag:  reflect.StructTag(fmt.Sprintf(`json:"%s,omitempty" %s"%s`, f.JsonTag, gormTag, uriTag)),
 	}
 	switch f.DataType {
 	case schema.Bool:

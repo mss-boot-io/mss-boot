@@ -18,9 +18,20 @@ import (
 
 var (
 	PathKey = "key"
+	base    = &Base{}
 )
 
-// Base action
+// GetBase get base
+func GetBase() *Base {
+	return base
+}
+
+// SetModel set model
+func SetModel(key string, m *model.Model) {
+	base.SetModel(key, m)
+}
+
+// Base acton
 type Base struct {
 	Models map[string]*model.Model
 	mutex  sync.Mutex

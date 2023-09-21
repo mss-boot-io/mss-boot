@@ -43,7 +43,7 @@ func (e *Delete) Handler() gin.HandlerFunc {
 			api := response.Make(c)
 			//delete
 			m := e.GetModel(c)
-			if m != nil {
+			if m == nil {
 				// no set model
 				api.Err(http.StatusNotFound)
 				return

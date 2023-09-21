@@ -99,7 +99,7 @@ func (m *Model) MakeTimeField() []reflect.StructField {
 		fieldTypes = append(fieldTypes, reflect.StructField{
 			Name: "DeletedAt",
 			Type: reflect.TypeOf(gorm.DeletedAt{}),
-			Tag:  "json:\"deletedAt,omitempty\" gorm:\"index\"",
+			Tag:  "json:\"-\" gorm:\"index\"",
 		})
 	}
 	return fieldTypes
@@ -127,7 +127,7 @@ func (m *Model) Pagination(ctx *gin.Context, p PaginationImp) (f func(*gorm.DB) 
 			return db
 		}
 		offset := (p.GetPage() - 1) * p.GetPageSize()
-		return db.Offset(int(offset)).Limit(int(p.GetPageSize()))
+		return db.Limit(int(p.GetPageSize())).Offset(int(offset))
 	}
 }
 
