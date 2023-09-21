@@ -9,7 +9,7 @@ package controller
 
 import (
 	"github.com/mss-boot-io/mss-boot/pkg/response"
-	"github.com/mss-boot-io/mss-boot/pkg/response/actions"
+	"github.com/mss-boot-io/mss-boot/pkg/response/actions/authentic"
 )
 
 // Option set options
@@ -19,9 +19,9 @@ type Option func(*Options)
 type Options struct {
 	actions       []response.Action
 	search        response.Searcher
-	model         actions.Model
+	model         authentic.Model
 	auth          bool
-	modelProvider actions.ModelProvider
+	modelProvider authentic.ModelProvider
 }
 
 // getAction get action
@@ -59,7 +59,7 @@ func WithSearch(search response.Searcher) Option {
 }
 
 // WithModel set model
-func WithModel(m actions.Model) Option {
+func WithModel(m authentic.Model) Option {
 	return func(o *Options) {
 		o.model = m
 	}
@@ -73,7 +73,7 @@ func WithAuth(auth bool) Option {
 }
 
 // WithModelProvider set model provider
-func WithModelProvider(provider actions.ModelProvider) Option {
+func WithModelProvider(provider authentic.ModelProvider) Option {
 	return func(o *Options) {
 		o.modelProvider = provider
 	}
