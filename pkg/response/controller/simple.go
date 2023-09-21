@@ -8,8 +8,9 @@ package controller
  */
 
 import (
-	"github.com/mss-boot-io/mss-boot/pkg/response/actions/authentic"
 	"strings"
+
+	"github.com/mss-boot-io/mss-boot/pkg/response/actions/authentic"
 
 	"github.com/gin-gonic/gin"
 	mgm "github.com/kamva/mgm/v3"
