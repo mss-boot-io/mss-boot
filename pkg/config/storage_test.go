@@ -10,6 +10,7 @@ package config
 import (
 	"bytes"
 	"context"
+	"fmt"
 	"os"
 	"testing"
 
@@ -53,13 +54,24 @@ func TestStorage_Init(t *testing.T) {
 				SecretAccessKey: tt.fields.SecretAccessKey,
 			}
 			o.Init()
-			_, err := o.GetClient().PutObject(context.TODO(), &s3.PutObjectInput{
-				Bucket: aws.String("mss-boot-io"),
+			res, err := o.GetClient().ListObjectsV2(context.TODO(), &s3.ListObjectsV2Input{
+				Bucket:  aws.String(tt.fields.Bucket),
+				MaxKeys: 10,
+			})
+			if err != nil {
+				t.Fatalf("failed to list items: %v", err)
+			}
+
+			for _, o := range res.Contents {
+				fmt.Println(">>> ", *o.Key)
+			}
+			_, err = o.GetClient().PutObject(context.TODO(), &s3.PutObjectInput{
+				Bucket: aws.String(tt.fields.Bucket),
 				Key:    aws.String("test.json"),
 				Body:   bytes.NewBuffer([]byte(`{"name": "lwx"}`)),
 			})
 			if err != nil {
-				t.Errorf("failed to put object: %v", err)
+				t.Fatalf("failed to put object: %v", err)
 			}
 		})
 	}
