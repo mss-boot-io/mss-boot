@@ -38,7 +38,7 @@ const (
 	OBS ProviderType = "obs"
 	// BOS baidu bos
 	BOS ProviderType = "bos"
-	// GCS google gcs fixme:not tested
+	// GCS google gcs
 	GCS ProviderType = "gcs"
 	// KS3 kingsoft ks3
 	KS3 ProviderType = "ks3"
@@ -134,8 +134,6 @@ func (o *Storage) Init() {
 
 				return nil
 			})
-		default:
-			s3Options.EndpointOptions.DisableHTTPS = true
 		}
 	})
 }
