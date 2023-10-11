@@ -10,6 +10,7 @@ package config
 import (
 	"bytes"
 	"context"
+	"fmt"
 	"os"
 	"testing"
 
@@ -31,14 +32,47 @@ func TestStorage_Init(t *testing.T) {
 		fields fields
 	}{
 		{
-			name: "test",
+			name: "test-oss",
 			fields: fields{
-				Type:            ProviderType(os.Getenv("s3_provider")),
+				Type:            OSS,
 				SigningMethod:   "v4",
-				Region:          os.Getenv("s3_region"),
-				Bucket:          os.Getenv("s3_bucket"),
-				AccessKeyID:     os.Getenv("s3_access_key_id"),
-				SecretAccessKey: os.Getenv("s3_secret_access_key"),
+				Region:          os.Getenv("oss_region"),
+				Bucket:          os.Getenv("oss_bucket"),
+				AccessKeyID:     os.Getenv("oss_access_key_id"),
+				SecretAccessKey: os.Getenv("oss_secret_access_key"),
+			},
+		},
+		{
+			name: "test-bos",
+			fields: fields{
+				Type:            BOS,
+				SigningMethod:   "v4",
+				Region:          os.Getenv("bos_region"),
+				Bucket:          os.Getenv("bos_bucket"),
+				AccessKeyID:     os.Getenv("bos_access_key_id"),
+				SecretAccessKey: os.Getenv("bos_secret_access_key"),
+			},
+		},
+		{
+			name: "test-ks3",
+			fields: fields{
+				Type:            KS3,
+				SigningMethod:   "v4",
+				Region:          os.Getenv("ks3_region"),
+				Bucket:          os.Getenv("ks3_bucket"),
+				AccessKeyID:     os.Getenv("ks3_access_key_id"),
+				SecretAccessKey: os.Getenv("ks3_secret_access_key"),
+			},
+		},
+		{
+			name: "test-kodo",
+			fields: fields{
+				Type:            KODO,
+				SigningMethod:   "v4",
+				Region:          os.Getenv("kodo_region"),
+				Bucket:          os.Getenv("kodo_bucket"),
+				AccessKeyID:     os.Getenv("kodo_access_key_id"),
+				SecretAccessKey: os.Getenv("kodo_secret_access_key"),
 			},
 		},
 	}
@@ -53,13 +87,24 @@ func TestStorage_Init(t *testing.T) {
 				SecretAccessKey: tt.fields.SecretAccessKey,
 			}
 			o.Init()
-			_, err := o.GetClient().PutObject(context.TODO(), &s3.PutObjectInput{
-				Bucket: aws.String("mss-boot-io"),
+			res, err := o.GetClient().ListObjectsV2(context.TODO(), &s3.ListObjectsV2Input{
+				Bucket:  aws.String(tt.fields.Bucket),
+				MaxKeys: 10,
+			})
+			if err != nil {
+				t.Fatalf("failed to list items: %v", err)
+			}
+
+			for _, o := range res.Contents {
+				fmt.Println(">>> ", *o.Key)
+			}
+			_, err = o.GetClient().PutObject(context.TODO(), &s3.PutObjectInput{
+				Bucket: aws.String(tt.fields.Bucket),
 				Key:    aws.String("test.json"),
 				Body:   bytes.NewBuffer([]byte(`{"name": "lwx"}`)),
 			})
 			if err != nil {
-				t.Errorf("failed to put object: %v", err)
+				t.Fatalf("failed to put object: %v", err)
 			}
 		})
 	}

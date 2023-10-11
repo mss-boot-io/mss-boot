@@ -13,8 +13,11 @@ import (
 	"log"
 
 	"github.com/aws/aws-sdk-go-v2/aws"
+	v4 "github.com/aws/aws-sdk-go-v2/aws/signer/v4"
 	"github.com/aws/aws-sdk-go-v2/config"
 	"github.com/aws/aws-sdk-go-v2/service/s3"
+	"github.com/aws/smithy-go/middleware"
+	smithyhttp "github.com/aws/smithy-go/transport/http"
 )
 
 // ProviderType storage provider type
@@ -35,7 +38,7 @@ const (
 	OBS ProviderType = "obs"
 	// BOS baidu bos
 	BOS ProviderType = "bos"
-	// GCS google gcs fixme:not tested
+	// GCS google gcs
 	GCS ProviderType = "gcs"
 	// KS3 kingsoft ks3
 	KS3 ProviderType = "ks3"
@@ -63,6 +66,16 @@ var endpointResolverFunc = func(urlTemplate, signingMethod string) s3.EndpointRe
 	}
 }
 
+var endpointResolverFuncGCS = func(urlTemplate, signingMethod string) s3.EndpointResolverFunc {
+	return func(region string, options s3.EndpointResolverOptions) (aws.Endpoint, error) {
+		return aws.Endpoint{
+			URL:           urlTemplate,
+			SigningRegion: region,
+			SigningMethod: signingMethod,
+		}, nil
+	}
+}
+
 // Storage storage
 type Storage struct {
 	Type            ProviderType `yaml:"type"`
@@ -77,11 +90,17 @@ type Storage struct {
 // Init init
 func (o *Storage) Init() {
 	var endpointResolver s3.EndpointResolver
-	if o.Type != S3 {
+	switch o.Type {
+	case GCS:
+		endpointResolver = s3.EndpointResolverFromURL(URLTemplate[GCS])
+		o.Region = "auto"
+	case S3:
+	default:
 		if urlTemplate, exist := URLTemplate[o.Type]; exist && urlTemplate != "" {
 			endpointResolver = endpointResolverFunc(urlTemplate, o.SigningMethod)
 		}
 	}
+
 	if o.Region == "" || o.AccessKeyID == "" || o.SecretAccessKey == "" {
 		//use default config
 		cfg, err := config.LoadDefaultConfig(context.TODO())
@@ -101,8 +120,21 @@ func (o *Storage) Init() {
 			}, nil
 		}),
 		EndpointResolver: endpointResolver,
-	}, func(o *s3.Options) {
-		o.EndpointOptions.DisableHTTPS = true
+	}, func(s3Options *s3.Options) {
+		switch o.Type {
+		case GCS:
+			s3Options.APIOptions = append(s3Options.APIOptions, func(stack *middleware.Stack) error {
+				if err := stack.Finalize.Insert(dropAcceptEncodingHeader, "Signing", middleware.Before); err != nil {
+					return err
+				}
+
+				if err := stack.Finalize.Insert(replaceAcceptEncodingHeader, "Signing", middleware.After); err != nil {
+					return err
+				}
+
+				return nil
+			})
+		}
 	})
 }
 
@@ -110,3 +142,47 @@ func (o *Storage) Init() {
 func (o *Storage) GetClient() *s3.Client {
 	return o.client
 }
+
+const acceptEncodingHeader = "Accept-Encoding"
+
+type acceptEncodingKey struct{}
+
+func GetAcceptEncodingKey(ctx context.Context) (v string) {
+	v, _ = middleware.GetStackValue(ctx, acceptEncodingKey{}).(string)
+	return v
+}
+
+func SetAcceptEncodingKey(ctx context.Context, value string) context.Context {
+	return middleware.WithStackValue(ctx, acceptEncodingKey{}, value)
+}
+
+var dropAcceptEncodingHeader = middleware.FinalizeMiddlewareFunc("DropAcceptEncodingHeader",
+	func(ctx context.Context, in middleware.FinalizeInput, next middleware.FinalizeHandler) (out middleware.FinalizeOutput, metadata middleware.Metadata, err error) {
+		req, ok := in.Request.(*smithyhttp.Request)
+		if !ok {
+			return out, metadata, &v4.SigningError{Err: fmt.Errorf("unexpected request middleware type %T", in.Request)}
+		}
+
+		ae := req.Header.Get(acceptEncodingHeader)
+		ctx = SetAcceptEncodingKey(ctx, ae)
+		req.Header.Del(acceptEncodingHeader)
+		in.Request = req
+
+		return next.HandleFinalize(ctx, in)
+	},
+)
+
+var replaceAcceptEncodingHeader = middleware.FinalizeMiddlewareFunc("ReplaceAcceptEncodingHeader",
+	func(ctx context.Context, in middleware.FinalizeInput, next middleware.FinalizeHandler) (out middleware.FinalizeOutput, metadata middleware.Metadata, err error) {
+		req, ok := in.Request.(*smithyhttp.Request)
+		if !ok {
+			return out, metadata, &v4.SigningError{Err: fmt.Errorf("unexpected request middleware type %T", in.Request)}
+		}
+
+		ae := GetAcceptEncodingKey(ctx)
+		req.Header.Set(acceptEncodingHeader, ae)
+		in.Request = req
+
+		return next.HandleFinalize(ctx, in)
+	},
+)
