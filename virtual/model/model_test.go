@@ -353,7 +353,7 @@ func TestModel_List(t *testing.T) {
 				t.Errorf("Expected status code %d, but got %d", http.StatusOK, w.Code)
 			}
 			if tt.wantError != (err != nil) {
-				t.Errorf("List() error = %v, wantError %v", err, tt.wantError)
+				t.Errorf("Data() error = %v, wantError %v", err, tt.wantError)
 			}
 		})
 	}
