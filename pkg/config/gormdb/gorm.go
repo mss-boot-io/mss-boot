@@ -12,7 +12,6 @@ import (
 	"github.com/casbin/casbin/v2/model"
 	"github.com/casbin/casbin/v2/persist"
 	gormadapter "github.com/casbin/gorm-adapter/v3"
-	gormLogger "github.com/mss-boot-io/mss-boot/pkg/config/gormdb/logger"
 	"gorm.io/gorm"
 	"gorm.io/gorm/logger"
 	"gorm.io/gorm/schema"
@@ -80,15 +79,7 @@ func (e *Database) Init() {
 		NamingStrategy: schema.NamingStrategy{
 			SingularTable: true,
 		},
-		Logger: gormLogger.New(
-			logger.Config{
-				//SlowThreshold: time.Second,
-				Colorful: true,
-				LogLevel: logger.LogLevel(
-
-					log.DefaultLogger.Options().Level.ToGorm()),
-			},
-		),
+		Logger: logger.Default,
 	}, opens[e.Driver])
 	if err != nil {
 		slog.Error(e.Driver+" connect failed", slog.Any("err", err))
