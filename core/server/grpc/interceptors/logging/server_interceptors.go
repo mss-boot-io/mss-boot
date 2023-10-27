@@ -80,7 +80,7 @@ func newLoggerForCall(ctx context.Context, fullMethodString string, start time.T
 	}
 	requestID := utils.GetRequestID(ctx)
 	f.Set(utils.RequestIDKey, requestID)
-	callLog := ctxlog.Extract(ctx).Fields(f.Values())
+	callLog := ctxlog.Extract(ctx).With(f.Args()...)
 	ctx = metadata.AppendToOutgoingContext(
 		ctx,
 		utils.RequestIDKey, requestID,

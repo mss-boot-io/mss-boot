@@ -18,6 +18,7 @@ import (
 	"github.com/mss-boot-io/mss-boot/core/server/grpc/interceptors/logging"
 	reqtags "github.com/mss-boot-io/mss-boot/core/server/grpc/interceptors/request_tag"
 	"google.golang.org/grpc"
+	"google.golang.org/grpc/credentials/insecure"
 )
 
 // Service service client
@@ -41,7 +42,7 @@ func (e *Service) Dial(
 	}
 	e.Connection, err = grpc.DialContext(ctx,
 		endpoint,
-		grpc.WithInsecure(),
+		grpc.WithTransportCredentials(insecure.NewCredentials()),
 		grpc.WithStreamInterceptor(middleware.ChainStreamClient(defaultStreamClientInterceptors()...)),
 		grpc.WithUnaryInterceptor(middleware.ChainUnaryClient(unary...)),
 		grpc.WithDefaultCallOptions(grpc.WaitForReady(true), grpc.MaxCallRecvMsgSize(defaultMaxMsgSize)),

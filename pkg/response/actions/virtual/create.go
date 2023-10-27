@@ -53,8 +53,7 @@ func (e *Create) Handler() gin.HandlerFunc {
 				return
 			}
 			if err := gormdb.DB.Scopes(m.TableScope).Create(req).Error; err != nil {
-				api.AddError(err)
-				api.Log.Errorf("create %s error", c.Param(PathKey))
+				api.AddError(err).Log.ErrorContext(c, "create error", PathKey, c.Param(PathKey))
 				api.Err(http.StatusInternalServerError)
 				return
 			}

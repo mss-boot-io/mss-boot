@@ -33,8 +33,7 @@ func (e *Delete) deleteGorm(c *gin.Context, ids ...string) {
 	}
 	err := gormdb.DB.Delete(e.ModelGorm, ids).Error
 	if err != nil {
-		api.Log.Error(err)
-		api.AddError(err)
+		api.AddError(err).Log.ErrorContext(c, "Delete error", "error", err)
 		api.Err(http.StatusInternalServerError)
 		return
 	}

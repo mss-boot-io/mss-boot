@@ -10,9 +10,9 @@ package config
 import (
 	"encoding/json"
 	"fmt"
+	"log/slog"
 	"os"
 
-	log "github.com/mss-boot-io/mss-boot/core/logger"
 	"github.com/mss-boot-io/mss-boot/pkg/config/source"
 	sourceFS "github.com/mss-boot-io/mss-boot/pkg/config/source/fs"
 	sourceLocal "github.com/mss-boot-io/mss-boot/pkg/config/source/local"
@@ -67,7 +67,7 @@ func Init(cfg any, options ...source.Option) (err error) {
 	var rb []byte
 	rb, err = f.ReadFile(opts.Name)
 	if err != nil {
-		log.Errorf("read file error: %v", err)
+		slog.Error(err.Error())
 		return err
 	}
 	var unm func([]byte, interface{}) error
@@ -79,7 +79,7 @@ func Init(cfg any, options ...source.Option) (err error) {
 	}
 	err = unm(rb, cfg)
 	if err != nil {
-		log.Errorf("unmarshal error: %v", err)
+		slog.Error(err.Error())
 		return err
 	}
 
@@ -87,7 +87,7 @@ func Init(cfg any, options ...source.Option) (err error) {
 	if err == nil {
 		err = unm(rb, cfg)
 		if err != nil {
-			log.Errorf("unmarshal error: %v", err)
+			slog.Error(err.Error())
 		}
 	}
 	return nil

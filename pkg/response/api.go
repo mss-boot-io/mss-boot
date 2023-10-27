@@ -10,6 +10,7 @@ package response
 import (
 	"errors"
 	"fmt"
+	"log/slog"
 	"net/http"
 	"strings"
 
@@ -17,7 +18,6 @@ import (
 	"github.com/gin-gonic/gin/binding"
 	"github.com/go-playground/validator/v10"
 
-	"github.com/mss-boot-io/mss-boot/core/logger"
 	"github.com/mss-boot-io/mss-boot/pkg"
 	"github.com/mss-boot-io/mss-boot/pkg/language"
 )
@@ -31,7 +31,7 @@ var AuthHandler gin.HandlerFunc
 // API api接口
 type API struct {
 	Context *gin.Context
-	Log     *logger.Helper
+	Log     *slog.Logger
 	Error   error
 	engine  *gin.RouterGroup
 }
@@ -209,19 +209,14 @@ func (e *API) getAcceptLanguage() string {
 }
 
 // GetRequestLogger 获取上下文提供的日志
-func GetRequestLogger(c *gin.Context) *logger.Helper {
-	var log *logger.Helper
-	l, ok := c.Get(pkg.LoggerKey)
-	if ok {
-		log, ok = l.(*logger.Helper)
+func GetRequestLogger(c *gin.Context) *slog.Logger {
+	if l, exist := c.Get(pkg.LoggerKey); exist {
+		log, ok := l.(*slog.Logger)
 		if ok && log != nil {
 			return log
 		}
 	}
 	//如果没有在上下文中放入logger
 	requestID := pkg.GenerateMsgIDFromContext(c)
-	log = logger.NewHelper(logger.DefaultLogger).WithFields(map[string]interface{}{
-		strings.ToLower(pkg.TrafficKey): requestID,
-	})
-	return log
+	return slog.Default().With(strings.ToLower(pkg.TrafficKey), requestID)
 }

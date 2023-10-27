@@ -46,8 +46,7 @@ func (e *Search) searchGorm(c *gin.Context) {
 		)
 	rows, err := query.Rows()
 	if err != nil {
-		api.Log.Errorf("Search error: %s", err.Error())
-		api.AddError(err)
+		api.AddError(err).Log.ErrorContext(c, "Search error", "error", err)
 		api.Err(http.StatusInternalServerError)
 		return
 	}
@@ -57,8 +56,7 @@ func (e *Search) searchGorm(c *gin.Context) {
 		m = pkg.TablerDeepCopy(e.ModelGorm)
 		err = db.ScanRows(rows, m)
 		if err != nil {
-			api.Log.Errorf("Search error: %s", err.Error())
-			api.AddError(err)
+			api.AddError(err).Log.ErrorContext(c, "Search error", "error", err)
 			api.Err(http.StatusInternalServerError)
 			return
 		}
@@ -66,8 +64,7 @@ func (e *Search) searchGorm(c *gin.Context) {
 	}
 	err = query.Limit(-1).Offset(-1).Count(&count).Error
 	if err != nil && !errors.Is(err, gorm.ErrRecordNotFound) {
-		api.Log.Errorf("Search error: %s", err.Error())
-		api.AddError(err)
+		api.AddError(err).Log.ErrorContext(c, "Search error", "error", err)
 		api.Err(http.StatusInternalServerError)
 		return
 	}

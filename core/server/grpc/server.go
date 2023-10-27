@@ -11,12 +11,14 @@ import (
 	"context"
 	"errors"
 	"fmt"
+	"log"
+	"log/slog"
 	"net"
+	"os"
 	"sync"
 
 	middleware "github.com/grpc-ecosystem/go-grpc-middleware"
 	prometheus "github.com/grpc-ecosystem/go-grpc-prometheus"
-	log "github.com/mss-boot-io/mss-boot/core/logger"
 	"google.golang.org/grpc"
 	"google.golang.org/grpc/credentials"
 	"google.golang.org/grpc/keepalive"
@@ -91,7 +93,8 @@ func (e *Server) initGrpcServerOptions() []grpc.ServerOption {
 	if e.options.certFile != "" && e.options.keyFile != "" {
 		creds, err := credentials.NewServerTLSFromFile(e.options.certFile, e.options.keyFile)
 		if err != nil {
-			log.Fatalf("Failed to generate credentials %v", err)
+			slog.Error("Failed to generate credentials", slog.Any("err", err))
+			os.Exit(-1)
 		}
 		opts = append(opts, grpc.Creds(creds))
 	}
@@ -116,11 +119,11 @@ func (e *Server) Start(ctx context.Context) error {
 	if err != nil {
 		return fmt.Errorf("gRPC Server listening on %s failed: %w", e.options.addr, err)
 	}
-	log.Infof("gRPC Server listening on %s", ts.Addr().String())
+	log.Printf("gRPC Server listening on %s\n", ts.Addr().String())
 
 	go func() {
 		if err = e.srv.Serve(ts); err != nil {
-			log.Errorf("gRPC Server start error: %s", err.Error())
+			slog.ErrorContext(ctx, "gRPC Server start error", slog.Any("err", err))
 		}
 	}()
 	e.started = true
@@ -131,7 +134,7 @@ func (e *Server) Start(ctx context.Context) error {
 // Shutdown shutdown
 func (e *Server) Shutdown(ctx context.Context) error {
 	<-ctx.Done()
-	log.Info("gRPC Server will be shutdown gracefully")
+	slog.InfoContext(ctx, "gRPC Server will be shutdown gracefully")
 	e.srv.GracefulStop()
 	return nil
 }

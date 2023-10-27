@@ -59,8 +59,7 @@ func (e *Delete) Handler() gin.HandlerFunc {
 					api.Err(http.StatusNotFound)
 					return
 				}
-				api.AddError(err)
-				api.Log.Errorf("delete %s error", c.Param(PathKey))
+				api.AddError(err).Log.ErrorContext(c, "delete error", PathKey, c.Param(PathKey))
 				api.Err(http.StatusInternalServerError)
 				return
 			}

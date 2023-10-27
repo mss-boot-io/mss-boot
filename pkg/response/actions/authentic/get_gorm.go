@@ -39,8 +39,7 @@ func (e *Get) getGorm(c *gin.Context, key string) {
 			api.Err(http.StatusNotFound)
 			return
 		}
-		api.Log.Error(err)
-		api.AddError(err)
+		api.AddError(err).Log.ErrorContext(c, "Get error", "error", err)
 		api.Err(http.StatusInternalServerError)
 		return
 	}

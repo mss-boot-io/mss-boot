@@ -38,8 +38,7 @@ func (e *Control) createGorm(c *gin.Context) {
 	}
 	err := gormdb.DB.Create(m).Error
 	if err != nil {
-		api.Log.Error(err)
-		api.AddError(err)
+		api.AddError(err).Log.ErrorContext(c, "Create error", "error", err)
 		api.Err(http.StatusInternalServerError)
 		return
 	}
@@ -63,8 +62,7 @@ func (e *Control) updateGorm(c *gin.Context) {
 			api.Err(http.StatusNotFound)
 			return
 		}
-		api.Log.Error(err)
-		api.AddError(err)
+		api.AddError(err).Log.ErrorContext(c, "Update error", "error", err.Error())
 		api.Err(http.StatusInternalServerError)
 		return
 	}
@@ -76,8 +74,7 @@ func (e *Control) updateGorm(c *gin.Context) {
 	}
 	err = gormdb.DB.Save(m).Error
 	if err != nil {
-		api.Log.Error(err)
-		api.AddError(err)
+		api.AddError(err).Log.ErrorContext(c, "Update error", "error", err.Error())
 		api.Err(http.StatusInternalServerError)
 		return
 	}

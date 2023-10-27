@@ -11,9 +11,8 @@ import (
 	"context"
 	"errors"
 	"fmt"
+	"log/slog"
 	"sync"
-
-	log "github.com/mss-boot-io/mss-boot/core/logger"
 )
 
 // Server server
@@ -123,7 +122,7 @@ func (e *Server) engageStopProcedure(stopComplete <-chan struct{}) error {
 			select {
 			case err, ok := <-e.errChan:
 				if ok {
-					log.Error(err, "error received after stop sequence was engaged")
+					slog.Error("error received after stop sequence was engaged", slog.Any("err", err))
 				}
 			case <-stopComplete:
 				return

@@ -80,8 +80,7 @@ func (e *Control) createMongo(c *gin.Context) {
 	}
 	err := mgm.Coll(e.ModelMgm).CreateWithCtx(c, m)
 	if err != nil {
-		api.Log.Error(err)
-		api.AddError(err)
+		api.AddError(err).Log.ErrorContext(c, "Create error", "error", err)
 		api.Err(http.StatusInternalServerError)
 		return
 	}
@@ -104,12 +103,11 @@ func (e *Control) updateMongo(c *gin.Context) {
 	m.SetID(id)
 	err = mgm.Coll(e.ModelMgm).UpdateWithCtx(c, m)
 	if err != nil {
-		api.AddError(err)
 		if errors.Is(err, mongo.ErrNoDocuments) {
 			api.Err(http.StatusNotFound)
 			return
 		}
-		api.Log.Error(err)
+		api.AddError(err).Log.ErrorContext(c, "Update error", "error", err)
 		api.Err(http.StatusInternalServerError)
 		return
 	}

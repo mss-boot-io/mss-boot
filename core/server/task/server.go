@@ -9,10 +9,9 @@ package task
 
 import (
 	"context"
+	"log/slog"
 
 	"github.com/robfig/cron/v3"
-
-	log "github.com/mss-boot-io/mss-boot/core/logger"
 )
 
 var task = &Server{
@@ -52,7 +51,7 @@ func UpdateJob(key string, spec string, job cron.Job) error {
 	}
 	entryID, err := task.opts.task.AddJob(spec, job)
 	if err != nil {
-		log.Errorf("task add job error: %s", err.Error())
+		slog.Error("task add job error", slog.Any("err", err))
 		return err
 	}
 	task.opts.schedules[key] = schedule{
@@ -95,7 +94,7 @@ func (e *Server) Start(ctx context.Context) error {
 	for i, s := range e.opts.schedules {
 		s.entryID, err = e.opts.task.AddJob(e.opts.schedules[i].spec, e.opts.schedules[i].job)
 		if err != nil {
-			log.Errorf("task add job error: %s", err.Error())
+			slog.ErrorContext(ctx, "task add job error", slog.Any("err", err))
 			return err
 		}
 		e.opts.schedules[i] = s
@@ -105,7 +104,7 @@ func (e *Server) Start(ctx context.Context) error {
 		<-ctx.Done()
 		err = e.Shutdown(ctx)
 		if err != nil {
-			log.Errorf("%S Server shutdown error: %s", e.String(), err.Error())
+			slog.ErrorContext(ctx, e.String()+" Server shutdown error", slog.Any("err", err.Error()))
 		}
 	}()
 	return nil

@@ -9,10 +9,10 @@ package logging
 
 import (
 	"context"
+	"log/slog"
 	"path"
 	"time"
 
-	"github.com/mss-boot-io/mss-boot/core/logger"
 	"github.com/mss-boot-io/mss-boot/core/server/grpc/interceptors/logging/ctxlog"
 	"google.golang.org/grpc"
 )
@@ -30,7 +30,7 @@ func UnaryClientInterceptor(opts ...Option) grpc.UnaryClientInterceptor {
 		fields := newClientLoggerFields(ctx, method)
 		start := time.Now()
 		err := invoker(ctx, method, req, reply, cc, opts...)
-		logFinalClientLine(o, ctxlog.Extract(ctx).Fields(fields.Values()), start, err,
+		logFinalClientLine(o, ctxlog.Extract(ctx).With(fields.Args()...), start, err,
 			"finished client unary call")
 		return err
 	}
@@ -46,13 +46,13 @@ func StreamClientInterceptor(opts ...Option) grpc.StreamClientInterceptor {
 		fieles := newClientLoggerFields(ctx, method)
 		start := time.Now()
 		clientStream, err := streamer(ctx, desc, cc, method, opts...)
-		logFinalClientLine(o, ctxlog.Extract(ctx).Fields(fieles.Values()),
+		logFinalClientLine(o, ctxlog.Extract(ctx).With(fieles.Args()...),
 			start, err, "finished client streaming call")
 		return clientStream, err
 	}
 }
 
-func logFinalClientLine(o *Options, l logger.Logger, start time.Time, err error, msg string) {
+func logFinalClientLine(o *Options, l *slog.Logger, start time.Time, err error, msg string) {
 	code := o.codeFunc(err)
 	level := o.levelFunc(code)
 
@@ -61,7 +61,7 @@ func logFinalClientLine(o *Options, l logger.Logger, start time.Time, err error,
 	if err != nil {
 
 	}
-	l.Fields(f.Values()).Log(level, msg, err)
+	l.With(f.Args()...).Log(context.Background(), level, msg, slog.Any("err", err))
 }
 
 func newClientLoggerFields(
