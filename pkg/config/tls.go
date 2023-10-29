@@ -10,9 +10,8 @@ package config
 import (
 	"crypto/tls"
 	"crypto/x509"
+	"log/slog"
 	"os"
-
-	log "github.com/mss-boot-io/mss-boot/core/logger"
 )
 
 // TLS config
@@ -31,19 +30,19 @@ func (c *TLS) GetTLS() (*tls.Config, error) {
 		// 从证书相关文件中读取和解析信息，得到证书公钥、密钥对
 		cert, err := tls.LoadX509KeyPair(c.Cert, c.Key)
 		if err != nil {
-			log.Errorf("tls.LoadX509KeyPair err: %v\n", err)
+			slog.Error("tls.LoadX509KeyPair error", "err", err)
 			return nil, err
 		}
 		// 创建一个新的、空的 CertPool，并尝试解析 PEM 编码的证书，解析成功会将其加到 CertPool 中
 		certPool := x509.NewCertPool()
 		ca, err := os.ReadFile(c.Ca)
 		if err != nil {
-			log.Errorf("ioutil.ReadFile err: %v\n", err)
+			slog.Error("ioutil.ReadFile error", "err", err)
 			return nil, err
 		}
 
 		if ok := certPool.AppendCertsFromPEM(ca); !ok {
-			log.Errorf("certPool.AppendCertsFromPEM err: %v\n", err)
+			slog.Error("certPool.AppendCertsFromPEM error", "err", err)
 			return nil, err
 		}
 		return &tls.Config{

@@ -1,11 +1,12 @@
 package response
 
 import (
+	"log/slog"
 	"net/http"
+	"os"
 
 	"github.com/gin-gonic/gin"
 
-	log "github.com/mss-boot-io/mss-boot/core/logger"
 	"github.com/mss-boot-io/mss-boot/pkg"
 )
 
@@ -70,6 +71,7 @@ func PageOK(c *gin.Context, result interface{}, count int64, pageIndex int64, pa
 
 func checkContext(c *gin.Context) {
 	if c == nil {
-		log.Fatalf("context is nil, please check, e.g. e.Make(c) add your controller function")
+		slog.Error("context is nil, please check, e.g. e.Make(c) add your controller function")
+		os.Exit(-1)
 	}
 }
