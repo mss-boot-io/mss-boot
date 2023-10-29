@@ -9,11 +9,11 @@ package listener
 
 import (
 	"context"
+	"log/slog"
 	"net"
 	"net/http"
 	_ "net/http/pprof"
 
-	log "github.com/mss-boot-io/mss-boot/core/logger"
 	"github.com/mss-boot-io/mss-boot/core/server"
 	"github.com/prometheus/client_golang/prometheus/promhttp"
 )
@@ -85,21 +85,21 @@ func (e *Server) Start(ctx context.Context) error {
 	e.srv.BaseContext = func(_ net.Listener) context.Context {
 		return ctx
 	}
-	log.Infof("%s Server listening on %s", e.opts.name, l.Addr().String())
+	slog.InfoContext(ctx, e.opts.name+" Server listening on "+l.Addr().String())
 	go func() {
 		if e.opts.keyFile == "" || e.opts.certFile == "" {
 			if err = e.srv.Serve(l); err != nil {
-				log.Errorf("%s Server start error: %s", e.opts.name, err.Error())
+				slog.ErrorContext(ctx, e.opts.name+" Server start error", slog.Any("err", err.Error()))
 			}
 		} else {
 			if err = e.srv.ServeTLS(l, e.opts.certFile, e.opts.keyFile); err != nil {
-				log.Errorf("%s Server start error: %s", e.opts.name, err.Error())
+				slog.ErrorContext(ctx, e.opts.name+" Server start error", slog.Any("err", err.Error()))
 			}
 		}
 		<-ctx.Done()
 		err = e.Shutdown(ctx)
 		if err != nil {
-			log.Errorf("%S Server shutdown error: %s", e.opts.name, err.Error())
+			slog.ErrorContext(ctx, e.opts.name+" Server shutdown error", slog.Any("err", err.Error()))
 		}
 	}()
 	if e.opts.startedHook != nil {

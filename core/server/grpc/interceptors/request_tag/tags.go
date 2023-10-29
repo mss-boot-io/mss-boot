@@ -10,7 +10,7 @@ package requesttag
 import (
 	"context"
 
-	grpc_middleware "github.com/grpc-ecosystem/go-grpc-middleware"
+	grpcMiddleware "github.com/grpc-ecosystem/go-grpc-middleware"
 	"github.com/mss-boot-io/mss-boot/core/tools/utils"
 	"google.golang.org/grpc"
 	"google.golang.org/grpc/metadata"
@@ -35,7 +35,7 @@ func StreamServerInterceptor() grpc.StreamServerInterceptor {
 		stream grpc.ServerStream,
 		info *grpc.StreamServerInfo,
 		handler grpc.StreamHandler) error {
-		wrappedStream := grpc_middleware.WrapServerStream(stream)
+		wrappedStream := grpcMiddleware.WrapServerStream(stream)
 		wrappedStream.WrappedContext = AppendTagsForContext(stream.Context())
 		return handler(srv, wrappedStream)
 	}

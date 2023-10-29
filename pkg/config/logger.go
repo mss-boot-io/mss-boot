@@ -10,25 +10,23 @@ package config
 import (
 	"io"
 	"log"
+	"log/slog"
 	"os"
+	"time"
 
-	"github.com/mss-boot-io/mss-boot/core/logger"
-	"github.com/mss-boot-io/mss-boot/core/logger/level"
+	"gorm.io/gorm/logger"
+
 	"github.com/mss-boot-io/mss-boot/core/logger/writer"
-	"github.com/mss-boot-io/mss-boot/core/plugins/logger/logrus"
-	"github.com/mss-boot-io/mss-boot/core/plugins/logger/zap"
-	logrusCore "github.com/sirupsen/logrus"
-	"go.uber.org/zap/zapcore"
 )
 
 // Logger logger配置
 type Logger struct {
-	Type      string `yaml:"type" json:"type"`
-	Path      string `yaml:"path" json:"path"`
-	Level     string `yaml:"level" json:"level"`
-	Stdout    string `yaml:"stdout" json:"stdout"`
-	Cap       uint   `yaml:"cap" json:"cap"`
-	Formatter string `yaml:"formatter" json:"formatter"`
+	Path      string     `yaml:"path" json:"path"`
+	Level     slog.Level `yaml:"level" json:"level"`
+	Stdout    string     `yaml:"stdout" json:"stdout"`
+	AddSource bool       `yaml:"addSource" json:"addSource"`
+	Cap       uint       `yaml:"cap" json:"cap"`
+	Json      bool       `yaml:"json" json:"json"`
 }
 
 // Init 初始化日志
@@ -54,36 +52,39 @@ func (e *Logger) Init() {
 	default:
 		output = os.Stderr
 	}
-	var l level.Level
-	l, err = level.GetLevel(e.Level)
-	if err != nil {
-		log.Fatalf("get logger level error, %s", err.Error())
+	if e.Json {
+		slog.SetDefault(slog.New(slog.NewJSONHandler(output, &slog.HandlerOptions{
+			AddSource: e.AddSource,
+			Level:     e.Level,
+		})))
+		return
 	}
 
-	opts := []logger.Option{
-		logger.WithLevel(l),
-		logger.WithOutput(output),
-	}
-	switch e.Type {
-	case "zap":
-		opts = append(opts, zap.WithCallerSkip(2))
-		switch e.Formatter {
-		case "json":
-			opts = append(opts, zap.WithEncoder(zapcore.NewJSONEncoder(zapcore.EncoderConfig{})))
-		}
-		logger.DefaultLogger, err = zap.NewLogger(opts...)
-		if err != nil {
-			log.Fatalf("new zap logger error, %s", err.Error())
-		}
-	case "logrus":
-		opts = append(opts, logrus.WithSkip(12), logrus.ReportCaller())
-		switch e.Formatter {
-		case "json":
-			opts = append(opts, logrus.WithJSONFormatter(&logrusCore.JSONFormatter{}))
-		}
-		logger.DefaultLogger = logrus.NewLogger(opts...)
+	slog.SetDefault(slog.New(slog.NewTextHandler(output, &slog.HandlerOptions{
+		AddSource: e.AddSource,
+		Level:     e.Level,
+	})))
+
+	// set gorm default logger
+	logger.Default = logger.New(log.New(output, "\r\n", log.LstdFlags), logger.Config{
+		SlowThreshold:             200 * time.Millisecond,
+		LogLevel:                  e.GormLevel(),
+		IgnoreRecordNotFoundError: false,
+		Colorful:                  true,
+	})
+
+}
+
+func (e *Logger) GormLevel() logger.LogLevel {
+	switch e.Level {
+	case slog.LevelDebug, slog.LevelInfo:
+		return logger.Info
+	case slog.LevelWarn:
+		return logger.Warn
+	case slog.LevelError:
+		return logger.Error
 	default:
-		logger.DefaultLogger = logger.NewLogger(opts...)
+		return logger.Silent
 	}
 }
 

@@ -9,8 +9,8 @@ package handler
 
 import (
 	"context"
+	"log/slog"
 
-	"github.com/mss-boot-io/mss-boot/core/logger"
 	"github.com/mss-boot-io/mss-boot/core/server/grpc/interceptors/logging/ctxlog"
 	"github.com/mss-boot-io/mss-boot/core/tools/utils"
 )
@@ -19,12 +19,12 @@ import (
 type Handler struct {
 	ID        string
 	RequestID string
-	Log       *logger.Helper
+	Log       *slog.Logger
 }
 
 // Make 构建
 func (e *Handler) Make(c context.Context) {
-	e.Log = logger.NewHelper(ctxlog.Extract(c))
+	e.Log = ctxlog.Extract(c)
 	e.RequestID = utils.GetRequestID(c)
 }
 

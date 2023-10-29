@@ -10,6 +10,8 @@ package grpc
 import (
 	"context"
 	"crypto/tls"
+	"fmt"
+	"log/slog"
 	"math"
 	"time"
 
@@ -18,7 +20,6 @@ import (
 	opentracing "github.com/grpc-ecosystem/go-grpc-middleware/tracing/opentracing"
 	prometheus "github.com/grpc-ecosystem/go-grpc-prometheus"
 	"github.com/mss-boot-io/mss-boot/core/errcode"
-	log "github.com/mss-boot-io/mss-boot/core/logger"
 	"github.com/mss-boot-io/mss-boot/core/server/grpc/interceptors/logging"
 	requesttag "github.com/mss-boot-io/mss-boot/core/server/grpc/interceptors/request_tag"
 	"google.golang.org/grpc"
@@ -198,7 +199,7 @@ func defaultOptions() *Options {
 // customRecovery custom recovery
 func customRecovery(id, domain string) recovery.RecoveryHandlerFunc {
 	return func(p interface{}) (err error) {
-		log.Errorf("panic triggered: %v", p)
+		slog.Error(fmt.Sprintf("panic triggered: %v", p))
 		return errcode.New(id, domain, errcode.GRPCInternalServerError)
 	}
 }

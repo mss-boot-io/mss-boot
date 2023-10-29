@@ -96,8 +96,7 @@ func (e *Search) searchMgm(c *gin.Context) {
 
 	count, err := mgm.Coll(e.ModelMgm).CountDocuments(c, filter)
 	if err != nil {
-		api.Log.Errorf("count items error, %s", err.Error())
-		api.AddError(err)
+		api.AddError(err).Log.ErrorContext(c, "count items error", "error", err)
 		api.Err(http.StatusInternalServerError)
 		return
 	}
@@ -112,7 +111,7 @@ func (e *Search) searchMgm(c *gin.Context) {
 
 		result, err := mgm.Coll(e.ModelMgm).Find(c, filter, ops)
 		if err != nil {
-			api.AddError(err).Log.Errorf("find items error, %s", err.Error())
+			api.AddError(err).Log.ErrorContext(c, "find items error", "error", err)
 			api.Err(http.StatusInternalServerError)
 			return
 		}
@@ -122,7 +121,7 @@ func (e *Search) searchMgm(c *gin.Context) {
 			m := pkg.ModelDeepCopy(e.ModelMgm)
 			err = result.Decode(m)
 			if err != nil {
-				api.AddError(err)
+				api.AddError(err).Log.ErrorContext(c, "decode items error", "error", err)
 				api.Err(http.StatusInternalServerError)
 				return
 			}
@@ -153,8 +152,7 @@ func (e *Search) searchMgm(c *gin.Context) {
 	})
 	result, err := mgm.Coll(e.ModelMgm).Aggregate(c, pipeline)
 	if err != nil {
-		api.Log.Errorf("find items error, %s", err.Error())
-		api.AddError(err)
+		api.AddError(err).Log.ErrorContext(c, "find items error", "error", err)
 		api.Err(http.StatusInternalServerError)
 		return
 	}
@@ -175,7 +173,7 @@ func (e *Search) searchMgm(c *gin.Context) {
 		//todo bson.M to model
 		err = BsonMTransferModel(bm, m)
 		if err != nil {
-			api.AddError(err).Log.Errorf("transfer bson.M to model error, %s", err.Error())
+			api.AddError(err).Log.ErrorContext(c, "transfer bson.M to model error", "error", err)
 			return
 		}
 		items = append(items, m)

@@ -50,8 +50,7 @@ func (e *Update) Handler() gin.HandlerFunc {
 				return
 			}
 			if err := gormdb.DB.Scopes(m.TableScope, m.URI(c)).Updates(req).Error; err != nil {
-				api.AddError(err)
-				api.Log.Errorf("update %s error", c.Param(PathKey))
+				api.AddError(err).Log.Error("update error", PathKey, c.Param(PathKey))
 				api.Err(http.StatusInternalServerError)
 				return
 			}

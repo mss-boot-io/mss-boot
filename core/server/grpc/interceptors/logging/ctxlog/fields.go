@@ -36,6 +36,16 @@ func (e *Fields) Values() map[string]interface{} {
 	return result
 }
 
+// Args return args
+func (e *Fields) Args() []any {
+	args := make([]any, 0)
+	e.value.Range(func(key, value interface{}) bool {
+		args = append(args, key, value)
+		return true
+	})
+	return args
+}
+
 // Merge merge fields
 func (e *Fields) Merge(f *Fields) {
 	for k, v := range f.Values() {

@@ -58,8 +58,7 @@ func (e *Get) Handler() gin.HandlerFunc {
 					api.Err(http.StatusNotFound)
 					return
 				}
-				api.AddError(err)
-				api.Log.Errorf("get %s error", c.Param(PathKey))
+				api.AddError(err).Log.ErrorContext(c, "get error", PathKey, c.Param(PathKey))
 				api.Err(http.StatusInternalServerError)
 				return
 			}

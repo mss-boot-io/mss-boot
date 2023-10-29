@@ -51,8 +51,7 @@ func (e *Search) Handler() gin.HandlerFunc {
 			var count int64
 			if err := gormdb.DB.Scopes(m.TableScope, m.Search(c), m.Pagination(c, page)).
 				Find(items).Offset(-1).Limit(-1).Count(&count).Error; err != nil {
-				api.AddError(err)
-				api.Log.Errorf("search %s error", c.Param(PathKey))
+				api.AddError(err).Log.Error("search error", PathKey, c.Param(PathKey))
 				api.Err(http.StatusInternalServerError)
 				return
 			}

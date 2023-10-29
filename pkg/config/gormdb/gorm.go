@@ -12,11 +12,11 @@ import (
 	"github.com/casbin/casbin/v2/model"
 	"github.com/casbin/casbin/v2/persist"
 	gormadapter "github.com/casbin/gorm-adapter/v3"
-	log "github.com/mss-boot-io/mss-boot/core/logger"
-	gormLogger "github.com/mss-boot-io/mss-boot/pkg/config/gormdb/logger"
 	"gorm.io/gorm"
 	"gorm.io/gorm/logger"
 	"gorm.io/gorm/schema"
+	"log/slog"
+	"os"
 )
 
 // DB gorm db
@@ -79,17 +79,11 @@ func (e *Database) Init() {
 		NamingStrategy: schema.NamingStrategy{
 			SingularTable: true,
 		},
-		Logger: gormLogger.New(
-			logger.Config{
-				//SlowThreshold: time.Second,
-				Colorful: true,
-				LogLevel: logger.LogLevel(
-					log.DefaultLogger.Options().Level.ToGorm()),
-			},
-		),
+		Logger: logger.Default,
 	}, opens[e.Driver])
 	if err != nil {
-		log.Fatalf("%s connect error : %s", e.Driver, err.Error())
+		slog.Error(e.Driver+" connect failed", slog.Any("err", err))
+		os.Exit(-1)
 	}
 	// casbin
 	if e.CasbinModel != "" {
@@ -97,20 +91,25 @@ func (e *Database) Init() {
 		var a persist.Adapter
 		a, err = gormadapter.NewAdapterByDBUseTableName(DB, "mss_boot", "casbin_rule")
 		if err != nil {
-			log.Fatalf("gormadapter.NewAdapterByDB error : %s", err.Error())
+			slog.Error("gormadapter.NewAdapterByDB error", slog.Any("err", err))
+			os.Exit(-1)
 		}
 		var m model.Model
 		m, err = model.NewModelFromString(e.CasbinModel)
 		if err != nil {
-			log.Fatalf("model.NewModelFromString error : %s", err.Error())
+			slog.Error("model.NewModelFromString error", slog.Any("err", err))
+			os.Exit(-1)
 		}
 		Enforcer, err = casbin.NewEnforcer(m, a)
 		if err != nil {
-			log.Fatalf("casbin.NewEnforcer error : %s", err.Error())
+			slog.Error("casbin.NewEnforcer error", slog.Any("err", err))
+			os.Exit(-1)
 		}
 		err = Enforcer.LoadPolicy()
 		if err != nil {
-			log.Fatalf("Enforcer.LoadPolicy error : %s", err.Error())
+			slog.Error("Enforcer.LoadPolicy error", slog.Any("err", err))
+			os.Exit(-1)
+			slog.Default()
 		}
 		Enforcer.EnableAutoSave(true)
 		Enforcer.EnableAutoBuildRoleLinks(true)
