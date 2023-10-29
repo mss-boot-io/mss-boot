@@ -12,6 +12,9 @@ import (
 	"log"
 	"log/slog"
 	"os"
+	"time"
+
+	"gorm.io/gorm/logger"
 
 	"github.com/mss-boot-io/mss-boot/core/logger/writer"
 )
@@ -61,6 +64,28 @@ func (e *Logger) Init() {
 		AddSource: e.AddSource,
 		Level:     e.Level,
 	})))
+
+	// set gorm default logger
+	logger.Default = logger.New(log.New(output, "\r\n", log.LstdFlags), logger.Config{
+		SlowThreshold:             200 * time.Millisecond,
+		LogLevel:                  e.GormLevel(),
+		IgnoreRecordNotFoundError: false,
+		Colorful:                  true,
+	})
+
+}
+
+func (e *Logger) GormLevel() logger.LogLevel {
+	switch e.Level {
+	case slog.LevelDebug, slog.LevelInfo:
+		return logger.Info
+	case slog.LevelWarn:
+		return logger.Warn
+	case slog.LevelError:
+		return logger.Error
+	default:
+		return logger.Silent
+	}
 }
 
 func pathCreate(dir string) error {
