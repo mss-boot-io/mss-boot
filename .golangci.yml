@@ -1,4 +1,5 @@
 run:
+  path: ./...
   deadline: 5m
   skip-dirs:
     - vendor
@@ -12,6 +13,7 @@ linters-settings:
     line-length: 170
   dupl:
     threshold: 400
+
 issues:
   # don't skip warning about doc comments
   exclude-use-default: false
@@ -19,23 +21,23 @@ issues:
   # restore some of the defaults
   # (fill in the rest as needed)
   exclude-rules:
-  - linters: [errcheck]
-    text: "Error return value of .((os\\.)?std(out|err)\\..*|.*Close|.*Flush|os\\.Remove(All)?|.*printf?|os\\.(Un)?Setenv). is not checked"
+    - linters: [errcheck]
+      text: "Error return value of .((os\\.)?std(out|err)\\..*|.*Close|.*Flush|os\\.Remove(All)?|.*printf?|os\\.(Un)?Setenv). is not checked"
 linters:
   disable-all: true
   enable:
-  - misspell
-#  - structcheck
-#  - golint
-  - govet
-#  - deadcode
-  - errcheck
-#  - varcheck
-  - goconst
-  - unparam
-  - ineffassign
-  - nakedret
-  - gocyclo
-  - lll
-  - dupl
-  - goimports
+    - misspell
+    #  - structcheck
+    #  - golint
+    - govet
+    #  - deadcode
+    - errcheck
+    #  - varcheck
+    - goconst
+    - unparam
+    - ineffassign
+    - nakedret
+    - gocyclo
+    - lll
+    - dupl
+    - goimports

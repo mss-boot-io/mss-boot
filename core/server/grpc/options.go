@@ -15,13 +15,9 @@ import (
 	"math"
 	"time"
 
-	recovery "github.com/grpc-ecosystem/go-grpc-middleware/recovery"
-	ctxtags "github.com/grpc-ecosystem/go-grpc-middleware/tags"
-	opentracing "github.com/grpc-ecosystem/go-grpc-middleware/tracing/opentracing"
-	prometheus "github.com/grpc-ecosystem/go-grpc-prometheus"
-	"github.com/mss-boot-io/mss-boot/core/errcode"
-	"github.com/mss-boot-io/mss-boot/core/server/grpc/interceptors/logging"
-	requesttag "github.com/mss-boot-io/mss-boot/core/server/grpc/interceptors/request_tag"
+	"github.com/grpc-ecosystem/go-grpc-middleware/providers/prometheus"
+	"github.com/grpc-ecosystem/go-grpc-middleware/v2/interceptors/logging"
+	"github.com/grpc-ecosystem/go-grpc-middleware/v2/interceptors/recovery"
 	"google.golang.org/grpc"
 )
 
@@ -33,6 +29,10 @@ const (
 	defaultConnectionIdleTime          = 10 * time.Second
 	defaultMaxServerConnectionAgeGrace = 10 * time.Second
 	defaultMiniKeepAliveTimeRate       = 2
+)
+
+var (
+	defaultMetricsServer = prometheus.NewServerMetrics()
 )
 
 // Option set options
@@ -55,6 +55,7 @@ type Options struct {
 	unaryServerInterceptors  []grpc.UnaryServerInterceptor
 	streamServerInterceptors []grpc.StreamServerInterceptor
 	ctx                      context.Context
+	metrcsServer             *prometheus.ServerMetrics
 }
 
 // WithContext set ContextOption
@@ -177,20 +178,23 @@ func defaultOptions() *Options {
 		maxConnectionAgeGrace: defaultMaxServerConnectionAgeGrace,
 		maxConcurrentStreams:  defaultMaxConcurrentStreams,
 		maxMsgSize:            defaultMaxMsgSize,
+		metrcsServer:          prometheus.NewServerMetrics(),
 		unaryServerInterceptors: []grpc.UnaryServerInterceptor{
-			requesttag.UnaryServerInterceptor(),
-			ctxtags.UnaryServerInterceptor(),
-			opentracing.UnaryServerInterceptor(),
-			logging.UnaryServerInterceptor(),
-			prometheus.UnaryServerInterceptor,
+			//requesttag.UnaryServerInterceptor(),
+			//ctxtags.UnaryServerInterceptor(),
+			//opentracing.UnaryServerInterceptor(),
+			//logging.UnaryServerInterceptor(),
+			logging.UnaryServerInterceptor(InterceptorLogger(slog.Default())),
+			defaultMetricsServer.UnaryServerInterceptor(),
 			recovery.UnaryServerInterceptor(recovery.WithRecoveryHandler(customRecovery("", ""))),
 		},
 		streamServerInterceptors: []grpc.StreamServerInterceptor{
-			requesttag.StreamServerInterceptor(),
-			ctxtags.StreamServerInterceptor(),
-			opentracing.StreamServerInterceptor(),
-			logging.StreamServerInterceptor(),
-			prometheus.StreamServerInterceptor,
+			//requesttag.StreamServerInterceptor(),
+			//ctxtags.StreamServerInterceptor(),
+			//opentracing.StreamServerInterceptor(),
+			//logging.StreamServerInterceptor(),
+			logging.StreamServerInterceptor(InterceptorLogger(slog.Default())),
+			defaultMetricsServer.StreamServerInterceptor(),
 			recovery.StreamServerInterceptor(recovery.WithRecoveryHandler(customRecovery("", ""))),
 		},
 	}
@@ -200,6 +204,14 @@ func defaultOptions() *Options {
 func customRecovery(id, domain string) recovery.RecoveryHandlerFunc {
 	return func(p interface{}) (err error) {
 		slog.Error(fmt.Sprintf("panic triggered: %v", p))
-		return errcode.New(id, domain, errcode.GRPCInternalServerError)
+		return fmt.Errorf("%s[%s] panic triggered: %v", id, domain, p)
 	}
+}
+
+// InterceptorLogger adapts slog logger to interceptor logger.
+// This code is simple enough to be copied and not imported.
+func InterceptorLogger(l *slog.Logger) logging.Logger {
+	return logging.LoggerFunc(func(ctx context.Context, lvl logging.Level, msg string, fields ...any) {
+		l.Log(ctx, slog.Level(lvl), msg, fields...)
+	})
 }

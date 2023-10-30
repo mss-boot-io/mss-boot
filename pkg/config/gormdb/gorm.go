@@ -8,6 +8,9 @@ package gormdb
  */
 
 import (
+	"log/slog"
+	"os"
+
 	"github.com/casbin/casbin/v2"
 	"github.com/casbin/casbin/v2/model"
 	"github.com/casbin/casbin/v2/persist"
@@ -15,8 +18,6 @@ import (
 	"gorm.io/gorm"
 	"gorm.io/gorm/logger"
 	"gorm.io/gorm/schema"
-	"log/slog"
-	"os"
 )
 
 // DB gorm db

@@ -17,8 +17,8 @@ import (
 	"os"
 	"sync"
 
-	middleware "github.com/grpc-ecosystem/go-grpc-middleware"
-	prometheus "github.com/grpc-ecosystem/go-grpc-prometheus"
+	grpcPrometheus "github.com/grpc-ecosystem/go-grpc-middleware/providers/prometheus"
+	"github.com/prometheus/client_golang/prometheus"
 	"google.golang.org/grpc"
 	"google.golang.org/grpc/credentials"
 	"google.golang.org/grpc/keepalive"
@@ -70,14 +70,15 @@ func (e *Server) NewServer() {
 // Register register
 func (e *Server) Register(do func(server *Server)) {
 	do(e)
-	prometheus.Register(e.srv)
+	registry := prometheus.NewPedanticRegistry()
+	registry.MustRegister(grpcPrometheus.NewServerMetrics(grpcPrometheus.WithServerHandlingTimeHistogram()))
 }
 
 func (e *Server) initGrpcServerOptions() []grpc.ServerOption {
 	opts := []grpc.ServerOption{
 		grpc.ConnectionTimeout(e.options.timeout),
-		grpc.UnaryInterceptor(middleware.ChainUnaryServer(e.options.unaryServerInterceptors...)),
-		grpc.StreamInterceptor(middleware.ChainStreamServer(e.options.streamServerInterceptors...)),
+		grpc.ChainUnaryInterceptor(e.options.unaryServerInterceptors...),
+		grpc.ChainStreamInterceptor(e.options.streamServerInterceptors...),
 		grpc.MaxConcurrentStreams(uint32(e.options.maxConcurrentStreams)),
 		grpc.MaxRecvMsgSize(e.options.maxMsgSize),
 		grpc.KeepaliveEnforcementPolicy(keepalive.EnforcementPolicy{
