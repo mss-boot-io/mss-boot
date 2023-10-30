@@ -1,8 +1,8 @@
 package security
 
 import (
+	"crypto/rand"
 	"encoding/hex"
-	"math/rand"
 
 	"golang.org/x/crypto/scrypt"
 )

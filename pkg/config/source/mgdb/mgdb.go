@@ -32,7 +32,7 @@ func (s *Source) Open(string) (fs.File, error) {
 
 // ReadFile read file
 func (s *Source) ReadFile(name string) ([]byte, error) {
-	if strings.Index(name, ".") > -1 {
+	if strings.Contains(name, ".") {
 		name = name[:strings.Index(name, ".")]
 	}
 	m := SystemConfig{}

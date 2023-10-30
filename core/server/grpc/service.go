@@ -11,12 +11,10 @@ import (
 	"context"
 	"fmt"
 	"log"
+	"log/slog"
 	"time"
 
-	middleware "github.com/grpc-ecosystem/go-grpc-middleware"
-	opentracing "github.com/grpc-ecosystem/go-grpc-middleware/tracing/opentracing"
-	"github.com/mss-boot-io/mss-boot/core/server/grpc/interceptors/logging"
-	reqtags "github.com/mss-boot-io/mss-boot/core/server/grpc/interceptors/request_tag"
+	"github.com/grpc-ecosystem/go-grpc-middleware/v2/interceptors/logging"
 	"google.golang.org/grpc"
 	"google.golang.org/grpc/credentials/insecure"
 )
@@ -43,8 +41,8 @@ func (e *Service) Dial(
 	e.Connection, err = grpc.DialContext(ctx,
 		endpoint,
 		grpc.WithTransportCredentials(insecure.NewCredentials()),
-		grpc.WithStreamInterceptor(middleware.ChainStreamClient(defaultStreamClientInterceptors()...)),
-		grpc.WithUnaryInterceptor(middleware.ChainUnaryClient(unary...)),
+		grpc.WithChainStreamInterceptor(defaultStreamClientInterceptors()...),
+		grpc.WithChainUnaryInterceptor(unary...),
 		grpc.WithDefaultCallOptions(grpc.WaitForReady(true), grpc.MaxCallRecvMsgSize(defaultMaxMsgSize)),
 	)
 
@@ -58,16 +56,16 @@ func (e *Service) Dial(
 
 func defaultUnaryClientInterceptors() []grpc.UnaryClientInterceptor {
 	return []grpc.UnaryClientInterceptor{
-		opentracing.UnaryClientInterceptor(),
-		logging.UnaryClientInterceptor(),
-		reqtags.UnaryClientInterceptor(),
+		//opentracing.UnaryClientInterceptor(),
+		logging.UnaryClientInterceptor(InterceptorLogger(slog.Default())),
+		//reqtags.UnaryClientInterceptor(),
 	}
 }
 
 func defaultStreamClientInterceptors() []grpc.StreamClientInterceptor {
 	return []grpc.StreamClientInterceptor{
-		opentracing.StreamClientInterceptor(),
-		logging.StreamClientInterceptor(),
-		reqtags.StreamClientInterceptor(),
+		//opentracing.StreamClientInterceptor(),
+		logging.StreamClientInterceptor(InterceptorLogger(slog.Default())),
+		//reqtags.StreamClientInterceptor(),
 	}
 }

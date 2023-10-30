@@ -25,6 +25,6 @@ func (s *Source) Open(string) (fs.File, error) {
 }
 
 // ReadFile method Get not implemented
-func (s *Source) ReadFile(name string) ([]byte, error) {
+func (s *Source) ReadFile(_ string) ([]byte, error) {
 	return nil, errors.New("method Get not implemented")
 }

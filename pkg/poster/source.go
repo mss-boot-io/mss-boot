@@ -5,8 +5,9 @@ import (
 	"crypto/tls"
 	"errors"
 	"image"
-	"io/ioutil"
+	"io"
 	"net/http"
+	"os"
 )
 
 // GetImage 从源读取图片，支持网络和本地
@@ -39,7 +40,7 @@ func getResourceReader(src string) (r *bytes.Reader, err error) {
 			return r, err
 		}
 		defer resp.Body.Close()
-		fileBytes, err := ioutil.ReadAll(resp.Body)
+		fileBytes, err := io.ReadAll(resp.Body)
 		if err != nil {
 			return r, err
 		}
@@ -47,12 +48,12 @@ func getResourceReader(src string) (r *bytes.Reader, err error) {
 		return r, nil
 	}
 
-	if src[0:2] == "s3" {
-		// todo: get image from s3
-	}
+	//if src[0:2] == "s3" {
+	//	// todo: get image from s3
+	//}
 
 	// get image from local
-	fileBytes, err := ioutil.ReadFile(src)
+	fileBytes, err := os.ReadFile(src)
 	if err != nil {
 		return nil, err
 	}

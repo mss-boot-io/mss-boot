@@ -11,7 +11,6 @@ import (
 	"context"
 	"log/slog"
 
-	"github.com/mss-boot-io/mss-boot/core/server/grpc/interceptors/logging/ctxlog"
 	"github.com/mss-boot-io/mss-boot/core/tools/utils"
 )
 
@@ -24,8 +23,8 @@ type Handler struct {
 
 // Make 构建
 func (e *Handler) Make(c context.Context) {
-	e.Log = ctxlog.Extract(c)
 	e.RequestID = utils.GetRequestID(c)
+	e.Log = slog.Default().With("traceID", e.RequestID)
 }
 
 // Make 构建
