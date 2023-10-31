@@ -30,6 +30,10 @@
 > - [ ] 支持istio链路追踪
 > - [ ] 开箱即用支持
 
+## 请我喝杯咖啡
+<a href="https://www.buymeacoffee.com/lwnmengjing" target="_blank"><img src="https://cdn.buymeacoffee.com/buttons/v2/default-yellow.png" alt="Buy Me A Coffee" style="height: 60px !important;width: 217px !important;" ></a>
+
+
 ## JetBrains 开源证书支持
 
 `mss-boot-io` 项目一直以来都是在 JetBrains 公司旗下的 GoLand 集成开发环境中进行开发，基于 **free JetBrains Open Source license(s)** 正版免费授权，在此表达我的谢意。
