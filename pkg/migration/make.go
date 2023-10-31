@@ -97,6 +97,10 @@ func GenFile(system bool, path string) error {
 	}
 	var b1 bytes.Buffer
 	err = t1.Execute(&b1, m)
+	if err != nil {
+		slog.Error("execute template error", slog.Any("err", err))
+		return err
+	}
 	if system {
 		fileCreate(b1, filepath.Join(path, "system", m["GenerateTime"]+"_migrate.go"))
 	} else {
