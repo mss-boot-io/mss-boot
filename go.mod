@@ -12,6 +12,7 @@ require (
 	github.com/casbin/gorm-adapter/v3 v3.20.0
 	github.com/casbin/mongodb-adapter/v3 v3.5.0
 	github.com/coreos/go-oidc/v3 v3.7.0
+	github.com/gin-contrib/pprof v1.4.0
 	github.com/golang/freetype v0.0.0-20170609003504-e2365dfdc4a0
 	github.com/google/uuid v1.4.0
 	github.com/grpc-ecosystem/go-grpc-middleware/providers/prometheus v1.0.0

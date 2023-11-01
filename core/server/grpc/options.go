@@ -32,7 +32,7 @@ const (
 )
 
 var (
-	defaultMetricsServer = prometheus.NewServerMetrics()
+	defaultMetricsServer = prometheus.NewServerMetrics(prometheus.WithServerCounterOptions())
 )
 
 // Option set options
@@ -178,7 +178,7 @@ func defaultOptions() *Options {
 		maxConnectionAgeGrace: defaultMaxServerConnectionAgeGrace,
 		maxConcurrentStreams:  defaultMaxConcurrentStreams,
 		maxMsgSize:            defaultMaxMsgSize,
-		metrcsServer:          prometheus.NewServerMetrics(),
+		metrcsServer:          defaultMetricsServer,
 		unaryServerInterceptors: []grpc.UnaryServerInterceptor{
 			//requesttag.UnaryServerInterceptor(),
 			//ctxtags.UnaryServerInterceptor(),
