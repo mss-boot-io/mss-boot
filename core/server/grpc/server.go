@@ -17,7 +17,6 @@ import (
 	"os"
 	"sync"
 
-	grpcPrometheus "github.com/grpc-ecosystem/go-grpc-middleware/providers/prometheus"
 	"github.com/prometheus/client_golang/prometheus"
 	"google.golang.org/grpc"
 	"google.golang.org/grpc/credentials"
@@ -62,16 +61,16 @@ func (e *Server) Server() *grpc.Server {
 
 // NewServer new a server
 func (e *Server) NewServer() {
-	grpc.EnableTracing = false
+	grpc.EnableTracing = true
 	e.srv = grpc.NewServer(e.initGrpcServerOptions()...)
+	prometheus.MustRegister(e.options.metrcsServer)
+	e.options.metrcsServer.InitializeMetrics(e.srv)
 	reflection.Register(e.srv)
 }
 
 // Register register
 func (e *Server) Register(do func(server *Server)) {
 	do(e)
-	registry := prometheus.NewPedanticRegistry()
-	registry.MustRegister(grpcPrometheus.NewServerMetrics(grpcPrometheus.WithServerHandlingTimeHistogram()))
 }
 
 func (e *Server) initGrpcServerOptions() []grpc.ServerOption {

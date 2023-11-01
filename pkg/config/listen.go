@@ -36,11 +36,19 @@ func (e *Listen) Init(opts ...listener.Option) server.Runnable {
 	if e.Timeout == 0 {
 		e.Timeout = 10
 	}
+	if e.Name != "" {
+		opts = append(opts, listener.WithName(e.Name))
+	}
+	if e.Addr != "" {
+		opts = append(opts, listener.WithAddr(e.Addr))
+	}
+	if e.CertFile != "" {
+		opts = append(opts, listener.WithCert(e.CertFile))
+	}
+	if e.KeyFile != "" {
+		opts = append(opts, listener.WithKey(e.KeyFile))
+	}
 	opts = append(opts,
-		listener.WithName(e.Name),
-		listener.WithAddr(e.Addr),
-		listener.WithCert(e.CertFile),
-		listener.WithKey(e.KeyFile),
 		listener.WithTimeout(e.Timeout),
 		listener.WithMetrics(e.Metrics),
 		listener.WithHealthz(e.Healthz),

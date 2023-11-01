@@ -12,8 +12,10 @@ import (
 	"log/slog"
 	"net"
 	"net/http"
-	_ "net/http/pprof"
+	"net/http/pprof"
 
+	ginPprof "github.com/gin-contrib/pprof"
+	"github.com/gin-gonic/gin"
 	"github.com/mss-boot-io/mss-boot/core/server"
 	"github.com/prometheus/client_golang/prometheus/promhttp"
 )
@@ -22,88 +24,109 @@ import (
 type Server struct {
 	ctx     context.Context
 	srv     *http.Server
-	opts    options
+	options Options
 	started bool
 }
 
 // New 实例化
 func New(opts ...Option) server.Runnable {
-	s := &Server{
-		opts: setDefaultOption(),
-	}
+	s := &Server{}
 
-	s.opts.handler = http.DefaultServeMux
 	s.Options(opts...)
-
-	//if s.opts.pprof {
-	//	http.HandleFunc("/debug/pprof/", pprof.Index)
-	//	http.HandleFunc("/debug/pprof/cmdline", pprof.Cmdline)
-	//	http.HandleFunc("/debug/pprof/profile", pprof.Profile)
-	//	http.HandleFunc("/debug/pprof/symbol", pprof.Symbol)
-	//	http.HandleFunc("/debug/pprof/trace", pprof.Trace)
-	//}
-	if s.opts.metrics {
-		http.Handle("/metrics", promhttp.Handler())
+	if s.options.handler == nil {
+		return nil
 	}
-	if s.opts.healthz {
-		http.HandleFunc("/healthz", func(w http.ResponseWriter, _ *http.Request) {
-			w.WriteHeader(http.StatusOK)
-		})
-	}
-	if s.opts.readyz {
-		http.HandleFunc("/readyz", func(w http.ResponseWriter, _ *http.Request) {
-			w.WriteHeader(http.StatusOK)
-		})
+	switch h := s.options.handler.(type) {
+	case *http.ServeMux:
+		if s.options.pprof && h != http.DefaultServeMux {
+			h.HandleFunc("/debug/pprof/", pprof.Index)
+			h.HandleFunc("/debug/pprof/cmdline", pprof.Cmdline)
+			h.HandleFunc("/debug/pprof/profile", pprof.Profile)
+			h.HandleFunc("/debug/pprof/symbol", pprof.Symbol)
+			h.HandleFunc("/debug/pprof/trace", pprof.Trace)
+		}
+		if s.options.metrics {
+			h.Handle("/metrics", promhttp.Handler())
+		}
+		if s.options.healthz {
+			h.HandleFunc("/healthz", func(w http.ResponseWriter, _ *http.Request) {
+				w.WriteHeader(http.StatusOK)
+			})
+		}
+		if s.options.readyz {
+			h.HandleFunc("/readyz", func(w http.ResponseWriter, _ *http.Request) {
+				w.WriteHeader(http.StatusOK)
+			})
+		}
+		s.options.handler = h
+	case *gin.Engine:
+		if s.options.pprof {
+			ginPprof.Register(h)
+		}
+		if s.options.metrics {
+			h.GET("/metrics", gin.WrapH(promhttp.Handler()))
+		}
+		if s.options.healthz {
+			h.GET("/healthz", func(c *gin.Context) {
+				c.AbortWithStatus(http.StatusOK)
+			})
+		}
+		if s.options.readyz {
+			h.GET("/readyz", func(c *gin.Context) {
+				c.AbortWithStatus(http.StatusOK)
+			})
+		}
 	}
 	return s
 }
 
 // Options 设置参数
-func (e *Server) Options(opts ...Option) {
-	for _, o := range opts {
-		o(&(e.opts))
+func (e *Server) Options(options ...Option) {
+	e.options = *defaultOptions()
+	for _, o := range options {
+		o(&e.options)
 	}
 }
 
 // String string
 func (e *Server) String() string {
-	return e.opts.name
+	return e.options.name
 }
 
 // Start server
 func (e *Server) Start(ctx context.Context) error {
-	l, err := net.Listen("tcp", e.opts.addr)
+	l, err := net.Listen("tcp", e.options.addr)
 	if err != nil {
 		return err
 	}
 	e.ctx = ctx
 	e.started = true
-	e.srv = &http.Server{Handler: e.opts.handler}
-	if e.opts.endHook != nil {
-		e.srv.RegisterOnShutdown(e.opts.endHook)
+	e.srv = &http.Server{Handler: e.options.handler}
+	if e.options.endHook != nil {
+		e.srv.RegisterOnShutdown(e.options.endHook)
 	}
 	e.srv.BaseContext = func(_ net.Listener) context.Context {
 		return ctx
 	}
-	slog.InfoContext(ctx, e.opts.name+" Server listening on "+l.Addr().String())
+	slog.InfoContext(ctx, e.options.name+" Server listening on "+l.Addr().String())
 	go func() {
-		if e.opts.keyFile == "" || e.opts.certFile == "" {
+		if e.options.keyFile == "" || e.options.certFile == "" {
 			if err = e.srv.Serve(l); err != nil {
-				slog.ErrorContext(ctx, e.opts.name+" Server start error", slog.Any("err", err.Error()))
+				slog.ErrorContext(ctx, e.options.name+" Server start error", slog.Any("err", err.Error()))
 			}
 		} else {
-			if err = e.srv.ServeTLS(l, e.opts.certFile, e.opts.keyFile); err != nil {
-				slog.ErrorContext(ctx, e.opts.name+" Server start error", slog.Any("err", err.Error()))
+			if err = e.srv.ServeTLS(l, e.options.certFile, e.options.keyFile); err != nil {
+				slog.ErrorContext(ctx, e.options.name+" Server start error", slog.Any("err", err.Error()))
 			}
 		}
 		<-ctx.Done()
 		err = e.Shutdown(ctx)
 		if err != nil {
-			slog.ErrorContext(ctx, e.opts.name+" Server shutdown error", slog.Any("err", err.Error()))
+			slog.ErrorContext(ctx, e.options.name+" Server shutdown error", slog.Any("err", err.Error()))
 		}
 	}()
-	if e.opts.startedHook != nil {
-		e.opts.startedHook()
+	if e.options.startedHook != nil {
+		e.options.startedHook()
 	}
 	return nil
 }
