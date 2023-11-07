@@ -14,6 +14,7 @@ import (
 	"os"
 	"time"
 
+	"github.com/gin-gonic/gin"
 	"gorm.io/gorm/logger"
 
 	"github.com/mss-boot-io/mss-boot/core/logger/writer"
@@ -73,6 +74,7 @@ func (e *Logger) Init() {
 		Colorful:                  true,
 	})
 
+	gin.DefaultWriter = output
 }
 
 func (e *Logger) GormLevel() logger.LogLevel {
