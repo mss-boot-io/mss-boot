@@ -69,3 +69,7 @@ func (e *Delete) Handler() gin.HandlerFunc {
 		}
 	}
 }
+
+//func (e *Delete) GenOpenAPI(m *model.Model) *spec.PathItemProps {
+//
+//}

@@ -2,6 +2,8 @@ package model
 
 import (
 	"fmt"
+	"github.com/aws/smithy-go/ptr"
+	"github.com/go-openapi/spec"
 	"reflect"
 	"strings"
 	"time"
@@ -114,4 +116,38 @@ func (f *Field) MakeField() reflect.StructField {
 		field.Type = reflect.TypeOf("")
 	}
 	return field
+}
+
+func (f *Field) GenOpenAPIFie() *spec.Schema {
+	s := &spec.Schema{
+		SchemaProps: spec.SchemaProps{
+			Type: []string{string(f.DataType)},
+		},
+	}
+	if f.DataType == schema.String {
+		s.MaxLength = ptr.Int64(int64(f.Size))
+	}
+	//todo float64
+	//if f.DataType == schema.Float {
+	//	s.Maximum = ptr.Float64(f.Precision)
+	//	s.Minimum = &f.Scale
+	//}
+	if f.DataType == schema.Time {
+		s.Format = "date-time"
+	}
+	if f.DefaultValue != "" {
+		s.Default = f.DefaultValue
+	}
+	if f.NotNull {
+		s.Nullable = false
+	}
+	//if f.PrimaryKey != "" {
+	//	s.Extensions = spec.Extensions(map[string]interface{}{
+	//		"x-order": f.PrimaryKey,
+	//	})
+	//}
+	if f.Comment != "" {
+		s.Description = f.Comment
+	}
+	return s
 }
