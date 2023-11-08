@@ -8,9 +8,8 @@ package controller
  */
 
 import (
+	"github.com/mss-boot-io/mss-boot/pkg/response/actions"
 	"strings"
-
-	"github.com/mss-boot-io/mss-boot/pkg/response/actions/authentic"
 
 	"github.com/gin-gonic/gin"
 	mgm "github.com/kamva/mgm/v3"
@@ -54,9 +53,9 @@ func (e *Simple) GetAction(key string) response.Action {
 		return action
 	}
 	switch e.options.modelProvider {
-	case authentic.ModelProviderMgm:
+	case actions.ModelProviderMgm:
 		return e.getActionMgm(key)
-	case authentic.ModelProviderGorm:
+	case actions.ModelProviderGorm:
 		return e.getActionGorm(key)
 	default:
 		return nil
@@ -66,13 +65,13 @@ func (e *Simple) GetAction(key string) response.Action {
 func (e *Simple) getActionMgm(key string) response.Action {
 	switch key {
 	case response.Get:
-		return authentic.NewGetMgm(e.options.model, e.GetKey())
+		return actions.NewGetMgm(e.options.model, e.GetKey())
 	case response.Control:
-		return authentic.NewControlMgm(e.options.model, e.GetKey())
+		return actions.NewControlMgm(e.options.model, e.GetKey())
 	case response.Delete:
-		return authentic.NewDeleteMgm(e.options.model, e.GetKey())
+		return actions.NewDeleteMgm(e.options.model, e.GetKey())
 	case response.Search:
-		return authentic.NewSearchMgm(e.options.model, e.options.search)
+		return actions.NewSearchMgm(e.options.model, e.options.search)
 	default:
 		return nil
 	}
@@ -81,13 +80,13 @@ func (e *Simple) getActionMgm(key string) response.Action {
 func (e *Simple) getActionGorm(key string) response.Action {
 	switch key {
 	case response.Get:
-		return authentic.NewGetGorm(e.options.model, e.GetKey())
+		return actions.NewGetGorm(e.options.model, e.GetKey())
 	case response.Control:
-		return authentic.NewControlGorm(e.options.model, e.GetKey())
+		return actions.NewControlGorm(e.options.model, e.GetKey())
 	case response.Delete:
-		return authentic.NewDeleteGorm(e.options.model, e.GetKey())
+		return actions.NewDeleteGorm(e.options.model, e.GetKey())
 	case response.Search:
-		return authentic.NewSearchGorm(e.options.model, e.options.search)
+		return actions.NewSearchGorm(e.options.model, e.options.search)
 	default:
 		return nil
 	}

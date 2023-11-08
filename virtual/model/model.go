@@ -2,11 +2,11 @@ package model
 
 import (
 	"fmt"
-	"github.com/go-openapi/spec"
 	"reflect"
 	"strings"
 	"time"
 
+	"github.com/go-openapi/spec"
 	"github.com/gin-gonic/gin"
 	"gorm.io/gorm"
 )

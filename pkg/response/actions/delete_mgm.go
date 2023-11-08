@@ -1,4 +1,4 @@
-package authentic
+package actions
 
 /*
  * @Author: lwnmengjing
@@ -9,7 +9,6 @@ package authentic
 
 import (
 	"errors"
-	"fmt"
 	"net/http"
 
 	"github.com/gin-gonic/gin"
@@ -59,9 +58,7 @@ func (e *Delete) Handler() gin.HandlerFunc {
 			e.deleteGorm(c, v)
 			return
 		}
-		response.Error(c,
-			http.StatusNotImplemented,
-			fmt.Errorf("not implemented"))
+		response.Make(c).Err(http.StatusNotImplemented, "not implemented")
 	}
 }
 

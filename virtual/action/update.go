@@ -1,11 +1,9 @@
-package virtual
+package action
 
 import (
-	"errors"
 	"net/http"
 
 	"github.com/gin-gonic/gin"
-	"gorm.io/gorm"
 
 	"github.com/mss-boot-io/mss-boot/pkg/config/gormdb"
 	"github.com/mss-boot-io/mss-boot/pkg/response"
@@ -13,35 +11,33 @@ import (
 
 /*
  * @Author: lwnmengjing<lwnmengjing@qq.com>
- * @Date: 2023/9/17 09:00:47
+ * @Date: 2023/9/17 08:55:14
  * @Last Modified by: lwnmengjing<lwnmengjing@qq.com>
- * @Last Modified time: 2023/9/17 09:00:47
+ * @Last Modified time: 2023/9/17 08:55:14
  */
 
-// Get action
-type Get struct {
+type Update struct {
 	*Base
 }
 
-// NewGet new get action
-func NewGet(b *Base) *Get {
-	return &Get{
+// NewUpdate new update action
+func NewUpdate(b *Base) *Update {
+	return &Update{
 		Base: b,
 	}
 }
 
-// String print action name
-func (*Get) String() string {
-	return "get"
+func (*Update) String() string {
+	return "update"
 }
 
-// Handler get action handler
-func (e *Get) Handler() gin.HandlerFunc {
+// Handler update action handler
+func (e *Update) Handler() gin.HandlerFunc {
 	return func(c *gin.Context) {
 		switch c.Request.Method {
-		case http.MethodGet:
+		case http.MethodPut:
 			api := response.Make(c)
-			//get
+			//update
 			m := e.GetModel(c)
 			if m == nil {
 				// no set model
@@ -53,20 +49,15 @@ func (e *Get) Handler() gin.HandlerFunc {
 				api.Err(http.StatusUnprocessableEntity)
 				return
 			}
-			if err := gormdb.DB.Scopes(m.TableScope, m.URI(c)).First(req).Error; err != nil {
-				if errors.Is(err, gorm.ErrRecordNotFound) {
-					api.Err(http.StatusNotFound)
-					return
-				}
-				api.AddError(err).Log.ErrorContext(c, "get error", PathKey, c.Param(PathKey))
+			if err := gormdb.DB.Scopes(m.TableScope, m.URI(c)).Updates(req).Error; err != nil {
+				api.AddError(err).Log.Error("update error", PathKey, c.Param(PathKey))
 				api.Err(http.StatusInternalServerError)
 				return
 			}
-			api.OK(req)
+			api.OK(nil)
 			return
 		default:
 			c.AbortWithStatus(http.StatusMethodNotAllowed)
-			return
 		}
 	}
 }

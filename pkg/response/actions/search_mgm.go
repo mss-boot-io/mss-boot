@@ -1,4 +1,4 @@
-package authentic
+package actions
 
 /*
  * @Author: lwnmengjing
@@ -79,9 +79,7 @@ func (e *Search) Handler() gin.HandlerFunc {
 			e.searchGorm(c)
 			return
 		}
-		response.Error(c,
-			http.StatusNotImplemented,
-			fmt.Errorf("not implemented"))
+		response.Make(c).Err(http.StatusNotImplemented, "not implemented")
 	}
 }
 

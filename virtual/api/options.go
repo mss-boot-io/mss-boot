@@ -1,4 +1,4 @@
-package controller
+package api
 
 /*
  * @Author: lwnmengjing
@@ -9,7 +9,7 @@ package controller
 
 import (
 	"github.com/mss-boot-io/mss-boot/pkg/response"
-	"github.com/mss-boot-io/mss-boot/pkg/response/actions"
+	"github.com/mss-boot-io/mss-boot/virtual/model"
 )
 
 // Option set options
@@ -19,9 +19,9 @@ type Option func(*Options)
 type Options struct {
 	actions       []response.Action
 	search        response.Searcher
-	model         actions.Model
+	model         model.ModelImpl
 	auth          bool
-	modelProvider actions.ModelProvider
+	modelProvider model.ModelProvider
 }
 
 // getAction get action
@@ -59,7 +59,7 @@ func WithSearch(search response.Searcher) Option {
 }
 
 // WithModel set model
-func WithModel(m actions.Model) Option {
+func WithModel(m model.ModelImpl) Option {
 	return func(o *Options) {
 		o.model = m
 	}
@@ -73,7 +73,7 @@ func WithAuth(auth bool) Option {
 }
 
 // WithModelProvider set model provider
-func WithModelProvider(provider actions.ModelProvider) Option {
+func WithModelProvider(provider model.ModelProvider) Option {
 	return func(o *Options) {
 		o.modelProvider = provider
 	}

@@ -1,4 +1,9 @@
-package virtual
+package action
+
+import (
+	"github.com/gin-gonic/gin"
+	"github.com/mss-boot-io/mss-boot/virtual/model"
+)
 
 /*
  * @Author: lwnmengjing<lwnmengjing@qq.com>
@@ -6,6 +11,14 @@ package virtual
  * @Last Modified by: lwnmengjing<lwnmengjing@qq.com>
  * @Last Modified time: 2023/9/17 08:12:38
  */
+
+// VirtualAction virtual action
+type VirtualAction interface {
+	String() string
+	Handler() gin.HandlerFunc
+	SetModel(key string, m *model.Model)
+	GetModel(ctx *gin.Context) *model.Model
+}
 
 // Pagination pagination params
 type Pagination struct {
