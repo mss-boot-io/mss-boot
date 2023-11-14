@@ -3,6 +3,7 @@
 package gormdb
 
 import (
+	"github.com/nfjBill/gorm-driver-dm"
 	"gorm.io/driver/mysql"
 	"gorm.io/driver/postgres"
 	"gorm.io/gorm"
@@ -11,4 +12,5 @@ import (
 var opens = map[string]func(string) gorm.Dialector{
 	"mysql":    mysql.Open,
 	"postgres": postgres.Open,
+	"dm":       dm.Open,
 }
