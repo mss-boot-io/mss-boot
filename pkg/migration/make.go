@@ -22,6 +22,7 @@ import (
 
 	"github.com/spf13/cast"
 	"gorm.io/gorm"
+	"gorm.io/gorm/schema"
 )
 
 //go:embed *.tpl
@@ -51,7 +52,7 @@ func (e *Migration) SetVersion(k int, f func(db *gorm.DB, version string) error)
 	e.version[k] = f
 }
 
-func (e *Migration) Migrate() {
+func (e *Migration) Migrate(ms ...schema.Tabler) {
 	versions := make([]int, 0)
 	for k := range e.version {
 		versions = append(versions, k)
@@ -62,7 +63,11 @@ func (e *Migration) Migrate() {
 	var err error
 	var count int64
 	for _, v := range versions {
-		err = e.db.Table("mss_boot_migration").Where("version = ?", v).Count(&count).Error
+		if len(ms) == 0 {
+			err = e.db.Table("mss_boot_migration").Where("version = ?", v).Count(&count).Error
+		} else {
+			err = e.db.Model(ms[0]).Where("version = ?", v).Count(&count).Error
+		}
 		if err != nil {
 			log.Fatalf("get migration version error: %v", err)
 		}
