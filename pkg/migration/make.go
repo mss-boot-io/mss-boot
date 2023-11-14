@@ -10,7 +10,6 @@ package migration
 import (
 	"bytes"
 	"embed"
-	"gorm.io/gorm/schema"
 	"log"
 	"log/slog"
 	"os"
@@ -23,6 +22,7 @@ import (
 
 	"github.com/spf13/cast"
 	"gorm.io/gorm"
+	"gorm.io/gorm/schema"
 )
 
 //go:embed *.tpl
