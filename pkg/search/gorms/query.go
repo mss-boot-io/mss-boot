@@ -78,7 +78,7 @@ func parseSQL(driver string, searchTag *resolveSearchTag, condition Condition, q
 	case "left":
 		//左关联
 		join := condition.SetJoinOn(searchTag.Type, fmt.Sprintf(
-			"left join `%s` on `%s`.`%s` = `%s`.`%s`",
+			"left join %s on %s.%s = %s.%s",
 			searchTag.Join,
 			searchTag.Join,
 			searchTag.On[0],
@@ -87,19 +87,19 @@ func parseSQL(driver string, searchTag *resolveSearchTag, condition Condition, q
 		))
 		ResolveSearchQuery(driver, qValue.Field(i).Interface(), join)
 	case "exact", "iexact":
-		condition.SetWhere(fmt.Sprintf("`%s`.`%s` = ?", searchTag.Table, searchTag.Column), []interface{}{qValue.Field(i).Interface()})
+		condition.SetWhere(fmt.Sprintf("%s.%s = ?", searchTag.Table, searchTag.Column), []interface{}{qValue.Field(i).Interface()})
 	case "contains":
-		condition.SetWhere(fmt.Sprintf("`%s`.`%s` like ?", searchTag.Table, searchTag.Column), []interface{}{"%" + qValue.Field(i).String() + "%"})
+		condition.SetWhere(fmt.Sprintf("%s.%s like ?", searchTag.Table, searchTag.Column), []interface{}{"%" + qValue.Field(i).String() + "%"})
 	case "icontains":
-		condition.SetWhere(fmt.Sprintf("`%s`.`%s` %slike ?", searchTag.Table, searchTag.Column, iStr), []interface{}{"%" + qValue.Field(i).String() + "%"})
+		condition.SetWhere(fmt.Sprintf("%s.%s %slike ?", searchTag.Table, searchTag.Column, iStr), []interface{}{"%" + qValue.Field(i).String() + "%"})
 	case "gt":
-		condition.SetWhere(fmt.Sprintf("`%s`.`%s` > ?", searchTag.Table, searchTag.Column), []interface{}{qValue.Field(i).Interface()})
+		condition.SetWhere(fmt.Sprintf("%s.%s > ?", searchTag.Table, searchTag.Column), []interface{}{qValue.Field(i).Interface()})
 	case "gte":
-		condition.SetWhere(fmt.Sprintf("`%s`.`%s` >= ?", searchTag.Table, searchTag.Column), []interface{}{qValue.Field(i).Interface()})
+		condition.SetWhere(fmt.Sprintf("%s.%s >= ?", searchTag.Table, searchTag.Column), []interface{}{qValue.Field(i).Interface()})
 	case "lt":
-		condition.SetWhere(fmt.Sprintf("`%s`.`%s` < ?", searchTag.Table, searchTag.Column), []interface{}{qValue.Field(i).Interface()})
+		condition.SetWhere(fmt.Sprintf("%s.%s < ?", searchTag.Table, searchTag.Column), []interface{}{qValue.Field(i).Interface()})
 	case "lte":
-		condition.SetWhere(fmt.Sprintf("`%s`.`%s` <= ?", searchTag.Table, searchTag.Column), []interface{}{qValue.Field(i).Interface()})
+		condition.SetWhere(fmt.Sprintf("%s.%s <= ?", searchTag.Table, searchTag.Column), []interface{}{qValue.Field(i).Interface()})
 	case "startswith":
 		condition.SetWhere(fmt.Sprintf("%s.%s like ?", searchTag.Table, searchTag.Column), []interface{}{qValue.Field(i).String() + "%"})
 	case "istartswith":
@@ -112,12 +112,12 @@ func parseSQL(driver string, searchTag *resolveSearchTag, condition Condition, q
 		condition.SetWhere(fmt.Sprintf("`%s`.`%s` in (?)", searchTag.Table, searchTag.Column), []interface{}{qValue.Field(i).Interface()})
 	case "isnull":
 		if !(qValue.Field(i).IsZero() && qValue.Field(i).IsNil()) {
-			condition.SetWhere(fmt.Sprintf("`%s`.`%s` isnull", searchTag.Table, searchTag.Column), make([]interface{}, 0))
+			condition.SetWhere(fmt.Sprintf("%s.%s` isnull", searchTag.Table, searchTag.Column), make([]interface{}, 0))
 		}
 	case "order":
 		switch strings.ToLower(qValue.Field(i).String()) {
 		case "desc", "asc":
-			condition.SetOrder(fmt.Sprintf("`%s`.`%s` %s", searchTag.Table, searchTag.Column, qValue.Field(i).String()))
+			condition.SetOrder(fmt.Sprintf("%s.%s %s", searchTag.Table, searchTag.Column, qValue.Field(i).String()))
 		}
 	}
 }
