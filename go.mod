@@ -18,6 +18,7 @@ require (
 	github.com/grpc-ecosystem/go-grpc-middleware/providers/prometheus v1.0.0
 	github.com/grpc-ecosystem/go-grpc-middleware/v2 v2.0.1
 	github.com/kamva/mgm/v3 v3.5.0
+	github.com/nfjBill/gorm-driver-dm v1.0.1
 	github.com/prometheus/client_golang v1.17.0
 	github.com/robfig/cron/v3 v3.0.1
 	github.com/sanity-io/litter v1.5.5
@@ -38,6 +39,7 @@ require (
 	github.com/chenzhuoyu/base64x v0.0.0-20230717121745-296ad89f973d // indirect
 	github.com/chenzhuoyu/iasm v0.9.0 // indirect
 	github.com/dustin/go-humanize v1.0.1 // indirect
+	github.com/emirpasic/gods v1.12.0 // indirect
 	github.com/gabriel-vasile/mimetype v1.4.3 // indirect
 	github.com/go-jose/go-jose/v3 v3.0.0 // indirect
 	github.com/goccy/go-json v0.10.2 // indirect
@@ -51,6 +53,7 @@ require (
 	github.com/rogpeppe/go-internal v1.11.0 // indirect
 	github.com/smarty/assertions v1.15.0 // indirect
 	github.com/stretchr/objx v0.5.1 // indirect
+	github.com/thoas/go-funk v0.9.1 // indirect
 	github.com/tidwall/gjson v1.17.0 // indirect
 	github.com/tidwall/match v1.1.1 // indirect
 	github.com/tidwall/pretty v1.2.1 // indirect

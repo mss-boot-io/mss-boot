@@ -8,5 +8,6 @@ type Migration struct {
 }
 
 func (Migration) TableName() string {
-	return "mss_boot_migration"
+	//return "mss_boot_migration"
+	return "MSS_BOOT_MIGRATION"
 }
