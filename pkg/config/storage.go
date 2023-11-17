@@ -71,9 +71,10 @@ var endpointResolverFunc = func(urlTemplate, signingMethod string) s3.EndpointRe
 var endpointResolverFuncMinio = func(urlTemplate, signingMethod string) s3.EndpointResolverFunc {
 	return func(region string, options s3.EndpointResolverOptions) (aws.Endpoint, error) {
 		return aws.Endpoint{
-			URL:           urlTemplate,
-			SigningRegion: region,
-			SigningMethod: signingMethod,
+			URL:               urlTemplate,
+			SigningRegion:     region,
+			SigningMethod:     signingMethod,
+			HostnameImmutable: true,
 		}, nil
 	}
 }
