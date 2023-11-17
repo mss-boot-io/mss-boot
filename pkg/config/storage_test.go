@@ -81,11 +81,11 @@ func TestStorage_Init(t *testing.T) {
 			fields: fields{
 				Type:            MINIO,
 				SigningMethod:   "v4",
-				Region:          os.Getenv("s3_region"),
-				Bucket:          os.Getenv("s3_bucket"),
-				Endpoint:        os.Getenv("s3_endpoint"),
-				AccessKeyID:     os.Getenv("s3_access_key_id"),
-				SecretAccessKey: os.Getenv("s3_secret_access_key"),
+				Region:          os.Getenv("minio_region"),
+				Bucket:          os.Getenv("minio_bucket"),
+				Endpoint:        os.Getenv("minio_endpoint"),
+				AccessKeyID:     os.Getenv("minio_access_key_id"),
+				SecretAccessKey: os.Getenv("minio_secret_access_key"),
 			},
 		},
 	}
