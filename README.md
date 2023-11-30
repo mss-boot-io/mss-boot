@@ -1,12 +1,11 @@
 # mss-boot
 
 ---
-<img align="right" width="320" src="https://mss-boot-io.github.io/mss-boot-docs/images/logos/logo-b.png"  alt="https://github.com/mss-boot-io/mss-boot"/>
+<img align="right" width="320" src="https://docs.mss-boot-io.top/favicon.ico"  alt="https://github.com/mss-boot-io/mss-boot"/>
 
 
 [![License](https://img.shields.io/github/license/mashape/apistatus.svg)](https://github.com/mss-boot-io/mss-boot)
-[![Build Status](https://travis-ci.org/mss-boot-io/mss-boot.svg?branch=main)](https://travis-ci.org/mss-boot-io/mss-boot)
-[![Coverage Status](https://coveralls.io/repos/github/mss-boot-io/mss-boot/badge.svg?branch=main)](https://coveralls.io/github/mss-boot-io/mss-boot?branch=main)
+[![ci](https://github.com/mss-boot-io/mss-boot/actions/workflows/ci.yml/badge.svg)](https://github.com/mss-boot-io/mss-boot/actions/workflows/ci.yml)
 
 English | [简体中文](https://github.com/mss-boot-io/mss-boot/blob/main/README.Zh-cn.md)
 
@@ -14,9 +13,11 @@ English | [简体中文](https://github.com/mss-boot-io/mss-boot/blob/main/READM
 
 An enterprise-level language heterogeneous microservice solution that supports grpc and http protocols. The single-service code framework adheres to the principle of minimalism, while providing complete devops process support (gitops).
 
-[documentation](https://mss-boot-io.github.io/mss-boot-docs/index.html)
+[documentation](https://docs.mss-boot-io.top)
 
-[microservices](https://github.com/mss-boot-io/mss-boot-monorepo)
+[http service template](https://github.com/mss-boot-io/service-http)
+
+[grpc service template](https://github.com/mss-boot-io/service-grpc)
 
 ## ✨ feature
 > - Follow RESTful API Design Specifications
@@ -26,11 +27,10 @@ An enterprise-level language heterogeneous microservice solution that supports g
 > - Perfect cicd package
 
 ## todo list
-> - [ ] Support tenants
-> - [ ] Support dynamodb
+> - [x] Support dynamodb
 > - [x] Support config provider
-> - [ ] Support istio traces
-> - [ ] Out-of-the-box support
+> - [x] Support istio traces
+> - [x] Out-of-the-box support
 
 ## Buy me a coffee
 <a href="https://www.buymeacoffee.com/lwnmengjing" target="_blank"><img src="https://cdn.buymeacoffee.com/buttons/v2/default-yellow.png" alt="Buy Me A Coffee" style="height: 60px !important;width: 217px !important;" ></a>

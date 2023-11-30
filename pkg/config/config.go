@@ -39,6 +39,7 @@ func Init(cfg any, options ...source.Option) (err error) {
 			SigningMethod:   os.Getenv("s3_signing_method"),
 			Region:          os.Getenv("s3_region"),
 			Bucket:          os.Getenv("s3_bucket"),
+			Endpoint:        os.Getenv("s3_endpoint"),
 			AccessKeyID:     os.Getenv("s3_access_key_id"),
 			SecretAccessKey: os.Getenv("s3_secret_access_key"),
 		}

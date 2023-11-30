@@ -24,6 +24,7 @@ func TestStorage_Init(t *testing.T) {
 		SigningMethod   string
 		Region          string
 		Bucket          string
+		Endpoint        string
 		AccessKeyID     string
 		SecretAccessKey string
 	}
@@ -75,6 +76,18 @@ func TestStorage_Init(t *testing.T) {
 				SecretAccessKey: os.Getenv("kodo_secret_access_key"),
 			},
 		},
+		{
+			name: "test-minio",
+			fields: fields{
+				Type:            MINIO,
+				SigningMethod:   "v4",
+				Region:          os.Getenv("minio_region"),
+				Bucket:          os.Getenv("minio_bucket"),
+				Endpoint:        os.Getenv("minio_endpoint"),
+				AccessKeyID:     os.Getenv("minio_access_key_id"),
+				SecretAccessKey: os.Getenv("minio_secret_access_key"),
+			},
+		},
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
@@ -83,6 +96,7 @@ func TestStorage_Init(t *testing.T) {
 				SigningMethod:   tt.fields.SigningMethod,
 				Region:          tt.fields.Region,
 				Bucket:          tt.fields.Bucket,
+				Endpoint:        tt.fields.Endpoint,
 				AccessKeyID:     tt.fields.AccessKeyID,
 				SecretAccessKey: tt.fields.SecretAccessKey,
 			}

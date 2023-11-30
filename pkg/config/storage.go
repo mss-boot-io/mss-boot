@@ -42,6 +42,8 @@ const (
 	GCS ProviderType = "gcs"
 	// KS3 kingsoft ks3
 	KS3 ProviderType = "ks3"
+	// MINIO minio storage
+	MINIO ProviderType = "minio"
 )
 
 // URLTemplate storage provider url template
@@ -66,12 +68,13 @@ var endpointResolverFunc = func(urlTemplate, signingMethod string) s3.EndpointRe
 	}
 }
 
-var endpointResolverFuncGCS = func(urlTemplate, signingMethod string) s3.EndpointResolverFunc {
+var endpointResolverFuncMinio = func(urlTemplate, signingMethod string) s3.EndpointResolverFunc {
 	return func(region string, options s3.EndpointResolverOptions) (aws.Endpoint, error) {
 		return aws.Endpoint{
-			URL:           urlTemplate,
-			SigningRegion: region,
-			SigningMethod: signingMethod,
+			URL:               urlTemplate,
+			SigningRegion:     region,
+			SigningMethod:     signingMethod,
+			HostnameImmutable: true,
 		}, nil
 	}
 }
@@ -82,6 +85,7 @@ type Storage struct {
 	SigningMethod   string       `yaml:"signingMethod"`
 	Region          string       `yaml:"region"`
 	Bucket          string       `yaml:"bucket"`
+	Endpoint        string       `yaml:"endpoint"`
 	AccessKeyID     string       `yaml:"accessKeyID"`
 	SecretAccessKey string       `yaml:"secretAccessKey"`
 	client          *s3.Client
@@ -93,6 +97,9 @@ func (o *Storage) Init() {
 	switch o.Type {
 	case GCS:
 		endpointResolver = s3.EndpointResolverFromURL(URLTemplate[GCS])
+		o.Region = "auto"
+	case MINIO:
+		endpointResolver = endpointResolverFuncMinio(o.Endpoint, o.SigningMethod)
 		o.Region = "auto"
 	case S3:
 	default:
