@@ -103,7 +103,7 @@ func TestStorage_Init(t *testing.T) {
 			o.Init()
 			res, err := o.GetClient().ListObjectsV2(context.TODO(), &s3.ListObjectsV2Input{
 				Bucket:  aws.String(tt.fields.Bucket),
-				MaxKeys: 10,
+				MaxKeys: aws.Int32(10),
 			})
 			if err != nil {
 				t.Fatalf("failed to list items: %v", err)
