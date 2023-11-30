@@ -1,12 +1,14 @@
-package virtual
+package action
 
 import (
 	"net/http"
 
 	"github.com/gin-gonic/gin"
+	"github.com/go-openapi/spec"
 
 	"github.com/mss-boot-io/mss-boot/pkg/config/gormdb"
 	"github.com/mss-boot-io/mss-boot/pkg/response"
+	"github.com/mss-boot-io/mss-boot/virtual/model"
 )
 
 /*
@@ -62,5 +64,51 @@ func (e *Create) Handler() gin.HandlerFunc {
 		default:
 			c.AbortWithStatus(http.StatusMethodNotAllowed)
 		}
+	}
+}
+
+// GenOpenAPI gen open api method: post, Parameters: nil
+func (e *Create) GenOpenAPI(m *model.Model) *spec.PathItemProps {
+	return &spec.PathItemProps{
+		Post: &spec.Operation{
+			OperationProps: spec.OperationProps{
+				Tags:        []string{m.Name},
+				Summary:     "create " + m.Name,
+				Description: "create " + m.Name,
+				Consumes:    []string{"application/json"},
+				Produces:    []string{"application/json"},
+				Parameters: []spec.Parameter{
+					{
+						ParamProps: spec.ParamProps{
+							Name:        "data",
+							Description: m.Name + " create input body",
+							Required:    true,
+							In:          "body",
+							Schema: &spec.Schema{
+								SchemaProps: spec.SchemaProps{
+									Ref: spec.MustCreateRef("#/definitions/" + m.Name),
+								},
+							},
+						},
+					},
+				},
+				Security: []map[string][]string{
+					{
+						"Authorization": {},
+					},
+				},
+				Responses: &spec.Responses{
+					ResponsesProps: spec.ResponsesProps{
+						StatusCodeResponses: map[int]spec.Response{
+							http.StatusCreated: {
+								ResponseProps: spec.ResponseProps{
+									Description: "OK",
+								},
+							},
+						},
+					},
+				},
+			},
+		},
 	}
 }

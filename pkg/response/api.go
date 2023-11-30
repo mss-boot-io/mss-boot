@@ -42,7 +42,7 @@ func (*API) Path() string {
 }
 
 // Handlers 路由
-func (*API) Handlers() []gin.HandlerFunc {
+func (*API) Handlers() gin.HandlersChain {
 	return []gin.HandlerFunc{}
 }
 
@@ -186,17 +186,17 @@ func (e *API) Bind(d interface{}, bindings ...binding.Binding) *API {
 
 // Err 通常错误数据处理
 func (e *API) Err(code int, msg ...string) {
-	Error(e.Context, code, e.Error, msg...)
+	Default.Error(e.Context, code, e.Error, msg...)
 }
 
 // OK 通常成功数据处理
 func (e *API) OK(data interface{}, msg ...string) {
-	OK(e.Context, data, msg...)
+	Default.OK(e.Context, data)
 }
 
 // PageOK 分页数据处理
 func (e *API) PageOK(result interface{}, count int64, pageIndex int64, pageSize int64, msg ...string) {
-	PageOK(e.Context, result, count, pageIndex, pageSize, msg...)
+	Default.PageOK(e.Context, result, count, pageIndex, pageSize)
 }
 
 // getAcceptLanguage 获取当前语言

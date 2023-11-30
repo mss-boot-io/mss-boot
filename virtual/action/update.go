@@ -1,11 +1,9 @@
-package virtual
+package action
 
 import (
-	"errors"
 	"net/http"
 
 	"github.com/gin-gonic/gin"
-	"gorm.io/gorm"
 
 	"github.com/mss-boot-io/mss-boot/pkg/config/gormdb"
 	"github.com/mss-boot-io/mss-boot/pkg/response"
@@ -13,35 +11,33 @@ import (
 
 /*
  * @Author: lwnmengjing<lwnmengjing@qq.com>
- * @Date: 2023/9/17 08:58:04
+ * @Date: 2023/9/17 08:55:14
  * @Last Modified by: lwnmengjing<lwnmengjing@qq.com>
- * @Last Modified time: 2023/9/17 08:58:04
+ * @Last Modified time: 2023/9/17 08:55:14
  */
 
-// Delete action
-type Delete struct {
+type Update struct {
 	*Base
 }
 
-// NewDelete new delete action
-func NewDelete(b *Base) *Delete {
-	return &Delete{
+// NewUpdate new update action
+func NewUpdate(b *Base) *Update {
+	return &Update{
 		Base: b,
 	}
 }
 
-// String print action name
-func (*Delete) String() string {
-	return "delete"
+func (*Update) String() string {
+	return "update"
 }
 
-// Handler delete action handler
-func (e *Delete) Handler() gin.HandlerFunc {
+// Handler update action handler
+func (e *Update) Handler() gin.HandlerFunc {
 	return func(c *gin.Context) {
 		switch c.Request.Method {
-		case http.MethodDelete:
+		case http.MethodPut:
 			api := response.Make(c)
-			//delete
+			//update
 			m := e.GetModel(c)
 			if m == nil {
 				// no set model
@@ -49,21 +45,17 @@ func (e *Delete) Handler() gin.HandlerFunc {
 				return
 			}
 			req := m.MakeModel()
-			m.Default(req)
 			if api.Bind(req).Error != nil {
 				api.Err(http.StatusUnprocessableEntity)
 				return
 			}
-			if err := gormdb.DB.Scopes(m.TableScope, m.URI(c)).Delete(req).Error; err != nil {
-				if errors.Is(err, gorm.ErrRecordNotFound) {
-					api.Err(http.StatusNotFound)
-					return
-				}
-				api.AddError(err).Log.ErrorContext(c, "delete error", PathKey, c.Param(PathKey))
+			if err := gormdb.DB.Scopes(m.TableScope, m.URI(c)).Updates(req).Error; err != nil {
+				api.AddError(err).Log.Error("update error", PathKey, c.Param(PathKey))
 				api.Err(http.StatusInternalServerError)
 				return
 			}
 			api.OK(nil)
+			return
 		default:
 			c.AbortWithStatus(http.StatusMethodNotAllowed)
 		}

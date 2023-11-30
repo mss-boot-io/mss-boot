@@ -6,6 +6,7 @@ import (
 	"strings"
 	"time"
 
+	"github.com/go-openapi/spec"
 	"github.com/gin-gonic/gin"
 	"gorm.io/gorm"
 )
@@ -19,6 +20,8 @@ import (
 
 type Model struct {
 	Table       string   `json:"tableName" yaml:"tableName" binding:"required"`
+	Name        string   `json:"name" yaml:"name" binding:"required"`
+	Description string   `json:"description" yaml:"description"`
 	HardDeleted bool     `json:"hardDeleted" yaml:"hardDeleted"`
 	Fields      []*Field `json:"fields" yaml:"fields" binding:"required"`
 }
@@ -177,4 +180,17 @@ func (m *Model) Search(ctx *gin.Context) (f func(*gorm.DB) *gorm.DB) {
 		}
 		return db
 	}
+}
+
+func (m *Model) GenOpenAPIModel() *spec.Schema {
+	s := spec.Schema{
+		SchemaProps: spec.SchemaProps{
+			Type:       []string{"object"},
+			Properties: make(map[string]spec.Schema),
+		},
+	}
+	for i := range m.Fields {
+		s.Properties[m.Fields[i].JsonTag] = *m.Fields[i].GenOpenAPIFie()
+	}
+	return &s
 }

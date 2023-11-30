@@ -1,4 +1,4 @@
-package authentic
+package actions
 
 /*
  * @Author: lwnmengjing<lwnmengjing@qq.com>
@@ -44,6 +44,12 @@ func (e *Search) searchGorm(c *gin.Context) {
 			gorms.MakeCondition(req),
 			gorms.Paginate(int(req.GetPageSize()), int(req.GetPage())),
 		)
+	if err := query.Limit(-1).Offset(-1).Count(&count).Error; err != nil && !errors.Is(err, gorm.ErrRecordNotFound) {
+		api.AddError(err).Log.ErrorContext(c, "Search error", "error", err)
+		api.Err(http.StatusInternalServerError)
+		return
+	}
+
 	rows, err := query.Rows()
 	if err != nil {
 		api.AddError(err).Log.ErrorContext(c, "Search error", "error", err)
@@ -56,7 +62,7 @@ func (e *Search) searchGorm(c *gin.Context) {
 		m = pkg.TablerDeepCopy(e.ModelGorm)
 		err = db.ScanRows(rows, m)
 		if err != nil {
-			api.AddError(err).Log.ErrorContext(c, "Search error", "error", err)
+			api.AddError(err).Log.ErrorContext(c, "search error", "error", err)
 			api.Err(http.StatusInternalServerError)
 			return
 		}
@@ -64,10 +70,10 @@ func (e *Search) searchGorm(c *gin.Context) {
 	}
 	err = query.Limit(-1).Offset(-1).Count(&count).Error
 	if err != nil && !errors.Is(err, gorm.ErrRecordNotFound) {
-		api.AddError(err).Log.ErrorContext(c, "Search error", "error", err)
+		api.AddError(err).Log.ErrorContext(c, "search error", "error", err)
 		api.Err(http.StatusInternalServerError)
 		return
 	}
-	response.PageOK(c, items, count, req.GetPage(), req.GetPageSize(), "search success")
+	api.PageOK(items, count, req.GetPage(), req.GetPageSize(), "search success")
 	c.Next()
 }
