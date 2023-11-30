@@ -42,7 +42,7 @@ func (*API) Path() string {
 }
 
 // Handlers 路由
-func (*API) Handlers() []gin.HandlerFunc {
+func (*API) Handlers() gin.HandlersChain {
 	return []gin.HandlerFunc{}
 }
 
