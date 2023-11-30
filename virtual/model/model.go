@@ -6,8 +6,8 @@ import (
 	"strings"
 	"time"
 
-	"github.com/go-openapi/spec"
 	"github.com/gin-gonic/gin"
+	"github.com/go-openapi/spec"
 	"gorm.io/gorm"
 )
 

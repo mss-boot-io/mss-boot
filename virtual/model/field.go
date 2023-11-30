@@ -2,11 +2,12 @@ package model
 
 import (
 	"fmt"
-	"github.com/aws/smithy-go/ptr"
-	"github.com/go-openapi/spec"
 	"reflect"
 	"strings"
 	"time"
+
+	"github.com/aws/smithy-go/ptr"
+	"github.com/go-openapi/spec"
 
 	"github.com/google/uuid"
 	"github.com/spf13/cast"
