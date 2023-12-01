@@ -37,6 +37,9 @@ func NewSimple(options ...Option) *Simple {
 
 // Path route path
 func (e *Simple) Path() string {
+	if e.options.model == nil {
+		return ""
+	}
 	return strings.ReplaceAll(strings.ToLower(mgm.CollName(e.options.model)), "_", "-")
 }
 
