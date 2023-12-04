@@ -1,5 +1,7 @@
 package security
 
+import "context"
+
 /*
  * @Author: lwnmengjing
  * @Date: 2021/6/23 5:44 下午
@@ -14,5 +16,5 @@ type Verifier interface {
 	GetRoleID() string
 	GetEmail() string
 	GetUsername() string
-	Verify() (bool, Verifier, error)
+	Verify(context.Context) (bool, Verifier, error)
 }
