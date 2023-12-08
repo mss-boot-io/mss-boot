@@ -8,8 +8,6 @@ package task
  */
 
 import (
-	"sync"
-
 	"github.com/robfig/cron/v3"
 )
 
@@ -23,26 +21,30 @@ type schedule struct {
 }
 
 type options struct {
-	task      *cron.Cron
-	schedules map[string]schedule
-	mux       sync.Mutex
+	task    *cron.Cron
+	storage Storage
 }
 
 // WithSchedule set schedule
 func WithSchedule(key string, spec string, job cron.Job) Option {
 	return func(o *options) {
-		o.mux.Lock()
-		o.schedules[key] = schedule{
-			spec: spec,
-			job:  job,
-		}
-		o.mux.Unlock()
+		o.storage.Set(key, 0, spec, job)
 	}
+}
+
+// WithStorage set storage
+func WithStorage(s Storage) Option {
+	return func(o *options) {
+		o.storage = s
+	}
+
 }
 
 func setDefaultOption() options {
 	return options{
-		task:      cron.New(cron.WithSeconds(), cron.WithChain()),
-		schedules: make(map[string]schedule),
+		task: cron.New(cron.WithSeconds(), cron.WithChain()),
+		storage: &defaultStorage{
+			schedules: make(map[string]*schedule),
+		},
 	}
 }
