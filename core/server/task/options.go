@@ -28,7 +28,7 @@ type options struct {
 // WithSchedule set schedule
 func WithSchedule(key string, spec string, job cron.Job) Option {
 	return func(o *options) {
-		o.storage.Set(key, 0, spec, job)
+		_ = o.storage.Set(key, 0, spec, job)
 	}
 }
 

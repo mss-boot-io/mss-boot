@@ -57,8 +57,7 @@ func UpdateJob(key string, spec string, job cron.Job) error {
 		slog.Error("task add job error", slog.Any("err", err))
 		return err
 	}
-	task.opts.storage.Update(key, entryID)
-	return nil
+	return task.opts.storage.Update(key, entryID)
 }
 
 // RemoveJob remove job
@@ -89,11 +88,11 @@ func (e *Server) Start(ctx context.Context) error {
 	e.ctx = ctx
 	keys, _ := e.opts.storage.ListKeys()
 	for i := range keys {
-		entryID, spec, job, ok, _ := e.opts.storage.Get(keys[i])
+		_, spec, job, ok, _ := e.opts.storage.Get(keys[i])
 		if !ok {
 			continue
 		}
-		entryID, err = e.opts.task.AddJob(spec, job)
+		entryID, err := e.opts.task.AddJob(spec, job)
 		if err != nil {
 			slog.ErrorContext(ctx, "task add job error", slog.Any("err", err))
 			return err
