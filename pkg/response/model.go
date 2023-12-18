@@ -92,19 +92,19 @@ func (e *response) OK(c *gin.Context, data interface{}) {
 	res := Default.Clone()
 	res.SetList(data)
 	res.SetTraceID(pkg.GenerateMsgIDFromContext(c))
-	status := http.StatusOK
 	switch c.Request.Method {
 	case http.MethodDelete:
-		status = http.StatusNoContent
-	case http.MethodPost:
-		status = http.StatusCreated
-	}
-	res.SetCode(status)
-	if data == nil {
-		c.AbortWithStatus(status)
+		res.SetCode(http.StatusNoContent)
+		c.AbortWithStatusJSON(http.StatusNoContent, data)
 		return
+	case http.MethodPost:
+		res.SetCode(http.StatusCreated)
+		c.AbortWithStatusJSON(http.StatusCreated, data)
+		return
+	default:
+		res.SetCode(http.StatusOK)
+		c.AbortWithStatusJSON(http.StatusOK, data)
 	}
-	c.AbortWithStatusJSON(status, data)
 }
 
 // PageOK page ok
