@@ -22,3 +22,5 @@ proto:
 .PHONY: lint
 lint:
 	golangci-lint run -v ./...
+fix-lint:
+	goimports -w .
