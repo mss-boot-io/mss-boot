@@ -32,42 +32,47 @@ func New(opts ...Option) *Server {
 
 // GetJob get job
 func GetJob(key string) (string, cron.Job, bool) {
-	_, spec, job, ok, _ := task.opts.storage.Get(key)
+	task.opts.mux.Lock()
+	defer task.opts.mux.Unlock()
+	s, ok := task.opts.schedules[key]
 	if !ok {
 		return "", nil, false
 	}
-	return spec, job, true
-}
-
-// Entry get entry
-func Entry(entryID cron.EntryID) cron.Entry {
-	return task.opts.task.Entry(entryID)
-
+	return s.spec, s.job, true
 }
 
 // UpdateJob update or create job
 func UpdateJob(key string, spec string, job cron.Job) error {
-	var err error
-	entryID, _, _, ok, _ := task.opts.storage.Get(key)
+	task.opts.mux.Lock()
+	defer task.opts.mux.Unlock()
+	s, ok := task.opts.schedules[key]
 	if ok {
-		task.opts.task.Remove(entryID)
+		task.opts.task.Remove(s.entryID)
 	}
-	entryID, err = task.opts.task.AddJob(spec, job)
+	entryID, err := task.opts.task.AddJob(spec, job)
 	if err != nil {
 		slog.Error("task add job error", slog.Any("err", err))
 		return err
 	}
-	return task.opts.storage.Update(key, entryID)
+	task.opts.schedules[key] = schedule{
+		spec:    spec,
+		job:     job,
+		entryID: entryID,
+	}
+	return nil
 }
 
 // RemoveJob remove job
 func RemoveJob(key string) error {
-	entryID, _, _, ok, _ := task.opts.storage.Get(key)
+	task.opts.mux.Lock()
+	defer task.opts.mux.Unlock()
+	s, ok := task.opts.schedules[key]
 	if !ok {
 		return nil
 	}
-	task.opts.task.Remove(entryID)
-	return task.opts.storage.Remove(key)
+	task.opts.task.Remove(s.entryID)
+	delete(task.opts.schedules, key)
+	return nil
 }
 
 // Options set options
@@ -86,22 +91,13 @@ func (e *Server) String() string {
 func (e *Server) Start(ctx context.Context) error {
 	var err error
 	e.ctx = ctx
-	keys, _ := e.opts.storage.ListKeys()
-	for i := range keys {
-		_, spec, job, ok, _ := e.opts.storage.Get(keys[i])
-		if !ok {
-			continue
-		}
-		entryID, err := e.opts.task.AddJob(spec, job)
+	for i, s := range e.opts.schedules {
+		s.entryID, err = e.opts.task.AddJob(e.opts.schedules[i].spec, e.opts.schedules[i].job)
 		if err != nil {
 			slog.ErrorContext(ctx, "task add job error", slog.Any("err", err))
 			return err
 		}
-		err = e.opts.storage.Update(keys[i], entryID)
-		if err != nil {
-			slog.ErrorContext(ctx, "task update job error", slog.Any("err", err))
-			return err
-		}
+		e.opts.schedules[i] = s
 	}
 	go func() {
 		e.opts.task.Run()
