@@ -8,9 +8,6 @@ package gormdb
  */
 
 import (
-	"log/slog"
-	"os"
-
 	"github.com/casbin/casbin/v2"
 	"github.com/casbin/casbin/v2/model"
 	"github.com/casbin/casbin/v2/persist"
@@ -18,6 +15,8 @@ import (
 	"gorm.io/gorm"
 	"gorm.io/gorm/logger"
 	"gorm.io/gorm/schema"
+	"log/slog"
+	"os"
 )
 
 // DB gorm db
@@ -44,6 +43,8 @@ type Database struct {
 	Registers []DBResolverConfig `yaml:"registers"`
 	// CasbinModel casbin model
 	CasbinModel string `yaml:"casbinModel"`
+	// Config gorm config
+	Config GORMConfig `yaml:"config"`
 }
 
 // DBResolverConfig db resolver config
@@ -56,6 +57,34 @@ type DBResolverConfig struct {
 	Policy string `yaml:"policy"`
 	// Tables db tables
 	Tables []string `yaml:"tables"`
+}
+
+type GORMConfig struct {
+	// GORM perform single create, update, delete operations in transactions by default to ensure database data integrity
+	// You can disable it by setting `SkipDefaultTransaction` to true
+	SkipDefaultTransaction bool `yaml:"skipDefaultTransaction" json:"skipDefaultTransaction"`
+	// FullSaveAssociations full save associations
+	FullSaveAssociations bool `yaml:"fullSaveAssociations" json:"fullSaveAssociations"`
+	// DryRun generate sql without execute
+	DryRun bool `yaml:"dryRun" json:"dryRun"`
+	// PrepareStmt executes the given query in cached statement
+	PrepareStmt bool `yaml:"prepareStmt" json:"prepareStmt"`
+	// DisableAutomaticPing
+	DisableAutomaticPing bool `yaml:"disableAutomaticPing" json:"disableAutomaticPing"`
+	// DisableForeignKeyConstraintWhenMigrating
+	DisableForeignKeyConstraintWhenMigrating bool `yaml:"disableForeignKeyConstraintWhenMigrating" json:"disableForeignKeyConstraintWhenMigrating"`
+	// IgnoreRelationshipsWhenMigrating
+	IgnoreRelationshipsWhenMigrating bool `yaml:"ignoreRelationshipsWhenMigrating" json:"ignoreRelationshipsWhenMigrating"`
+	// DisableNestedTransaction disable nested transaction
+	DisableNestedTransaction bool `yaml:"disableNestedTransaction" json:"disableNestedTransaction"`
+	// AllowGlobalUpdate allow global update
+	AllowGlobalUpdate bool `yaml:"allowGlobalUpdate" json:"allowGlobalUpdate"`
+	// QueryFields executes the SQL query with all fields of the table
+	QueryFields bool `yaml:"queryFields" json:"queryFields"`
+	// CreateBatchSize default create batch size
+	CreateBatchSize int `yaml:"createBatchSize" json:"createBatchSize"`
+	// TranslateError enabling error translation
+	TranslateError bool `yaml:"translateError" json:"translateError"`
 }
 
 // Init init db
@@ -76,12 +105,26 @@ func (e *Database) Init() {
 		e.ConnMaxIdleTime,
 		e.ConnMaxLifeTime,
 		registers)
-	DB, err = resolverConfig.Init(&gorm.Config{
+	config := &gorm.Config{
 		NamingStrategy: schema.NamingStrategy{
 			SingularTable: true,
 		},
 		Logger: logger.Default,
-	}, opens[e.Driver])
+	}
+	config.SkipDefaultTransaction = e.Config.SkipDefaultTransaction
+	config.FullSaveAssociations = e.Config.FullSaveAssociations
+	config.DryRun = e.Config.DryRun
+	config.PrepareStmt = e.Config.PrepareStmt
+	config.DisableAutomaticPing = e.Config.DisableAutomaticPing
+	config.DisableForeignKeyConstraintWhenMigrating = e.Config.DisableForeignKeyConstraintWhenMigrating
+	config.IgnoreRelationshipsWhenMigrating = e.Config.IgnoreRelationshipsWhenMigrating
+	config.DisableNestedTransaction = e.Config.DisableNestedTransaction
+	config.AllowGlobalUpdate = e.Config.AllowGlobalUpdate
+	config.QueryFields = e.Config.QueryFields
+	config.CreateBatchSize = e.Config.CreateBatchSize
+	config.TranslateError = e.Config.TranslateError
+	// gorm
+	DB, err = resolverConfig.Init(config, opens[e.Driver])
 	if err != nil {
 		slog.Error(e.Driver+" connect failed", slog.Any("err", err))
 		os.Exit(-1)
