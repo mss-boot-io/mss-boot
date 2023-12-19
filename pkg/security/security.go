@@ -16,5 +16,6 @@ type Verifier interface {
 	GetRoleID() string
 	GetEmail() string
 	GetUsername() string
+	Root() bool
 	Verify(context.Context) (bool, Verifier, error)
 }

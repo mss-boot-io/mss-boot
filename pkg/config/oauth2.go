@@ -22,6 +22,7 @@ type OAuth2 struct {
 	ClientSecret string   `yaml:"clientSecret" json:"clientSecret"`
 	Scopes       []string `yaml:"scopes" json:"scopes"`
 	RedirectURL  string   `yaml:"redirectURL" json:"redirectURL"`
+	AllowGroup   []string `yaml:"allowGroup" json:"allowGroup"`
 }
 
 type Endpoint struct {
