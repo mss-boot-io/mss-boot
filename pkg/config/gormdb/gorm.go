@@ -125,7 +125,7 @@ func (e *Database) Init() {
 	config.CreateBatchSize = e.Config.CreateBatchSize
 	config.TranslateError = e.Config.TranslateError
 	// gorm
-	DB, err = resolverConfig.Init(config, opens[e.Driver])
+	DB, err = resolverConfig.Init(config, Opens[e.Driver])
 	if err != nil {
 		slog.Error(e.Driver+" connect failed", slog.Any("err", err))
 		os.Exit(-1)

@@ -8,13 +8,18 @@ package config
  */
 
 import (
+	"bytes"
 	"encoding/json"
 	"fmt"
 	"log/slog"
 	"os"
+	"strings"
+	"text/template"
+	"text/template/parse"
 
 	"github.com/mss-boot-io/mss-boot/pkg/config/source"
 	sourceFS "github.com/mss-boot-io/mss-boot/pkg/config/source/fs"
+	"github.com/mss-boot-io/mss-boot/pkg/config/source/gorm"
 	sourceLocal "github.com/mss-boot-io/mss-boot/pkg/config/source/local"
 	"github.com/mss-boot-io/mss-boot/pkg/config/source/mgdb"
 	sourceS3 "github.com/mss-boot-io/mss-boot/pkg/config/source/s3"
@@ -49,15 +54,17 @@ func Init(cfg any, options ...source.Option) (err error) {
 		f, err = sourceS3.New(options...)
 	case source.MGDB:
 		f, err = mgdb.New(options...)
-		if err != nil {
-			return err
-		}
-		var rb []byte
-		rb, err = f.ReadFile(opts.Name)
-		if err != nil {
-			return err
-		}
-		return yaml.Unmarshal(rb, cfg)
+		//if err != nil {
+		//	return err
+		//}
+		//var rb []byte
+		//rb, err = f.ReadFile(opts.Name)
+		//if err != nil {
+		//	return err
+		//}
+		//return yaml.Unmarshal(rb, cfg)
+	case source.GORM:
+		f, err = gorm.New(options...)
 	}
 	if err != nil {
 		return err
@@ -69,6 +76,10 @@ func Init(cfg any, options ...source.Option) (err error) {
 	rb, err = f.ReadFile(opts.Name)
 	if err != nil {
 		slog.Error(err.Error())
+		return err
+	}
+	rb, err = parseTemplateWithEnv(rb)
+	if err != nil {
 		return err
 	}
 	var unm func([]byte, interface{}) error
@@ -86,6 +97,10 @@ func Init(cfg any, options ...source.Option) (err error) {
 
 	rb, err = f.ReadFile(fmt.Sprintf("%s-%s", opts.Name, stage))
 	if err == nil {
+		rb, err = parseTemplateWithEnv(rb)
+		if err != nil {
+			return err
+		}
 		err = unm(rb, cfg)
 		if err != nil {
 			slog.Error(err.Error())
@@ -103,4 +118,74 @@ func getStage() string {
 		stage = "local"
 	}
 	return stage
+}
+
+func parseTemplateWithEnv(rb []byte) ([]byte, error) {
+	t, err := template.New("env").Parse(string(rb))
+	if err != nil {
+		return nil, err
+	}
+	tree, err := parse.Parse("env", string(rb), "{{", "}}")
+	if err != nil {
+		return nil, err
+	}
+	var buffer bytes.Buffer
+	data := getValueFromEnv(getParseKeys(tree["env"].Root))
+	err = t.Execute(&buffer, data)
+	if err != nil {
+		return nil, err
+	}
+	return buffer.Bytes(), nil
+}
+
+func getValueFromEnv(keys []string) any {
+	env := make(map[string]string)
+	for i := range keys {
+		if !strings.Contains(strings.ToLower(keys[i]), "env.") {
+			continue
+		}
+		keyArr := strings.Split(keys[i], ".")
+		if len(keyArr) > 1 {
+			keyArr = keyArr[1:]
+		}
+		key := strings.Join(keyArr, ".")
+		var exist bool
+		env[key], exist = os.LookupEnv(key)
+		if exist {
+			continue
+		}
+		env[key], exist = os.LookupEnv(strings.ToUpper(key))
+		if exist {
+			continue
+		}
+		env[key], exist = os.LookupEnv(strings.ToLower(key))
+		if exist {
+			continue
+		}
+		env[key] = ""
+	}
+	return map[string]any{
+		"Env": env,
+	}
+}
+
+// getParseKeys get parse keys from template text
+func getParseKeys(nodes *parse.ListNode) []string {
+	keys := make([]string, 0)
+	if nodes == nil {
+		return keys
+	}
+	for a := range nodes.Nodes {
+		if actionNode, ok := nodes.Nodes[a].(*parse.ActionNode); ok {
+			if actionNode == nil || actionNode.Pipe == nil {
+				continue
+			}
+			for b := range actionNode.Pipe.Cmds {
+				if strings.Index(actionNode.Pipe.Cmds[b].String(), ".") == 0 {
+					keys = append(keys, actionNode.Pipe.Cmds[b].String()[1:])
+				}
+			}
+		}
+	}
+	return keys
 }

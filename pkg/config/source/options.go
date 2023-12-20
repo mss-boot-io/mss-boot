@@ -46,6 +46,7 @@ type Option func(*Options)
 // Options options
 type Options struct {
 	Provider          Provider
+	Driver            Driver
 	Name              string
 	Extend            Scheme
 	Dir               string
@@ -59,6 +60,8 @@ type Options struct {
 	MongoDBName       string
 	MongoDBCollection string
 	Datasource        string
+	GORMDriver        string
+	GORMDsn           string
 }
 
 // DefaultOptions default options
@@ -98,6 +101,18 @@ func WithMongoDBName(name string) Option {
 func WithMongoDBCollection(collection string) Option {
 	return func(args *Options) {
 		args.MongoDBCollection = collection
+	}
+}
+
+func WithGORMDriver(driver string) Option {
+	return func(args *Options) {
+		args.GORMDriver = driver
+	}
+}
+
+func WithGORMDsn(dsn string) Option {
+	return func(args *Options) {
+		args.GORMDsn = dsn
 	}
 }
 
@@ -161,5 +176,12 @@ func WithClient(client *s3.Client) Option {
 func WithFrom(fs fs.ReadFileFS) Option {
 	return func(args *Options) {
 		args.FS = fs
+	}
+}
+
+// WithDriver set driver
+func WithDriver(driver Driver) Option {
+	return func(args *Options) {
+		args.Driver = driver
 	}
 }

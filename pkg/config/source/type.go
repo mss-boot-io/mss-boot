@@ -23,3 +23,8 @@ const (
 func (s Scheme) String() string {
 	return string(s)
 }
+
+type Driver interface {
+	GenerateBytes() ([]byte, error)
+	GetExtend() Scheme
+}

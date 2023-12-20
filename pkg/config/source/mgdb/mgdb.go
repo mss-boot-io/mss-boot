@@ -32,6 +32,9 @@ func (s *Source) Open(string) (fs.File, error) {
 
 // ReadFile read file
 func (s *Source) ReadFile(name string) ([]byte, error) {
+	if s.opt.Driver == nil {
+		return nil, errors.New("method Get not implemented")
+	}
 	if strings.Contains(name, ".") {
 		name = name[:strings.Index(name, ".")]
 	}
