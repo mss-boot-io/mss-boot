@@ -42,7 +42,7 @@ func (e *Control) createGorm(c *gin.Context) {
 		api.Err(http.StatusInternalServerError)
 		return
 	}
-	api.OK(nil)
+	api.OK(m)
 }
 
 func (e *Control) updateGorm(c *gin.Context) {
@@ -78,5 +78,5 @@ func (e *Control) updateGorm(c *gin.Context) {
 		api.Err(http.StatusInternalServerError)
 		return
 	}
-	api.OK(nil)
+	api.OK(m)
 }

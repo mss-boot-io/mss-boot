@@ -3,6 +3,9 @@ package pkg
 import (
 	"reflect"
 
+	"github.com/mss-boot-io/mss-boot/pkg/enum"
+	"github.com/spf13/cast"
+
 	"github.com/gin-gonic/gin"
 	"github.com/google/uuid"
 	mgm "github.com/kamva/mgm/v3"
@@ -52,12 +55,23 @@ func DeepCopy(d any) any {
 }
 
 // BuildMap build map
-func BuildMap(keys []string, value string) map[string]any {
+func BuildMap(keys []string, value string, dataType enum.DataType) map[string]any {
 	data := make(map[string]any)
 	if len(keys) > 1 {
-		data[keys[0]] = BuildMap(keys[1:], value)
+		data[keys[0]] = BuildMap(keys[1:], value, dataType)
 	} else {
-		return map[string]any{keys[0]: value}
+		var v any
+		switch dataType {
+		case enum.DataTypeInt:
+			v, _ = cast.ToIntE(value)
+		case enum.DataTypeFloat:
+			v, _ = cast.ToFloat64E(value)
+		case enum.DataTypeBool:
+			v, _ = cast.ToBoolE(value)
+		default:
+			v = value
+		}
+		return map[string]any{keys[0]: v}
 	}
 	return data
 }

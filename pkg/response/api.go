@@ -30,10 +30,11 @@ var AuthHandler gin.HandlerFunc
 
 // API api接口
 type API struct {
-	Context *gin.Context
-	Log     *slog.Logger
-	Error   error
-	engine  *gin.RouterGroup
+	Context  *gin.Context
+	Log      *slog.Logger
+	Error    error
+	engine   *gin.RouterGroup
+	language string
 }
 
 // Path 路径
