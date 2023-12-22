@@ -13,12 +13,12 @@ import (
 	"strings"
 	"time"
 
-	"github.com/mss-boot-io/mss-boot/pkg"
-	"github.com/mss-boot-io/mss-boot/pkg/config/gormdb"
 	"gorm.io/gorm"
 	"gorm.io/gorm/logger"
 	"gorm.io/gorm/schema"
 
+	"github.com/mss-boot-io/mss-boot/pkg"
+	"github.com/mss-boot-io/mss-boot/pkg/config/gormdb"
 	"github.com/mss-boot-io/mss-boot/pkg/config/source"
 )
 

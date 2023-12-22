@@ -15,9 +15,11 @@ import (
 	"time"
 
 	mgm "github.com/kamva/mgm/v3"
-	"github.com/mss-boot-io/mss-boot/pkg/config/source"
 	"go.mongodb.org/mongo-driver/bson"
 	mongoOptions "go.mongodb.org/mongo-driver/mongo/options"
+
+	"github.com/mss-boot-io/mss-boot/pkg"
+	"github.com/mss-boot-io/mss-boot/pkg/config/source"
 )
 
 // Source source
@@ -38,12 +40,12 @@ func (s *Source) ReadFile(name string) ([]byte, error) {
 	if strings.Contains(name, ".") {
 		name = name[:strings.Index(name, ".")]
 	}
-	m := SystemConfig{}
+	m := pkg.DeepCopy(s.opt.Driver).(source.Driver)
 	ctx, cancel := context.WithTimeout(
 		context.TODO(),
 		s.opt.Timeout)
 	defer cancel()
-	err := mgm.Coll(&m).FirstWithCtx(ctx, bson.M{"name": name}, &m)
+	err := mgm.Coll(m.(mgm.Model)).FirstWithCtx(ctx, bson.M{"name": name}, m.(mgm.Model))
 	if err != nil {
 		return nil, err
 	}

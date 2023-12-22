@@ -7,17 +7,21 @@ package enum
  * @Last Modified time: 2022/3/14 9:10
  */
 
-//go:generate stringer -type Status -output status_string.go
-
 // Status type for enum
-type Status uint8
+type Status string
 
 const (
-	_ Status = iota
+	// Unknown status for unknown
+	Unknown Status = ""
 	// Enabled enabled
-	Enabled
+	Enabled Status = "enabled"
 	// Disabled disabled
-	Disabled
+	Disabled Status = "disabled"
 	// Locked lock status
-	Locked
+	Locked Status = "locked"
 )
+
+// String string
+func (s Status) String() string {
+	return string(s)
+}
