@@ -4,7 +4,6 @@ import (
 	"runtime"
 
 	"github.com/mss-boot-io/mss-boot/pkg/migration"
-	migrationModel "github.com/mss-boot-io/mss-boot/pkg/migration/models"
 	"gorm.io/gorm"
 )
 
@@ -33,8 +32,6 @@ func _{{.GenerateTime}}Migrate(db *gorm.DB, version string) error {
         //}
 
 
-		return tx.Create(&migrationModel.Migration{
-			Version: version,
-		}).Error
+		return migration.Migrate.CreateVersion(tx, version)
 	})
 }
