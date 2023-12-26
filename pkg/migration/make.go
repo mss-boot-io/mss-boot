@@ -53,6 +53,9 @@ func (e *Migration) SetModel(v Version) {
 func (e *Migration) SetVersion(k int, f func(db *gorm.DB, version string) error) {
 	e.mutex.Lock()
 	defer e.mutex.Unlock()
+	if e.version == nil {
+		e.version = make(map[int]func(db *gorm.DB, version string) error)
+	}
 	e.version[k] = f
 }
 
@@ -67,6 +70,9 @@ func (e *Migration) CreateVersion(tx *gorm.DB, v string) error {
 }
 
 func (e *Migration) Migrate() {
+	if e.version == nil {
+		e.version = make(map[int]func(db *gorm.DB, version string) error)
+	}
 	versions := make([]int, 0)
 	for k := range e.version {
 		versions = append(versions, k)
