@@ -29,7 +29,9 @@ import (
 //go:embed *.tpl
 var FS embed.FS
 
-var Migrate *Migration
+var Migrate = &Migration{
+	version: make(map[int]func(db *gorm.DB, version string) error),
+}
 
 type Migration struct {
 	db      *gorm.DB
