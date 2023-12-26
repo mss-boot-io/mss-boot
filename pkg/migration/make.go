@@ -10,10 +10,12 @@ package migration
 import (
 	"bytes"
 	"embed"
+	"fmt"
 	"log"
 	"log/slog"
 	"os"
 	"path/filepath"
+	"reflect"
 	"sort"
 	"strconv"
 	"sync"
@@ -22,20 +24,18 @@ import (
 
 	"github.com/spf13/cast"
 	"gorm.io/gorm"
-	"gorm.io/gorm/schema"
 )
 
 //go:embed *.tpl
 var FS embed.FS
 
-var Migrate = &Migration{
-	version: make(map[int]func(db *gorm.DB, version string) error),
-}
+var Migrate *Migration
 
 type Migration struct {
 	db      *gorm.DB
 	version map[int]func(db *gorm.DB, version string) error
 	mutex   sync.Mutex
+	Model   Version
 }
 
 func (e *Migration) GetDb() *gorm.DB {
@@ -46,13 +46,27 @@ func (e *Migration) SetDb(db *gorm.DB) {
 	e.db = db
 }
 
+func (e *Migration) SetModel(v Version) {
+	e.Model = v
+}
+
 func (e *Migration) SetVersion(k int, f func(db *gorm.DB, version string) error) {
 	e.mutex.Lock()
 	defer e.mutex.Unlock()
 	e.version[k] = f
 }
 
-func (e *Migration) Migrate(ms ...schema.Tabler) {
+func (e *Migration) cloneModel() Version {
+	return reflect.New(reflect.TypeOf(e.Model).Elem()).Interface().(Version)
+}
+
+func (e *Migration) CreateVersion(tx *gorm.DB, v string) error {
+	m := reflect.New(reflect.TypeOf(e.Model).Elem()).Interface().(Version)
+	m.SetVersion(v)
+	return tx.Create(tx).Error
+}
+
+func (e *Migration) Migrate() {
 	versions := make([]int, 0)
 	for k := range e.version {
 		versions = append(versions, k)
@@ -60,20 +74,15 @@ func (e *Migration) Migrate(ms ...schema.Tabler) {
 	if !sort.IntsAreSorted(versions) {
 		sort.Ints(versions)
 	}
-	var err error
-	var count int64
 	for _, v := range versions {
-		if len(ms) == 0 {
-			err = e.db.Table("mss_boot_migration").Where("version = ?", v).Count(&count).Error
-		} else {
-			err = e.db.Model(ms[0]).Where("version = ?", v).Count(&count).Error
-		}
+		m := e.cloneModel()
+		m.SetVersion(fmt.Sprintf("%d", v))
+		exist, err := m.Done(e.db)
 		if err != nil {
-			log.Fatalf("get migration version error: %v", err)
+			slog.Error("get migration version", slog.Any("error", err))
+			os.Exit(-1)
 		}
-		if count > 0 {
-			log.Println(count)
-			count = 0
+		if exist {
 			continue
 		}
 		err = (e.version[v])(e.db, strconv.Itoa(v))
