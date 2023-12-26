@@ -17,6 +17,7 @@ func (*Migration) TableName() string {
 
 func (e *Migration) SetVersion(version string) {
 	e.Version = version
+	e.ApplyTime = time.Now()
 }
 
 func (e *Migration) Done(tx *gorm.DB) (bool, error) {
