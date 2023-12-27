@@ -68,7 +68,7 @@ func (e *Migration) cloneModel() Version {
 func (e *Migration) CreateVersion(tx *gorm.DB, v string) error {
 	m := reflect.New(reflect.TypeOf(e.Model).Elem()).Interface().(Version)
 	m.SetVersion(v)
-	return tx.Create(tx).Error
+	return tx.Create(m).Error
 }
 
 func (e *Migration) Migrate() {
