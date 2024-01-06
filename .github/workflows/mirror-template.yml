@@ -1,7 +1,9 @@
 on:
   workflow_call:
     secrets:
-      - ssh_private_key
+      ssh_private_key:
+        required: true
+        description: 'SSH private key for git push'
 
 jobs:
   mirror_to_gitee:
