@@ -4,8 +4,9 @@
 <img align="right" width="320" src="https://docs.mss-boot-io.top/favicon.ico"  alt="https://github.com/mss-boot-io/mss-boot"/>
 
 
-[![License](https://img.shields.io/github/license/mashape/apistatus.svg)](https://github.com/mss-boot-io/mss-boot)
 [![ci](https://github.com/mss-boot-io/mss-boot/actions/workflows/ci.yml/badge.svg)](https://github.com/mss-boot-io/mss-boot/actions/workflows/ci.yml)
+[![Release](https://img.shields.io/github/v/release/mss-boot-io/mss-boot.svg?style=flat-square)](https://github.com/mss-boot-io/mss-boot/releases)
+[![License](https://img.shields.io/github/license/mashape/apistatus.svg)](https://github.com/mss-boot-io/mss-boot)
 
 English | [简体中文](https://github.com/mss-boot-io/mss-boot/blob/main/README.Zh-cn.md)
 
