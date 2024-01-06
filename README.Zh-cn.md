@@ -4,9 +4,9 @@
 <img align="right" width="320" src="https://mss-boot-io.github.io/mss-boot-docs/images/logos/logo-b.png"  alt="https://github.com/mss-boot-io/mss-boot"/>
 
 
+[![ci](https://github.com/mss-boot-io/mss-boot/actions/workflows/ci.yml/badge.svg)](https://github.com/mss-boot-io/mss-boot/actions/workflows/ci.yml)
+[![Release](https://img.shields.io/github/v/release/mss-boot-io/mss-boot.svg?style=flat-square)](https://github.com/mss-boot-io/mss-boot/releases)
 [![License](https://img.shields.io/github/license/mashape/apistatus.svg)](https://github.com/mss-boot-io/mss-boot)
-[![Build Status](https://travis-ci.org/mss-boot-io/mss-boot.svg?branch=main)](https://travis-ci.org/mss-boot-io/mss-boot)
-[![Coverage Status](https://coveralls.io/repos/github/mss-boot-io/mss-boot/badge.svg?branch=main)](https://coveralls.io/github/mss-boot-io/mss-boot?branch=main)
 
 [English](https://github.com/mss-boot-io/mss-boot/blob/main/README.md) | 简体中文
 
