@@ -1,5 +1,7 @@
 on:
   workflow_call:
+    secrets:
+      - ssh_private_key
 
 jobs:
   mirror_to_gitee:
