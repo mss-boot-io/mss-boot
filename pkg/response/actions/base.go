@@ -8,6 +8,7 @@ package actions
  */
 
 import (
+	"gorm.io/gorm"
 	"net/http"
 
 	"github.com/gin-gonic/gin"
@@ -19,6 +20,7 @@ import (
 type Base struct {
 	ModelMgm  mgm.Model
 	ModelGorm schema.Tabler
+	Scope     func(ctx *gin.Context, table schema.Tabler) func(db *gorm.DB) *gorm.DB
 }
 
 // String string
