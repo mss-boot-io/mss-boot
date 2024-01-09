@@ -8,8 +8,11 @@ package controller
  */
 
 import (
+	"github.com/gin-gonic/gin"
 	"github.com/mss-boot-io/mss-boot/pkg/response"
 	"github.com/mss-boot-io/mss-boot/pkg/response/actions"
+	"gorm.io/gorm"
+	"gorm.io/gorm/schema"
 )
 
 // Option set options
@@ -22,6 +25,7 @@ type Options struct {
 	model         actions.Model
 	auth          bool
 	modelProvider actions.ModelProvider
+	scope         func(ctx *gin.Context, table schema.Tabler) func(db *gorm.DB) *gorm.DB
 }
 
 // getAction get action
@@ -76,5 +80,12 @@ func WithAuth(auth bool) Option {
 func WithModelProvider(provider actions.ModelProvider) Option {
 	return func(o *Options) {
 		o.modelProvider = provider
+	}
+}
+
+// WithScope set scope
+func WithScope(scope func(ctx *gin.Context, table schema.Tabler) func(db *gorm.DB) *gorm.DB) Option {
+	return func(o *Options) {
+		o.scope = scope
 	}
 }

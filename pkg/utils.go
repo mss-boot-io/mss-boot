@@ -2,6 +2,7 @@ package pkg
 
 import (
 	"reflect"
+	"strings"
 
 	"github.com/mss-boot-io/mss-boot/pkg/enum"
 	"github.com/spf13/cast"
@@ -107,4 +108,33 @@ func MergeMap(m1, m2 map[string]any) map[string]any {
 		m1[k] = m2[k]
 	}
 	return m1
+}
+
+// SupportMultiTenant support multi tenant
+func SupportMultiTenant(data any) bool {
+	typeOf := reflect.TypeOf(data)
+	valueOf := reflect.ValueOf(data)
+	if typeOf.Kind() == reflect.Ptr {
+		typeOf = typeOf.Elem()
+		valueOf = valueOf.Elem()
+	}
+
+	var exist bool
+	for i := 0; i < typeOf.NumField(); i++ {
+		field := typeOf.Field(i)
+		if field.Type.Kind() == reflect.Struct {
+			exist = SupportMultiTenant(valueOf.Field(i).Interface())
+		}
+		if field.Type.Kind() == reflect.Ptr {
+			continue
+		}
+		if strings.ToLower(field.Name) == "tenantid" ||
+			strings.ToLower(field.Name) == "tenant_id" {
+			exist = true
+		}
+		if exist {
+			break
+		}
+	}
+	return exist
 }

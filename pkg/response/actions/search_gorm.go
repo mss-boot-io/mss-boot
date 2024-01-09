@@ -11,6 +11,8 @@ import (
 	"errors"
 	"net/http"
 
+	"gorm.io/gorm/schema"
+
 	"github.com/gin-gonic/gin"
 	"github.com/mss-boot-io/mss-boot/pkg"
 	"github.com/mss-boot-io/mss-boot/pkg/config/gormdb"
@@ -20,9 +22,10 @@ import (
 )
 
 // NewSearchGorm new search action
-func NewSearchGorm(m Model, search response.Searcher) *Search {
+func NewSearchGorm(m Model, search response.Searcher,
+	scope func(ctx *gin.Context, table schema.Tabler) func(*gorm.DB) *gorm.DB) *Search {
 	return &Search{
-		Base:   Base{ModelGorm: m},
+		Base:   Base{ModelGorm: m, Scope: scope},
 		Search: search,
 	}
 }
@@ -44,6 +47,9 @@ func (e *Search) searchGorm(c *gin.Context) {
 			gorms.MakeCondition(req),
 			gorms.Paginate(int(req.GetPageSize()), int(req.GetPage())),
 		)
+	if e.Scope != nil {
+		query = query.Scopes(e.Scope(c, m))
+	}
 	if err := query.Limit(-1).Offset(-1).Count(&count).Error; err != nil && !errors.Is(err, gorm.ErrRecordNotFound) {
 		api.AddError(err).Log.ErrorContext(c, "Search error", "error", err)
 		api.Err(http.StatusInternalServerError)

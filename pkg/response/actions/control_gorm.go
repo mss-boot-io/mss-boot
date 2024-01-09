@@ -22,9 +22,10 @@ import (
 )
 
 // NewControlGorm new control action
-func NewControlGorm(m schema.Tabler, key string) *Control {
+func NewControlGorm(m schema.Tabler, key string,
+	scope func(ctx *gin.Context, table schema.Tabler) func(*gorm.DB) *gorm.DB) *Control {
 	return &Control{
-		Base: Base{ModelGorm: m},
+		Base: Base{ModelGorm: m, Scope: scope},
 		Key:  key,
 	}
 }
@@ -36,7 +37,7 @@ func (e *Control) createGorm(c *gin.Context) {
 		api.Err(http.StatusUnprocessableEntity)
 		return
 	}
-	err := gormdb.DB.Create(m).Error
+	err := gormdb.DB.WithContext(c).Create(m).Error
 	if err != nil {
 		api.AddError(err).Log.ErrorContext(c, "Create error", "error", err)
 		api.Err(http.StatusInternalServerError)
@@ -54,8 +55,12 @@ func (e *Control) updateGorm(c *gin.Context) {
 		api.Err(http.StatusUnprocessableEntity)
 		return
 	}
+	query := gormdb.DB.Where(e.Key, id)
+	if e.Scope != nil {
+		query = query.Scopes(e.Scope(c, m))
+	}
 	//find object
-	err := gormdb.DB.Where(e.Key, id).First(m).Error
+	err := query.First(m).Error
 	if err != nil {
 		if errors.Is(err, gorm.ErrRecordNotFound) {
 			api.AddError(fmt.Errorf("%s(%s) record not found", e.Key, id))
@@ -72,7 +77,11 @@ func (e *Control) updateGorm(c *gin.Context) {
 		api.Err(http.StatusUnprocessableEntity)
 		return
 	}
-	err = gormdb.DB.Save(m).Error
+	query = gormdb.DB.WithContext(c)
+	if e.Scope != nil {
+		query = query.Scopes(e.Scope(c, m))
+	}
+	err = query.Save(m).Error
 	if err != nil {
 		api.AddError(err).Log.ErrorContext(c, "Update error", "error", err.Error())
 		api.Err(http.StatusInternalServerError)

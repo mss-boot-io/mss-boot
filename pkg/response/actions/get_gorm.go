@@ -22,9 +22,10 @@ import (
 )
 
 // NewGetGorm new get action
-func NewGetGorm(m schema.Tabler, key string) *Get {
+func NewGetGorm(m schema.Tabler, key string,
+	scope func(ctx *gin.Context, table schema.Tabler) func(*gorm.DB) *gorm.DB) *Get {
 	return &Get{
-		Base: Base{ModelGorm: m},
+		Base: Base{ModelGorm: m, Scope: scope},
 		Key:  key,
 	}
 }
@@ -35,8 +36,12 @@ func (e *Get) getGorm(c *gin.Context, key string) {
 	m := pkg.TablerDeepCopy(e.ModelGorm)
 	preloads := c.QueryArray("preloads[]")
 	query := gormdb.DB.Model(m).Where("id = ?", c.Param(key))
+
 	for _, preload := range preloads {
 		query = query.Preload(preload)
+	}
+	if e.Scope != nil {
+		query = query.Scopes(e.Scope(c, m))
 	}
 	err := query.First(m).Error
 	if err != nil {

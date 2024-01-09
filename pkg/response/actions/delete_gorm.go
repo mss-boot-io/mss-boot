@@ -8,7 +8,10 @@ package actions
  */
 
 import (
+	"fmt"
 	"net/http"
+
+	"gorm.io/gorm"
 
 	"github.com/gin-gonic/gin"
 	"gorm.io/gorm/schema"
@@ -18,9 +21,10 @@ import (
 )
 
 // NewDeleteGorm new delete action
-func NewDeleteGorm(m schema.Tabler, key string) *Delete {
+func NewDeleteGorm(m schema.Tabler, key string,
+	scope func(ctx *gin.Context, table schema.Tabler) func(*gorm.DB) *gorm.DB) *Delete {
 	return &Delete{
-		Base: Base{ModelGorm: m},
+		Base: Base{ModelGorm: m, Scope: scope},
 		Key:  key,
 	}
 }
@@ -31,7 +35,11 @@ func (e *Delete) deleteGorm(c *gin.Context, ids ...string) {
 		api.Err(http.StatusUnprocessableEntity)
 		return
 	}
-	err := gormdb.DB.Delete(e.ModelGorm, ids).Error
+	query := gormdb.DB.WithContext(c).Where(fmt.Sprintf("%s IN ?", e.Key), ids)
+	if e.Scope != nil {
+		query = query.Scopes(e.Scope(c, e.ModelGorm))
+	}
+	err := query.Delete(e.ModelGorm).Error
 	if err != nil {
 		api.AddError(err).Log.ErrorContext(c, "Delete error", "error", err)
 		api.Err(http.StatusInternalServerError)

@@ -84,13 +84,13 @@ func (e *Simple) getActionMgm(key string) response.Action {
 func (e *Simple) getActionGorm(key string) response.Action {
 	switch key {
 	case response.Get:
-		return actions.NewGetGorm(e.options.model, e.GetKey())
+		return actions.NewGetGorm(e.options.model, e.GetKey(), e.options.scope)
 	case response.Control:
-		return actions.NewControlGorm(e.options.model, e.GetKey())
+		return actions.NewControlGorm(e.options.model, e.GetKey(), e.options.scope)
 	case response.Delete:
-		return actions.NewDeleteGorm(e.options.model, e.GetKey())
+		return actions.NewDeleteGorm(e.options.model, e.GetKey(), e.options.scope)
 	case response.Search:
-		return actions.NewSearchGorm(e.options.model, e.options.search)
+		return actions.NewSearchGorm(e.options.model, e.options.search, e.options.scope)
 	default:
 		return nil
 	}
