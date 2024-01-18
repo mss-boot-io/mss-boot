@@ -24,8 +24,21 @@ type Options struct {
 	search        response.Searcher
 	model         actions.Model
 	auth          bool
+	noAuthAction  []string
 	modelProvider actions.ModelProvider
 	scope         func(ctx *gin.Context, table schema.Tabler) func(db *gorm.DB) *gorm.DB
+}
+
+func (o *Options) needAuth(name string) bool {
+	if !o.auth {
+		return false
+	}
+	for i := range o.noAuthAction {
+		if o.noAuthAction[i] == name {
+			return false
+		}
+	}
+	return true
 }
 
 // getAction get action
@@ -73,6 +86,13 @@ func WithModel(m actions.Model) Option {
 func WithAuth(auth bool) Option {
 	return func(o *Options) {
 		o.auth = auth
+	}
+}
+
+// WithNoAuthAction set no auth action names
+func WithNoAuthAction(names ...string) Option {
+	return func(o *Options) {
+		o.noAuthAction = names
 	}
 }
 

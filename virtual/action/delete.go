@@ -36,8 +36,8 @@ func (*Delete) String() string {
 }
 
 // Handler delete action handler
-func (e *Delete) Handler() gin.HandlerFunc {
-	return func(c *gin.Context) {
+func (e *Delete) Handler() gin.HandlersChain {
+	h := func(c *gin.Context) {
 		switch c.Request.Method {
 		case http.MethodDelete:
 			api := response.Make(c)
@@ -48,13 +48,21 @@ func (e *Delete) Handler() gin.HandlerFunc {
 				api.Err(http.StatusNotFound)
 				return
 			}
+			if m.Auth {
+				response.AuthHandler(c)
+			}
 			req := m.MakeModel()
 			m.Default(req)
 			if api.Bind(req).Error != nil {
 				api.Err(http.StatusUnprocessableEntity)
 				return
 			}
-			if err := gormdb.DB.Scopes(m.TableScope, m.URI(c)).Delete(req).Error; err != nil {
+			query := gormdb.DB.Scopes(m.TableScope, m.URI(c))
+			if m.MultiTenant && e.TenantIDFunc != nil {
+				query = query.Scopes(m.TenantScope(c, e.TenantIDFunc))
+			}
+
+			if err := query.Delete(req).Error; err != nil {
 				if errors.Is(err, gorm.ErrRecordNotFound) {
 					api.Err(http.StatusNotFound)
 					return
@@ -68,6 +76,7 @@ func (e *Delete) Handler() gin.HandlerFunc {
 			c.AbortWithStatus(http.StatusMethodNotAllowed)
 		}
 	}
+	return gin.HandlersChain{h}
 }
 
 //func (e *Delete) GenOpenAPI(m *model.Model) *spec.PathItemProps {

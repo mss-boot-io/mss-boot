@@ -33,7 +33,7 @@ const (
 // Action interface
 type Action interface {
 	fmt.Stringer
-	Handler() gin.HandlerFunc
+	Handler() gin.HandlersChain
 }
 
 // Searcher search interface

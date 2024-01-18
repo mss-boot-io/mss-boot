@@ -22,6 +22,7 @@ type Base struct {
 	ModelMgm  mgm.Model
 	ModelGorm schema.Tabler
 	Scope     func(ctx *gin.Context, table schema.Tabler) func(db *gorm.DB) *gorm.DB
+	Handlers  gin.HandlersChain
 }
 
 // String string
@@ -30,8 +31,9 @@ func (*Base) String() string {
 }
 
 // Handler action handler
-func (*Base) Handler() gin.HandlerFunc {
-	return func(c *gin.Context) {
+func (*Base) Handler() gin.HandlersChain {
+	h := func(c *gin.Context) {
 		c.AbortWithStatus(http.StatusMethodNotAllowed)
 	}
+	return gin.HandlersChain{h}
 }

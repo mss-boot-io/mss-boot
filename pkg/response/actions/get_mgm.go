@@ -41,8 +41,8 @@ func (*Get) String() string {
 }
 
 // Handler action handler
-func (e *Get) Handler() gin.HandlerFunc {
-	return func(c *gin.Context) {
+func (e *Get) Handler() gin.HandlersChain {
+	h := func(c *gin.Context) {
 		if e.ModelGorm != nil {
 			e.getGorm(c, e.Key)
 			return
@@ -53,6 +53,10 @@ func (e *Get) Handler() gin.HandlerFunc {
 		}
 		response.Make(c).Err(http.StatusNotImplemented, "not implemented")
 	}
+	if e.Handlers != nil {
+		return append(e.Handlers, h)
+	}
+	return gin.HandlersChain{h}
 }
 
 func (e *Get) getMgm(c *gin.Context, key string) {

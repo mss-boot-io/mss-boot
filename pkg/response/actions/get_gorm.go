@@ -14,18 +14,15 @@ import (
 	"gorm.io/gorm"
 
 	"github.com/gin-gonic/gin"
-	"gorm.io/gorm/schema"
-
 	"github.com/mss-boot-io/mss-boot/pkg"
 	"github.com/mss-boot-io/mss-boot/pkg/config/gormdb"
 	"github.com/mss-boot-io/mss-boot/pkg/response"
 )
 
 // NewGetGorm new get action
-func NewGetGorm(m schema.Tabler, key string,
-	scope func(ctx *gin.Context, table schema.Tabler) func(*gorm.DB) *gorm.DB) *Get {
+func NewGetGorm(b Base, key string) *Get {
 	return &Get{
-		Base: Base{ModelGorm: m, Scope: scope},
+		Base: b,
 		Key:  key,
 	}
 }

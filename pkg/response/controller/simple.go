@@ -45,9 +45,6 @@ func (e *Simple) Path() string {
 
 // Handlers return handlers
 func (e *Simple) Handlers() gin.HandlersChain {
-	if e.options.auth {
-		return gin.HandlersChain{response.AuthHandler}
-	}
 	return nil
 }
 
@@ -82,15 +79,22 @@ func (e *Simple) getActionMgm(key string) response.Action {
 }
 
 func (e *Simple) getActionGorm(key string) response.Action {
+	b := actions.Base{
+		ModelGorm: e.options.model,
+		Scope:     e.options.scope,
+	}
+	if e.options.needAuth(key) {
+		b.Handlers = gin.HandlersChain{response.AuthHandler}
+	}
 	switch key {
 	case response.Get:
-		return actions.NewGetGorm(e.options.model, e.GetKey(), e.options.scope)
+		return actions.NewGetGorm(b, e.GetKey())
 	case response.Control:
-		return actions.NewControlGorm(e.options.model, e.GetKey(), e.options.scope)
+		return actions.NewControlGorm(b, e.GetKey())
 	case response.Delete:
-		return actions.NewDeleteGorm(e.options.model, e.GetKey(), e.options.scope)
+		return actions.NewDeleteGorm(b, e.GetKey())
 	case response.Search:
-		return actions.NewSearchGorm(e.options.model, e.options.search, e.options.scope)
+		return actions.NewSearchGorm(b, e.options.search)
 	default:
 		return nil
 	}

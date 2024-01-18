@@ -13,19 +13,16 @@ import (
 	"net/http"
 
 	"github.com/gin-gonic/gin"
-	"gorm.io/gorm"
-	"gorm.io/gorm/schema"
-
 	"github.com/mss-boot-io/mss-boot/pkg"
 	"github.com/mss-boot-io/mss-boot/pkg/config/gormdb"
 	"github.com/mss-boot-io/mss-boot/pkg/response"
+	"gorm.io/gorm"
 )
 
 // NewControlGorm new control action
-func NewControlGorm(m schema.Tabler, key string,
-	scope func(ctx *gin.Context, table schema.Tabler) func(*gorm.DB) *gorm.DB) *Control {
+func NewControlGorm(b Base, key string) *Control {
 	return &Control{
-		Base: Base{ModelGorm: m, Scope: scope},
+		Base: b,
 		Key:  key,
 	}
 }

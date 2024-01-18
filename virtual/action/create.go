@@ -6,6 +6,7 @@ import (
 	"github.com/gin-gonic/gin"
 	"github.com/go-openapi/spec"
 
+	"github.com/mss-boot-io/mss-boot/pkg"
 	"github.com/mss-boot-io/mss-boot/pkg/config/gormdb"
 	"github.com/mss-boot-io/mss-boot/pkg/response"
 	"github.com/mss-boot-io/mss-boot/virtual/model"
@@ -36,8 +37,8 @@ func (*Create) String() string {
 }
 
 // Handler create action handler
-func (e *Create) Handler() gin.HandlerFunc {
-	return func(c *gin.Context) {
+func (e *Create) Handler() gin.HandlersChain {
+	h := func(c *gin.Context) {
 		switch c.Request.Method {
 		case http.MethodPost:
 			api := response.Make(c)
@@ -48,11 +49,23 @@ func (e *Create) Handler() gin.HandlerFunc {
 				api.Err(http.StatusNotFound)
 				return
 			}
+			if m.Auth {
+				response.AuthHandler(c)
+			}
 			req := m.MakeModel()
 			m.Default(req)
 			if api.Bind(req).Error != nil {
 				api.Err(http.StatusUnprocessableEntity)
 				return
+			}
+			if m.MultiTenant && e.TenantIDFunc != nil {
+				tenantID, err := e.TenantIDFunc(c)
+				if err != nil {
+					api.AddError(err).Log.ErrorContext(c, "get tenant id error", PathKey, c.Param(PathKey))
+					api.Err(http.StatusInternalServerError)
+					return
+				}
+				pkg.SetValue(req, "TenantID", tenantID)
 			}
 			if err := gormdb.DB.Scopes(m.TableScope).Create(req).Error; err != nil {
 				api.AddError(err).Log.ErrorContext(c, "create error", PathKey, c.Param(PathKey))
@@ -65,6 +78,7 @@ func (e *Create) Handler() gin.HandlerFunc {
 			c.AbortWithStatus(http.StatusMethodNotAllowed)
 		}
 	}
+	return gin.HandlersChain{h}
 }
 
 // GenOpenAPI gen open api method: post, Parameters: nil

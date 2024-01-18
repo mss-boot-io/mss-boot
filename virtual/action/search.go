@@ -34,8 +34,8 @@ func (*Search) String() string {
 }
 
 // Handler search action handler
-func (e *Search) Handler() gin.HandlerFunc {
-	return func(c *gin.Context) {
+func (e *Search) Handler() gin.HandlersChain {
+	h := func(c *gin.Context) {
 		switch c.Request.Method {
 		case http.MethodGet:
 			api := response.Make(c)
@@ -46,11 +46,17 @@ func (e *Search) Handler() gin.HandlerFunc {
 				api.Err(http.StatusNotFound)
 				return
 			}
+			if m.Auth {
+				response.AuthHandler(c)
+			}
 			items := m.MakeList()
 			page := &Pagination{}
 			var count int64
-			if err := gormdb.DB.Scopes(m.TableScope, m.Search(c), m.Pagination(c, page)).
-				Find(items).Offset(-1).Limit(-1).Count(&count).Error; err != nil {
+			query := gormdb.DB.Scopes(m.TableScope, m.Search(c), m.Pagination(c, page))
+			if m.MultiTenant && e.TenantIDFunc != nil {
+				query = query.Scopes(m.TenantScope(c, e.TenantIDFunc))
+			}
+			if err := query.Find(items).Offset(-1).Limit(-1).Count(&count).Error; err != nil {
 				api.AddError(err).Log.Error("search error", PathKey, c.Param(PathKey))
 				api.Err(http.StatusInternalServerError)
 				return
@@ -60,4 +66,5 @@ func (e *Search) Handler() gin.HandlerFunc {
 			c.AbortWithStatus(http.StatusMethodNotAllowed)
 		}
 	}
+	return gin.HandlersChain{h}
 }

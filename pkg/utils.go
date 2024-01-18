@@ -138,3 +138,26 @@ func SupportMultiTenant(data any) bool {
 	}
 	return exist
 }
+
+func SetValue(data any, key string, value any) {
+	typeOf := reflect.TypeOf(data)
+	valueOf := reflect.ValueOf(data)
+	if typeOf.Kind() == reflect.Ptr {
+		typeOf = typeOf.Elem()
+		valueOf = valueOf.Elem()
+	}
+	key = strings.ToLower(key)
+	for i := 0; i < typeOf.NumField(); i++ {
+		field := typeOf.Field(i)
+		if field.Type.Kind() == reflect.Struct {
+			SetValue(valueOf.Field(i).Interface(), key, value)
+			continue
+		}
+		if field.Type.Kind() == reflect.Ptr {
+			continue
+		}
+		if strings.ToLower(field.Name) == key {
+			valueOf.Field(i).Set(reflect.ValueOf(value))
+		}
+	}
+}
