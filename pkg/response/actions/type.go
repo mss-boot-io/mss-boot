@@ -37,7 +37,7 @@ type Model interface {
 // ModelGorm model gorm
 type ModelGorm struct {
 	// ID primary key
-	ID string `gorm:"primarykey" json:"id" bson:"_id,omitempty" form:"id" query:"id"`
+	ID string `gorm:"primaryKey;column:id;type:varchar(64);not null;comment:ID" json:"id" bson:"_id,omitempty" form:"id" query:"id"`
 	// CreatedAt create time
 	CreatedAt time.Time `json:"createdAt" bson:"createdAt"`
 	// UpdatedAt update time

@@ -11,8 +11,6 @@ import (
 	"errors"
 	"net/http"
 
-	"gorm.io/gorm/schema"
-
 	"github.com/gin-gonic/gin"
 	"github.com/mss-boot-io/mss-boot/pkg"
 	"github.com/mss-boot-io/mss-boot/pkg/config/gormdb"
@@ -22,10 +20,9 @@ import (
 )
 
 // NewSearchGorm new search action
-func NewSearchGorm(m Model, search response.Searcher,
-	scope func(ctx *gin.Context, table schema.Tabler) func(*gorm.DB) *gorm.DB) *Search {
+func NewSearchGorm(b Base, search response.Searcher) *Search {
 	return &Search{
-		Base:   Base{ModelGorm: m, Scope: scope},
+		Base:   b,
 		Search: search,
 	}
 }

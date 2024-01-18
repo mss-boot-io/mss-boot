@@ -33,8 +33,9 @@ func SetModel(key string, m *model.Model) {
 
 // Base acton
 type Base struct {
-	Models map[string]*model.Model
-	mutex  sync.Mutex
+	Models       map[string]*model.Model
+	mutex        sync.Mutex
+	TenantIDFunc func(ctx *gin.Context) (any, error)
 }
 
 // String string
@@ -43,10 +44,11 @@ func (*Base) String() string {
 }
 
 // Handler action handler
-func (*Base) Handler() gin.HandlerFunc {
-	return func(c *gin.Context) {
+func (*Base) Handler() gin.HandlersChain {
+	h := func(c *gin.Context) {
 		c.AbortWithStatus(http.StatusMethodNotAllowed)
 	}
+	return gin.HandlersChain{h}
 }
 
 func (b *Base) SetModel(key string, m *model.Model) {

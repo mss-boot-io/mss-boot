@@ -69,8 +69,8 @@ func (*Search) String() string {
 }
 
 // Handler action handler
-func (e *Search) Handler() gin.HandlerFunc {
-	return func(c *gin.Context) {
+func (e *Search) Handler() gin.HandlersChain {
+	h := func(c *gin.Context) {
 		if e.ModelMgm != nil {
 			e.searchMgm(c)
 			return
@@ -81,6 +81,10 @@ func (e *Search) Handler() gin.HandlerFunc {
 		}
 		response.Make(c).Err(http.StatusNotImplemented, "not implemented")
 	}
+	if e.Handlers != nil {
+		return append(e.Handlers, h)
+	}
+	return gin.HandlersChain{h}
 }
 
 func (e *Search) searchMgm(c *gin.Context) {

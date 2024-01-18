@@ -11,20 +11,15 @@ import (
 	"fmt"
 	"net/http"
 
-	"gorm.io/gorm"
-
 	"github.com/gin-gonic/gin"
-	"gorm.io/gorm/schema"
-
 	"github.com/mss-boot-io/mss-boot/pkg/config/gormdb"
 	"github.com/mss-boot-io/mss-boot/pkg/response"
 )
 
 // NewDeleteGorm new delete action
-func NewDeleteGorm(m schema.Tabler, key string,
-	scope func(ctx *gin.Context, table schema.Tabler) func(*gorm.DB) *gorm.DB) *Delete {
+func NewDeleteGorm(b Base, key string) *Delete {
 	return &Delete{
-		Base: Base{ModelGorm: m, Scope: scope},
+		Base: b,
 		Key:  key,
 	}
 }

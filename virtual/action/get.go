@@ -36,8 +36,8 @@ func (*Get) String() string {
 }
 
 // Handler get action handler
-func (e *Get) Handler() gin.HandlerFunc {
-	return func(c *gin.Context) {
+func (e *Get) Handler() gin.HandlersChain {
+	h := func(c *gin.Context) {
 		switch c.Request.Method {
 		case http.MethodGet:
 			api := response.Make(c)
@@ -48,12 +48,19 @@ func (e *Get) Handler() gin.HandlerFunc {
 				api.Err(http.StatusNotFound)
 				return
 			}
+			if m.Auth {
+				response.AuthHandler(c)
+			}
 			req := m.MakeModel()
 			if api.Bind(req).Error != nil {
 				api.Err(http.StatusUnprocessableEntity)
 				return
 			}
-			if err := gormdb.DB.Scopes(m.TableScope, m.URI(c)).First(req).Error; err != nil {
+			query := gormdb.DB.Scopes(m.TableScope, m.URI(c))
+			if m.MultiTenant && e.TenantIDFunc != nil {
+				query = query.Scopes(m.TenantScope(c, e.TenantIDFunc))
+			}
+			if err := query.First(req).Error; err != nil {
 				if errors.Is(err, gorm.ErrRecordNotFound) {
 					api.Err(http.StatusNotFound)
 					return
@@ -69,4 +76,5 @@ func (e *Get) Handler() gin.HandlerFunc {
 			return
 		}
 	}
+	return gin.HandlersChain{h}
 }

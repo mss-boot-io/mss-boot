@@ -39,8 +39,8 @@ func (*Control) String() string {
 }
 
 // Handler action handler
-func (e *Control) Handler() gin.HandlerFunc {
-	return func(c *gin.Context) {
+func (e *Control) Handler() gin.HandlersChain {
+	h := func(c *gin.Context) {
 		switch c.Request.Method {
 		case http.MethodPost:
 			//create
@@ -66,6 +66,10 @@ func (e *Control) Handler() gin.HandlerFunc {
 			response.Make(c).Err(http.StatusNotImplemented, "not implemented")
 		}
 	}
+	if e.Handlers != nil {
+		return append(e.Handlers, h)
+	}
+	return gin.HandlersChain{h}
 }
 
 func (e *Control) createMongo(c *gin.Context) {

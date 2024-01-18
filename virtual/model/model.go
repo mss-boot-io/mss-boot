@@ -24,6 +24,8 @@ type Model struct {
 	Description string   `json:"description" yaml:"description"`
 	HardDeleted bool     `json:"hardDeleted" yaml:"hardDeleted"`
 	Fields      []*Field `json:"fields" yaml:"fields" binding:"required"`
+	MultiTenant bool     `json:"multiTenant" yaml:"multiTenant"`
+	Auth        bool     `json:"auth" yaml:"auth"`
 }
 
 // TableName get table name
@@ -105,11 +107,35 @@ func (m *Model) MakeTimeField() []reflect.StructField {
 			Tag:  "json:\"-\" gorm:\"index\"",
 		})
 	}
+	if m.MultiTenant {
+		fieldTypes = append(fieldTypes, reflect.StructField{
+			Name: "TenantID",
+			Type: reflect.TypeOf(any("")),
+			Tag:  "json:\"tenantID,omitempty\" gorm:\"index\"",
+		})
+	}
 	return fieldTypes
 }
 
 func (m *Model) TableScope(db *gorm.DB) *gorm.DB {
 	return db.Table(m.TableName())
+}
+
+func (m *Model) TenantScope(ctx *gin.Context,
+	fn func(ctx *gin.Context) (any, error)) func(db *gorm.DB) *gorm.DB {
+	if !m.MultiTenant {
+		return func(db *gorm.DB) *gorm.DB {
+			return db
+		}
+	}
+	return func(db *gorm.DB) *gorm.DB {
+		tenantID, err := fn(ctx)
+		if err != nil {
+			_ = db.AddError(err)
+			return db
+		}
+		return db.Where(fmt.Sprintf("`%s`.`tenant_id` = ?", m.TableName()), tenantID)
+	}
 }
 
 func (m *Model) URI(ctx *gin.Context) (f func(*gorm.DB) *gorm.DB) {

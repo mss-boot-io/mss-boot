@@ -32,8 +32,8 @@ func (*Update) String() string {
 }
 
 // Handler update action handler
-func (e *Update) Handler() gin.HandlerFunc {
-	return func(c *gin.Context) {
+func (e *Update) Handler() gin.HandlersChain {
+	h := func(c *gin.Context) {
 		switch c.Request.Method {
 		case http.MethodPut:
 			api := response.Make(c)
@@ -44,12 +44,19 @@ func (e *Update) Handler() gin.HandlerFunc {
 				api.Err(http.StatusNotFound)
 				return
 			}
+			if m.Auth {
+				response.AuthHandler(c)
+			}
 			req := m.MakeModel()
 			if api.Bind(req).Error != nil {
 				api.Err(http.StatusUnprocessableEntity)
 				return
 			}
-			if err := gormdb.DB.Scopes(m.TableScope, m.URI(c)).Updates(req).Error; err != nil {
+			query := gormdb.DB.Scopes(m.TableScope, m.URI(c))
+			if m.MultiTenant && e.TenantIDFunc != nil {
+				query = query.Scopes(m.TenantScope(c, e.TenantIDFunc))
+			}
+			if err := query.Updates(req).Error; err != nil {
 				api.AddError(err).Log.Error("update error", PathKey, c.Param(PathKey))
 				api.Err(http.StatusInternalServerError)
 				return
@@ -60,4 +67,5 @@ func (e *Update) Handler() gin.HandlerFunc {
 			c.AbortWithStatus(http.StatusMethodNotAllowed)
 		}
 	}
+	return gin.HandlersChain{h}
 }
