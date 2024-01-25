@@ -17,6 +17,8 @@ import (
 	"os"
 	"sync"
 
+	"go.opentelemetry.io/contrib/instrumentation/google.golang.org/grpc/otelgrpc"
+
 	"github.com/prometheus/client_golang/prometheus"
 	"google.golang.org/grpc"
 	"google.golang.org/grpc/credentials"
@@ -75,6 +77,7 @@ func (e *Server) Register(do func(server *Server)) {
 
 func (e *Server) initGrpcServerOptions() []grpc.ServerOption {
 	opts := []grpc.ServerOption{
+		grpc.StatsHandler(otelgrpc.NewServerHandler()),
 		grpc.ConnectionTimeout(e.options.timeout),
 		grpc.ChainUnaryInterceptor(e.options.unaryServerInterceptors...),
 		grpc.ChainStreamInterceptor(e.options.streamServerInterceptors...),
