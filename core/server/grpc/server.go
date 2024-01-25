@@ -11,6 +11,7 @@ import (
 	"context"
 	"errors"
 	"fmt"
+	"go.opentelemetry.io/contrib/instrumentation/google.golang.org/grpc/otelgrpc"
 	"log"
 	"log/slog"
 	"net"
@@ -75,6 +76,7 @@ func (e *Server) Register(do func(server *Server)) {
 
 func (e *Server) initGrpcServerOptions() []grpc.ServerOption {
 	opts := []grpc.ServerOption{
+		grpc.StatsHandler(otelgrpc.NewServerHandler()),
 		grpc.ConnectionTimeout(e.options.timeout),
 		grpc.ChainUnaryInterceptor(e.options.unaryServerInterceptors...),
 		grpc.ChainStreamInterceptor(e.options.streamServerInterceptors...),

@@ -3,7 +3,10 @@ package config
 import (
 	"time"
 
+	"github.com/grpc-ecosystem/go-grpc-middleware/v2/interceptors/timeout"
 	"google.golang.org/grpc"
+	"google.golang.org/grpc/credentials"
+	"google.golang.org/grpc/credentials/insecure"
 
 	"github.com/mss-boot-io/mss-boot/core/server"
 	serverGRPC "github.com/mss-boot-io/mss-boot/core/server/grpc"
@@ -11,11 +14,15 @@ import (
 
 // GRPC grpc服务公共配置(选用)
 type GRPC struct {
-	Addr     string                `yaml:"addr" json:"addr"` // default:  :9090
-	CertFile string                `yaml:"certFile" json:"certFile"`
-	KeyFile  string                `yaml:"keyFile" json:"keyFile"`
-	Timeout  int                   `yaml:"timeout" json:"timeout"` // default: 10
-	Client   map[string]GRPCClient `yaml:"client" json:"client"`
+	ServerParams `yaml:",inline" json:",inline"`
+	Clients      Clients `yaml:"client" json:"client"`
+}
+
+type ServerParams struct {
+	Addr     string        `yaml:"addr" json:"addr"` // default:  :9090
+	CertFile string        `yaml:"certFile" json:"certFile"`
+	KeyFile  string        `yaml:"keyFile" json:"keyFile"`
+	Timeout  time.Duration `yaml:"timeout" json:"timeout"` // default: 10
 }
 
 // Init init
@@ -36,24 +43,36 @@ func (e *GRPC) Init(
 	return s
 }
 
-type GRPCClient struct {
-	conn    *grpc.ClientConn
-	Address string        `yaml:"address" json:"address"`
-	Timeout time.Duration `yaml:"timeout" json:"timeout"`
+type Clients map[string]ServerParams
+
+func (cs Clients) makeClient(key string) *grpc.ClientConn {
+	params, ok := cs[key]
+	if !ok {
+		return nil
+	}
+	opts := make([]grpc.DialOption, 0)
+	if params.CertFile != "" && params.KeyFile != "" {
+		creds, err := credentials.NewClientTLSFromFile(params.CertFile, params.KeyFile)
+		if err != nil {
+			return nil
+		}
+		opts = append(opts, grpc.WithTransportCredentials(creds))
+	} else {
+		opts = append(opts, grpc.WithTransportCredentials(insecure.NewCredentials()))
+	}
+	if params.Timeout > 0 {
+		opts = append(opts,
+			grpc.WithChainUnaryInterceptor(
+				timeout.UnaryClientInterceptor(params.Timeout),
+			))
+	}
+	conn, err := grpc.Dial(params.Addr, opts...)
+	if err != nil {
+		return nil
+	}
+	return conn
 }
 
-func (g *GRPCClient) Init() error {
-	//cc, err := grpc.Dial(g.Address,
-	//	grpc.WithTransportCredentials(insecure.NewCredentials()),
-	//	grpc.WithChainUnaryInterceptor(
-	//		timeout.UnaryClientInterceptor(g.Timeout),
-	//
-	//	))
-	return nil
-}
-
-type Clients map[string]GRPCClient
-
-func (cs Clients) Init() error {
-	return nil
+func (e *GRPC) GetGRPCClient(key string) *grpc.ClientConn {
+	return e.Clients.makeClient(key)
 }

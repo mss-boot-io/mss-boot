@@ -22,6 +22,7 @@ import (
 	"text/template"
 	"time"
 
+	"github.com/mss-boot-io/mss-boot/pkg"
 	"github.com/spf13/cast"
 	"gorm.io/gorm"
 )
@@ -132,6 +133,12 @@ func GenFile(system bool, path string) error {
 }
 
 func fileCreate(content bytes.Buffer, name string) {
+	if !pkg.PathExist(filepath.Dir(name)) {
+		err := pkg.PathCreate(filepath.Dir(name))
+		if err != nil {
+			log.Fatalln(err)
+		}
+	}
 	file, err := os.Create(name)
 	defer func(file *os.File) {
 		err := file.Close()

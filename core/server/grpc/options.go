@@ -13,12 +13,18 @@ import (
 	"fmt"
 	"log/slog"
 	"math"
+	"runtime/debug"
 	"time"
 
-	"github.com/grpc-ecosystem/go-grpc-middleware/providers/prometheus"
+	grpcprom "github.com/grpc-ecosystem/go-grpc-middleware/providers/prometheus"
 	"github.com/grpc-ecosystem/go-grpc-middleware/v2/interceptors/logging"
 	"github.com/grpc-ecosystem/go-grpc-middleware/v2/interceptors/recovery"
+	"github.com/prometheus/client_golang/prometheus"
+	"github.com/prometheus/client_golang/prometheus/promauto"
+	"go.opentelemetry.io/otel/trace"
 	"google.golang.org/grpc"
+	"google.golang.org/grpc/codes"
+	"google.golang.org/grpc/status"
 )
 
 const (
@@ -32,7 +38,13 @@ const (
 )
 
 var (
-	defaultMetricsServer = prometheus.NewServerMetrics(prometheus.WithServerCounterOptions())
+	defaultMetricsServer = grpcprom.NewServerMetrics(grpcprom.WithServerCounterOptions())
+	logTraceID           = func(ctx context.Context) logging.Fields {
+		if span := trace.SpanContextFromContext(ctx); span.IsSampled() {
+			return logging.Fields{"traceID", span.TraceID().String()}
+		}
+		return nil
+	}
 )
 
 // Option set options
@@ -55,7 +67,7 @@ type Options struct {
 	unaryServerInterceptors  []grpc.UnaryServerInterceptor
 	streamServerInterceptors []grpc.StreamServerInterceptor
 	ctx                      context.Context
-	metrcsServer             *prometheus.ServerMetrics
+	metrcsServer             *grpcprom.ServerMetrics
 }
 
 // WithContext set ContextOption
@@ -170,6 +182,18 @@ func WithStreamServerInterceptors(u ...grpc.StreamServerInterceptor) Option {
 }
 
 func defaultOptions() *Options {
+	reg := prometheus.NewRegistry()
+	reg.MustRegister(defaultMetricsServer)
+	// Setup metric for panic recoveries.
+	panicsTotal := promauto.With(reg).NewCounter(prometheus.CounterOpts{
+		Name: "grpc_req_panics_recovered_total",
+		Help: "Total number of gRPC requests recovered from internal panic.",
+	})
+	grpcPanicRecoveryHandler := func(p any) (err error) {
+		panicsTotal.Inc()
+		slog.Error("msg", "recovered from panic", "panic", p, "stack", debug.Stack())
+		return status.Errorf(codes.Internal, "%s", p)
+	}
 	return &Options{
 		addr:                  ":0",
 		keepAlive:             defaultKeepAliveTime,
@@ -180,22 +204,14 @@ func defaultOptions() *Options {
 		maxMsgSize:            defaultMaxMsgSize,
 		metrcsServer:          defaultMetricsServer,
 		unaryServerInterceptors: []grpc.UnaryServerInterceptor{
-			//requesttag.UnaryServerInterceptor(),
-			//ctxtags.UnaryServerInterceptor(),
-			//opentracing.UnaryServerInterceptor(),
-			//logging.UnaryServerInterceptor(),
-			logging.UnaryServerInterceptor(InterceptorLogger(slog.Default())),
+			logging.UnaryServerInterceptor(InterceptorLogger(slog.Default()), logging.WithFieldsFromContext(logTraceID)),
 			defaultMetricsServer.UnaryServerInterceptor(),
-			recovery.UnaryServerInterceptor(recovery.WithRecoveryHandler(customRecovery("", ""))),
+			recovery.UnaryServerInterceptor(recovery.WithRecoveryHandler(grpcPanicRecoveryHandler)),
 		},
 		streamServerInterceptors: []grpc.StreamServerInterceptor{
-			//requesttag.StreamServerInterceptor(),
-			//ctxtags.StreamServerInterceptor(),
-			//opentracing.StreamServerInterceptor(),
-			//logging.StreamServerInterceptor(),
-			logging.StreamServerInterceptor(InterceptorLogger(slog.Default())),
+			logging.StreamServerInterceptor(InterceptorLogger(slog.Default()), logging.WithFieldsFromContext(logTraceID)),
 			defaultMetricsServer.StreamServerInterceptor(),
-			recovery.StreamServerInterceptor(recovery.WithRecoveryHandler(customRecovery("", ""))),
+			recovery.StreamServerInterceptor(recovery.WithRecoveryHandler(grpcPanicRecoveryHandler)),
 		},
 	}
 }
