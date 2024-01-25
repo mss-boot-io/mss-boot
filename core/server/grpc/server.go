@@ -11,12 +11,13 @@ import (
 	"context"
 	"errors"
 	"fmt"
-	"go.opentelemetry.io/contrib/instrumentation/google.golang.org/grpc/otelgrpc"
 	"log"
 	"log/slog"
 	"net"
 	"os"
 	"sync"
+
+	"go.opentelemetry.io/contrib/instrumentation/google.golang.org/grpc/otelgrpc"
 
 	"github.com/prometheus/client_golang/prometheus"
 	"google.golang.org/grpc"
