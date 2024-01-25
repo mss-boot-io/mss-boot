@@ -112,6 +112,14 @@ func MergeMap(m1, m2 map[string]any) map[string]any {
 
 // SupportMultiTenant support multi tenant
 func SupportMultiTenant(data any) bool {
+	return supportColumn(data, "tenantID", "tenant_id")
+}
+
+func SupportCreator(data any) bool {
+	return supportColumn(data, "creatorID", "creator_id")
+}
+
+func supportColumn(data any, fields ...string) bool {
 	typeOf := reflect.TypeOf(data)
 	valueOf := reflect.ValueOf(data)
 	if typeOf.Kind() == reflect.Ptr {
@@ -128,9 +136,11 @@ func SupportMultiTenant(data any) bool {
 		if field.Type.Kind() == reflect.Ptr {
 			continue
 		}
-		if strings.ToLower(field.Name) == "tenantid" ||
-			strings.ToLower(field.Name) == "tenant_id" {
-			exist = true
+		for j := range fields {
+			exist = exist || strings.ToLower(field.Name) == strings.ToLower(fields[j])
+			if exist {
+				break
+			}
 		}
 		if exist {
 			break
