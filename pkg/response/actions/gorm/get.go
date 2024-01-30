@@ -1,4 +1,4 @@
-package actions
+package gorm
 
 /*
  * @Author: lwnmengjing<lwnmengjing@qq.com>
@@ -19,18 +19,43 @@ import (
 	"github.com/mss-boot-io/mss-boot/pkg/response"
 )
 
-// NewGetGorm new get action
-func NewGetGorm(b Base, key string) *Get {
+// Get action
+type Get struct {
+	Base
+	Key string
+}
+
+// String action name
+func (*Get) String() string {
+	return "get"
+}
+
+// NewGet new get action
+func NewGet(b Base, key string) *Get {
 	return &Get{
 		Base: b,
 		Key:  key,
 	}
 }
 
-// getGorm get one record by id
-func (e *Get) getGorm(c *gin.Context, key string) {
+func (e *Get) Handler() gin.HandlersChain {
+	h := func(c *gin.Context) {
+		if e.Model == nil {
+			response.Make(c).Err(http.StatusNotImplemented, "not implemented")
+			return
+		}
+		e.get(c, e.Key)
+	}
+	if e.Handlers != nil {
+		return append(e.Handlers, h)
+	}
+	return gin.HandlersChain{h}
+}
+
+// get one record by id
+func (e *Get) get(c *gin.Context, key string) {
 	api := response.Make(c)
-	m := pkg.TablerDeepCopy(e.ModelGorm)
+	m := pkg.TablerDeepCopy(e.Model)
 	preloads := c.QueryArray("preloads[]")
 	query := gormdb.DB.Model(m).Where("id = ?", c.Param(key))
 

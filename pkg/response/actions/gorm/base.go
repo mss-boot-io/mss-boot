@@ -1,4 +1,4 @@
-package actions
+package gorm
 
 /*
  * @Author: lwnmengjing
@@ -10,19 +10,18 @@ package actions
 import (
 	"net/http"
 
-	"gorm.io/gorm"
-
 	"github.com/gin-gonic/gin"
-	mgm "github.com/kamva/mgm/v3"
+	"gorm.io/gorm"
 	"gorm.io/gorm/schema"
 )
 
 // Base action
 type Base struct {
-	ModelMgm  mgm.Model
-	ModelGorm schema.Tabler
+	Model     schema.Tabler
 	Scope     func(ctx *gin.Context, table schema.Tabler) func(db *gorm.DB) *gorm.DB
 	Handlers  gin.HandlersChain
+	TreeField string
+	Depth     int
 }
 
 // String string

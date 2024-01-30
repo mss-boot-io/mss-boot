@@ -1,4 +1,4 @@
-package actions
+package mgm
 
 /*
  * @Author: lwnmengjing
@@ -12,7 +12,7 @@ import (
 	"net/http"
 
 	"github.com/gin-gonic/gin"
-	mgm "github.com/kamva/mgm/v3"
+	"github.com/kamva/mgm/v3"
 	"github.com/mss-boot-io/mss-boot/pkg"
 	"github.com/mss-boot-io/mss-boot/pkg/response"
 	"go.mongodb.org/mongo-driver/bson/primitive"
@@ -25,10 +25,10 @@ type Control struct {
 	Key string
 }
 
-// NewControlMgm new control action
-func NewControlMgm(m mgm.Model, key string) *Control {
+// NewControl new control action
+func NewControl(b Base, key string) *Control {
 	return &Control{
-		Base: Base{ModelMgm: m},
+		Base: b,
 		Key:  key,
 	}
 }
@@ -38,48 +38,14 @@ func (*Control) String() string {
 	return "control"
 }
 
-// Handler action handler
-func (e *Control) Handler() gin.HandlersChain {
-	h := func(c *gin.Context) {
-		switch c.Request.Method {
-		case http.MethodPost:
-			//create
-			if e.ModelGorm != nil {
-				e.createGorm(c)
-				break
-			}
-			if e.ModelMgm != nil {
-				e.createMongo(c)
-				break
-			}
-		case http.MethodPut:
-			//update
-			if e.ModelGorm != nil {
-				e.updateGorm(c)
-				break
-			}
-			if e.ModelMgm != nil {
-				e.updateMongo(c)
-				break
-			}
-		default:
-			response.Make(c).Err(http.StatusNotImplemented, "not implemented")
-		}
-	}
-	if e.Handlers != nil {
-		return append(e.Handlers, h)
-	}
-	return gin.HandlersChain{h}
-}
-
-func (e *Control) createMongo(c *gin.Context) {
-	m := pkg.ModelDeepCopy(e.ModelMgm)
+func (e *Control) create(c *gin.Context) {
+	m := pkg.ModelDeepCopy(e.Model)
 	api := response.Make(c).Bind(m)
 	if api.Error != nil {
 		api.Err(http.StatusUnprocessableEntity)
 		return
 	}
-	err := mgm.Coll(e.ModelMgm).CreateWithCtx(c, m)
+	err := mgm.Coll(e.Model).CreateWithCtx(c, m)
 	if err != nil {
 		api.AddError(err).Log.ErrorContext(c, "Create error", "error", err)
 		api.Err(http.StatusInternalServerError)
@@ -88,8 +54,8 @@ func (e *Control) createMongo(c *gin.Context) {
 	api.OK(nil)
 }
 
-func (e *Control) updateMongo(c *gin.Context) {
-	m := pkg.ModelDeepCopy(e.ModelMgm)
+func (e *Control) update(c *gin.Context) {
+	m := pkg.ModelDeepCopy(e.Model)
 	api := response.Make(c).Bind(m)
 	if api.Error != nil {
 		api.Err(http.StatusUnprocessableEntity)
@@ -102,7 +68,7 @@ func (e *Control) updateMongo(c *gin.Context) {
 		return
 	}
 	m.SetID(id)
-	err = mgm.Coll(e.ModelMgm).UpdateWithCtx(c, m)
+	err = mgm.Coll(e.Model).UpdateWithCtx(c, m)
 	if err != nil {
 		if errors.Is(err, mongo.ErrNoDocuments) {
 			api.Err(http.StatusNotFound)

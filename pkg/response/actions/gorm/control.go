@@ -1,4 +1,4 @@
-package actions
+package gorm
 
 /*
  * @Author: lwnmengjing<lwnmengjing@qq.com>
@@ -19,16 +19,48 @@ import (
 	"gorm.io/gorm"
 )
 
-// NewControlGorm new control action
-func NewControlGorm(b Base, key string) *Control {
+// Control action
+type Control struct {
+	Base
+	Key string
+}
+
+// String action name
+func (*Control) String() string {
+	return "control"
+}
+
+// NewControl new control action
+func NewControl(b Base, key string) *Control {
 	return &Control{
 		Base: b,
 		Key:  key,
 	}
 }
 
-func (e *Control) createGorm(c *gin.Context) {
-	m := pkg.TablerDeepCopy(e.ModelGorm)
+func (e *Control) Handler() gin.HandlersChain {
+	h := func(c *gin.Context) {
+		if e.Model == nil {
+			response.Make(c).Err(http.StatusNotImplemented, "not implemented")
+			return
+		}
+		switch c.Request.Method {
+		case http.MethodPost:
+			e.create(c)
+		case http.MethodPut:
+			e.update(c)
+		default:
+			response.Make(c).Err(http.StatusNotImplemented, "not implemented")
+		}
+	}
+	if e.Handlers != nil {
+		return append(e.Handlers, h)
+	}
+	return gin.HandlersChain{h}
+}
+
+func (e *Control) create(c *gin.Context) {
+	m := pkg.TablerDeepCopy(e.Model)
 	api := response.Make(c).Bind(m)
 	if api.Error != nil {
 		api.Err(http.StatusUnprocessableEntity)
@@ -43,8 +75,8 @@ func (e *Control) createGorm(c *gin.Context) {
 	api.OK(m)
 }
 
-func (e *Control) updateGorm(c *gin.Context) {
-	m := pkg.TablerDeepCopy(e.ModelGorm)
+func (e *Control) update(c *gin.Context) {
+	m := pkg.TablerDeepCopy(e.Model)
 	id := c.Param(e.Key)
 	api := response.Make(c)
 	if id == "" {

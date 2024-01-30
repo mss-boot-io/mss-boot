@@ -1,4 +1,4 @@
-package actions
+package mgm
 
 /*
  * @Author: lwnmengjing
@@ -12,7 +12,7 @@ import (
 	"net/http"
 
 	"github.com/gin-gonic/gin"
-	mgm "github.com/kamva/mgm/v3"
+	"github.com/kamva/mgm/v3"
 	"go.mongodb.org/mongo-driver/bson"
 	"go.mongodb.org/mongo-driver/bson/primitive"
 	"go.mongodb.org/mongo-driver/mongo"
@@ -27,10 +27,10 @@ type Get struct {
 	Key string
 }
 
-// NewGetMgm new get action
-func NewGetMgm(m mgm.Model, key string) *Get {
+// NewGet new get action
+func NewGet(b Base, key string) *Get {
 	return &Get{
-		Base: Base{ModelMgm: m},
+		Base: b,
 		Key:  key,
 	}
 }
@@ -40,35 +40,16 @@ func (*Get) String() string {
 	return "get"
 }
 
-// Handler action handler
-func (e *Get) Handler() gin.HandlersChain {
-	h := func(c *gin.Context) {
-		if e.ModelGorm != nil {
-			e.getGorm(c, e.Key)
-			return
-		}
-		if e.ModelMgm != nil {
-			e.getMgm(c, e.Key)
-			return
-		}
-		response.Make(c).Err(http.StatusNotImplemented, "not implemented")
-	}
-	if e.Handlers != nil {
-		return append(e.Handlers, h)
-	}
-	return gin.HandlersChain{h}
-}
-
-func (e *Get) getMgm(c *gin.Context, key string) {
+func (e *Get) get(c *gin.Context, key string) {
 	api := response.Make(c)
-	m := pkg.ModelDeepCopy(e.ModelMgm)
+	m := pkg.ModelDeepCopy(e.Model)
 	id, err := primitive.ObjectIDFromHex(c.Param(key))
 	if err != nil {
 		api.AddError(err)
 		api.Err(http.StatusUnprocessableEntity)
 		return
 	}
-	err = mgm.Coll(e.ModelMgm).
+	err = mgm.Coll(e.Model).
 		FindOne(c, bson.M{"_id": id}).
 		Decode(m)
 	if err != nil {
