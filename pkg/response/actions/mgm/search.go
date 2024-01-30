@@ -1,4 +1,4 @@
-package actions
+package mgm
 
 /*
  * @Author: lwnmengjing
@@ -15,7 +15,7 @@ import (
 	"time"
 
 	"github.com/gin-gonic/gin"
-	mgm "github.com/kamva/mgm/v3"
+	"github.com/kamva/mgm/v3"
 	"github.com/kamva/mgm/v3/builder"
 	"github.com/kamva/mgm/v3/field"
 	"go.mongodb.org/mongo-driver/bson"
@@ -27,38 +27,18 @@ import (
 	"github.com/mss-boot-io/mss-boot/pkg/search/mgos"
 )
 
-// Pagination pagination params
-type Pagination struct {
-	Page     int64 `form:"page" query:"page"`
-	PageSize int64 `form:"pageSize" query:"pageSize"`
-}
-
-// GetPage get page
-func (e *Pagination) GetPage() int64 {
-	if e.Page <= 0 {
-		return 1
-	}
-	return e.Page
-}
-
-// GetPageSize get page size
-func (e *Pagination) GetPageSize() int64 {
-	if e.PageSize <= 0 {
-		return 10
-	}
-	return e.PageSize
-}
-
 // Search action
 type Search struct {
 	Base
-	Search response.Searcher
+	TreeField string
+	Depth     int
+	Search    response.Searcher
 }
 
-// NewSearchMgm new search action
-func NewSearchMgm(m mgm.Model, search response.Searcher) *Search {
+// NewSearch new search action
+func NewSearch(b Base, search response.Searcher) *Search {
 	return &Search{
-		Base:   Base{ModelMgm: m},
+		Base:   b,
 		Search: search,
 	}
 }
@@ -66,25 +46,6 @@ func NewSearchMgm(m mgm.Model, search response.Searcher) *Search {
 // String action name
 func (*Search) String() string {
 	return "search"
-}
-
-// Handler action handler
-func (e *Search) Handler() gin.HandlersChain {
-	h := func(c *gin.Context) {
-		if e.ModelMgm != nil {
-			e.searchMgm(c)
-			return
-		}
-		if e.ModelGorm != nil {
-			e.searchGorm(c)
-			return
-		}
-		response.Make(c).Err(http.StatusNotImplemented, "not implemented")
-	}
-	if e.Handlers != nil {
-		return append(e.Handlers, h)
-	}
-	return gin.HandlersChain{h}
 }
 
 func (e *Search) searchMgm(c *gin.Context) {
@@ -96,13 +57,13 @@ func (e *Search) searchMgm(c *gin.Context) {
 	}
 	filter, sort := mgos.MakeCondition(req)
 
-	count, err := mgm.Coll(e.ModelMgm).CountDocuments(c, filter)
+	count, err := mgm.Coll(e.Model).CountDocuments(c, filter)
 	if err != nil {
 		api.AddError(err).Log.ErrorContext(c, "count items error", "error", err)
 		api.Err(http.StatusInternalServerError)
 		return
 	}
-	linkConfigs := getLinkTag(e.ModelMgm)
+	linkConfigs := getLinkTag(e.Model)
 	if len(linkConfigs) == 0 {
 		ops := options.Find()
 		ops.SetLimit(req.GetPageSize())
@@ -111,7 +72,7 @@ func (e *Search) searchMgm(c *gin.Context) {
 		}
 		ops.SetSkip(req.GetPageSize() * (req.GetPage() - 1))
 
-		result, err := mgm.Coll(e.ModelMgm).Find(c, filter, ops)
+		result, err := mgm.Coll(e.Model).Find(c, filter, ops)
 		if err != nil {
 			api.AddError(err).Log.ErrorContext(c, "find items error", "error", err)
 			api.Err(http.StatusInternalServerError)
@@ -120,7 +81,7 @@ func (e *Search) searchMgm(c *gin.Context) {
 		defer result.Close(c)
 		items := make([]any, 0, req.GetPageSize())
 		for result.Next(c) {
-			m := pkg.ModelDeepCopy(e.ModelMgm)
+			m := pkg.ModelDeepCopy(e.Model)
 			err = result.Decode(m)
 			if err != nil {
 				api.AddError(err).Log.ErrorContext(c, "decode items error", "error", err)
@@ -152,7 +113,7 @@ func (e *Search) searchMgm(c *gin.Context) {
 	}, bson.D{
 		{Key: "$sort", Value: sort},
 	})
-	result, err := mgm.Coll(e.ModelMgm).Aggregate(c, pipeline)
+	result, err := mgm.Coll(e.Model).Aggregate(c, pipeline)
 	if err != nil {
 		api.AddError(err).Log.ErrorContext(c, "find items error", "error", err)
 		api.Err(http.StatusInternalServerError)
@@ -161,7 +122,7 @@ func (e *Search) searchMgm(c *gin.Context) {
 	defer result.Close(c)
 	items := make([]any, 0, req.GetPageSize())
 	for result.Next(c) {
-		m := pkg.ModelDeepCopy(e.ModelMgm)
+		m := pkg.ModelDeepCopy(e.Model)
 		var bm bson.M
 		err = result.Decode(bm)
 		if err != nil {

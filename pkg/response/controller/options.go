@@ -25,6 +25,8 @@ type Options struct {
 	model         actions.Model
 	auth          bool
 	noAuthAction  []string
+	depth         int
+	treeField     string
 	modelProvider actions.ModelProvider
 	scope         func(ctx *gin.Context, table schema.Tabler) func(db *gorm.DB) *gorm.DB
 }
@@ -107,5 +109,19 @@ func WithModelProvider(provider actions.ModelProvider) Option {
 func WithScope(scope func(ctx *gin.Context, table schema.Tabler) func(db *gorm.DB) *gorm.DB) Option {
 	return func(o *Options) {
 		o.scope = scope
+	}
+}
+
+// WithDepth set depth
+func WithDepth(depth int) Option {
+	return func(o *Options) {
+		o.depth = depth
+	}
+}
+
+// WithTreeField set tree field
+func WithTreeField(treeField string) Option {
+	return func(o *Options) {
+		o.treeField = treeField
 	}
 }

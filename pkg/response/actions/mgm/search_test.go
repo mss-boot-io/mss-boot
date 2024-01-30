@@ -1,4 +1,4 @@
-package actions
+package mgm
 
 /*
  * @Author: lwnmengjing<lwnmengjing@qq.com>
@@ -10,7 +10,7 @@ package actions
 import (
 	"testing"
 
-	mgm "github.com/kamva/mgm/v3"
+	"github.com/kamva/mgm/v3"
 	"go.mongodb.org/mongo-driver/bson/primitive"
 )
 

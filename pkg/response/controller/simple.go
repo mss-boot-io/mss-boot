@@ -10,12 +10,13 @@ package controller
 import (
 	"strings"
 
-	"github.com/mss-boot-io/mss-boot/pkg/response/actions"
-
 	"github.com/gin-gonic/gin"
-	mgm "github.com/kamva/mgm/v3"
+	"github.com/kamva/mgm/v3"
 
 	"github.com/mss-boot-io/mss-boot/pkg/response"
+	"github.com/mss-boot-io/mss-boot/pkg/response/actions"
+	"github.com/mss-boot-io/mss-boot/pkg/response/actions/gorm"
+	mgmActions "github.com/mss-boot-io/mss-boot/pkg/response/actions/mgm"
 )
 
 // Simple controller
@@ -64,37 +65,42 @@ func (e *Simple) GetAction(key string) response.Action {
 }
 
 func (e *Simple) getActionMgm(key string) response.Action {
+	b := mgmActions.Base{
+		Model: e.options.model,
+	}
 	switch key {
 	case response.Get:
-		return actions.NewGetMgm(e.options.model, e.GetKey())
+		return mgmActions.NewGet(b, e.GetKey())
 	case response.Control:
-		return actions.NewControlMgm(e.options.model, e.GetKey())
+		return mgmActions.NewControl(b, e.GetKey())
 	case response.Delete:
-		return actions.NewDeleteMgm(e.options.model, e.GetKey())
+		return mgmActions.NewDelete(b, e.GetKey())
 	case response.Search:
-		return actions.NewSearchMgm(e.options.model, e.options.search)
+		return mgmActions.NewSearch(b, e.options.search)
 	default:
 		return nil
 	}
 }
 
 func (e *Simple) getActionGorm(key string) response.Action {
-	b := actions.Base{
-		ModelGorm: e.options.model,
+	b := gorm.Base{
+		Model:     e.options.model,
 		Scope:     e.options.scope,
+		TreeField: e.options.treeField,
+		Depth:     e.options.depth,
 	}
 	if e.options.needAuth(key) {
 		b.Handlers = gin.HandlersChain{response.AuthHandler}
 	}
 	switch key {
 	case response.Get:
-		return actions.NewGetGorm(b, e.GetKey())
+		return gorm.NewGet(b, e.GetKey())
 	case response.Control:
-		return actions.NewControlGorm(b, e.GetKey())
+		return gorm.NewControl(b, e.GetKey())
 	case response.Delete:
-		return actions.NewDeleteGorm(b, e.GetKey())
+		return gorm.NewDelete(b, e.GetKey())
 	case response.Search:
-		return actions.NewSearchGorm(b, e.options.search)
+		return gorm.NewSearch(b, e.options.search)
 	default:
 		return nil
 	}
