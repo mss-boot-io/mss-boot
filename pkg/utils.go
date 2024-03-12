@@ -119,6 +119,14 @@ func SupportCreator(data any) bool {
 	return supportColumn(data, "creatorID", "creator_id")
 }
 
+func GetCreatorField() string {
+	return "creator_id"
+}
+
+func SetCreator(data any, id string) {
+	SetValue(data, "creatorID", id)
+}
+
 func supportColumn(data any, fields ...string) bool {
 	typeOf := reflect.TypeOf(data)
 	valueOf := reflect.ValueOf(data)
@@ -131,7 +139,7 @@ func supportColumn(data any, fields ...string) bool {
 	for i := 0; i < typeOf.NumField(); i++ {
 		field := typeOf.Field(i)
 		if field.Type.Kind() == reflect.Struct {
-			exist = SupportMultiTenant(valueOf.Field(i).Interface())
+			exist = supportColumn(valueOf.Field(i).Interface(), fields...)
 		}
 		if field.Type.Kind() == reflect.Ptr {
 			continue
@@ -159,15 +167,16 @@ func SetValue(data any, key string, value any) {
 	key = strings.ToLower(key)
 	for i := 0; i < typeOf.NumField(); i++ {
 		field := typeOf.Field(i)
+		if field.Type.Kind() == reflect.Ptr {
+			continue
+		}
 		if field.Type.Kind() == reflect.Struct {
 			SetValue(valueOf.Field(i).Interface(), key, value)
 			continue
 		}
-		if field.Type.Kind() == reflect.Ptr {
-			continue
-		}
 		if strings.ToLower(field.Name) == key {
-			valueOf.Field(i).Set(reflect.ValueOf(value))
+			v := reflect.ValueOf(value)
+			valueOf.FieldByName(field.Name).Set(v)
 		}
 	}
 }

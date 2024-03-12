@@ -66,19 +66,19 @@ func (e *Search) search(c *gin.Context) {
 
 	var count int64
 
-	query := db.WithContext(c).Model(m).
-		Scopes(
-			gorms.MakeCondition(req),
-			gorms.Paginate(int(req.GetPageSize()), int(req.GetPage())),
-		)
+	scopes := []func(db *gorm.DB) *gorm.DB{
+		gorms.MakeCondition(req),
+		gorms.Paginate(int(req.GetPageSize()), int(req.GetPage())),
+	}
 	if e.Scope != nil {
-		query = query.Scopes(e.Scope(c, m))
+		scopes = append(scopes, e.Scope(c, m))
 	}
-	if err := query.Limit(-1).Offset(-1).Count(&count).Error; err != nil && !errors.Is(err, gorm.ErrRecordNotFound) {
-		api.AddError(err).Log.ErrorContext(c, "Search error", "error", err)
-		api.Err(http.StatusInternalServerError)
-		return
-	}
+	query := db.WithContext(c).Model(m).Scopes(scopes...)
+	//if err := query.Limit(-1).Offset(-1).Count(&count).Error; err != nil && !errors.Is(err, gorm.ErrRecordNotFound) {
+	//	api.AddError(err).Log.ErrorContext(c, "Search error", "error", err)
+	//	api.Err(http.StatusInternalServerError)
+	//	return
+	//}
 
 	if e.Base.TreeField != "" && e.Base.Depth > 0 {
 		treeFields := make([]string, 0, e.Base.Depth)

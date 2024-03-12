@@ -14,6 +14,8 @@ import (
 	"net/http"
 	"strings"
 
+	"github.com/mss-boot-io/mss-boot/pkg/security"
+
 	"github.com/gin-gonic/gin"
 	"github.com/gin-gonic/gin/binding"
 	"github.com/go-playground/validator/v10"
@@ -27,6 +29,8 @@ var DefaultLanguage = "zh-CN"
 
 // AuthHandler 鉴权
 var AuthHandler gin.HandlerFunc
+
+var VerifyHandler func(ctx *gin.Context) security.Verifier
 
 // API api接口
 type API struct {
