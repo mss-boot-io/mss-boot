@@ -10,10 +10,11 @@ package response
 import (
 	"errors"
 	"fmt"
-	"github.com/mss-boot-io/mss-boot/pkg/security"
 	"log/slog"
 	"net/http"
 	"strings"
+
+	"github.com/mss-boot-io/mss-boot/pkg/security"
 
 	"github.com/gin-gonic/gin"
 	"github.com/gin-gonic/gin/binding"
