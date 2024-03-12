@@ -66,12 +66,34 @@ func (e *Control) create(c *gin.Context) {
 		api.Err(http.StatusUnprocessableEntity)
 		return
 	}
-	err := gormdb.DB.WithContext(c).Create(m).Error
+	err := gormdb.DB.WithContext(c).Transaction(func(tx *gorm.DB) error {
+		err := tx.Create(m).Error
+		if err != nil {
+			api.AddError(err).Log.ErrorContext(c, "Create error", "error", err)
+			api.Err(http.StatusInternalServerError)
+			return err
+		}
+		if pkg.SupportCreator(m) {
+			verify := response.VerifyHandler(c)
+			if verify == nil {
+				api.Err(http.StatusUnauthorized)
+				return errors.New("verify handler is nil")
+			}
+			err = tx.Model(m).Update(pkg.GetCreatorField(), verify.GetUserID()).Error
+			if err != nil {
+				api.AddError(err).Log.ErrorContext(c, "Create error", "error", err)
+				api.Err(http.StatusInternalServerError)
+				return err
+			}
+		}
+		return nil
+	})
+
 	if err != nil {
 		api.AddError(err).Log.ErrorContext(c, "Create error", "error", err)
-		api.Err(http.StatusInternalServerError)
 		return
 	}
+
 	api.OK(m)
 }
 
