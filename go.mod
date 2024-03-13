@@ -30,7 +30,7 @@ require (
 	go.opentelemetry.io/otel/trace v1.22.0
 	golang.org/x/time v0.5.0
 	google.golang.org/grpc v1.60.1
-	google.golang.org/protobuf v1.32.0
+	google.golang.org/protobuf v1.33.0
 	gorm.io/driver/mysql v1.5.2
 	gorm.io/driver/postgres v1.5.4
 	gorm.io/driver/sqlite v1.5.4
