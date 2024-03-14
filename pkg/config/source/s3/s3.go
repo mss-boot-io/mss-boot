@@ -58,6 +58,10 @@ func (s *Source) ReadFile(name string) (rb []byte, err error) {
 	return nil, err
 }
 
+func (s *Source) Watch(_ source.Entity, _ func([]byte, any) error) error {
+	return nil
+}
+
 // GetExtend get extend
 func (s *Source) GetExtend() source.Scheme {
 	return s.opt.Extend

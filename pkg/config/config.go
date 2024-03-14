@@ -27,7 +27,7 @@ import (
 )
 
 // Init 初始化配置
-func Init(cfg any, options ...source.Option) (err error) {
+func Init(cfg source.Entity, options ...source.Option) (err error) {
 	opts := source.DefaultOptions()
 	for _, opt := range options {
 		opt(opts)
@@ -54,15 +54,6 @@ func Init(cfg any, options ...source.Option) (err error) {
 		f, err = sourceS3.New(options...)
 	case source.MGDB:
 		f, err = mgdb.New(options...)
-		//if err != nil {
-		//	return err
-		//}
-		//var rb []byte
-		//rb, err = f.ReadFile(opts.Name)
-		//if err != nil {
-		//	return err
-		//}
-		//return yaml.Unmarshal(rb, cfg)
 	case source.GORM:
 		f, err = gorm.New(options...)
 	}
@@ -82,7 +73,7 @@ func Init(cfg any, options ...source.Option) (err error) {
 	if err != nil {
 		return err
 	}
-	var unm func([]byte, interface{}) error
+	var unm func([]byte, any) error
 	switch f.GetExtend() {
 	case source.SchemeYaml, source.SchemeYml:
 		unm = yaml.Unmarshal
@@ -106,7 +97,10 @@ func Init(cfg any, options ...source.Option) (err error) {
 			slog.Error(err.Error())
 		}
 	}
-	return nil
+	if !opts.Watch {
+		return nil
+	}
+	return f.Watch(cfg, unm)
 }
 
 func getStage() string {

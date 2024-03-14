@@ -38,6 +38,7 @@ var Extends = []Scheme{SchemeYaml, SchemeYml, SchemeJSOM}
 type Sourcer interface {
 	fs.ReadFileFS
 	GetExtend() Scheme
+	Watch(e Entity, unm func([]byte, any) error) error
 }
 
 // Option option
@@ -62,6 +63,7 @@ type Options struct {
 	Datasource        string
 	GORMDriver        string
 	GORMDsn           string
+	Watch             bool
 }
 
 // DefaultOptions default options
@@ -183,5 +185,11 @@ func WithFrom(fs fs.ReadFileFS) Option {
 func WithDriver(driver Driver) Option {
 	return func(args *Options) {
 		args.Driver = driver
+	}
+}
+
+func WithWatch(watch bool) Option {
+	return func(args *Options) {
+		args.Watch = watch
 	}
 }
