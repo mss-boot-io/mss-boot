@@ -52,6 +52,10 @@ func (s *Source) ReadFile(name string) ([]byte, error) {
 	return m.GenerateBytes()
 }
 
+func (s *Source) Watch(_ source.Entity, _ func([]byte, any) error) error {
+	return nil
+}
+
 // GetExtend get extend
 func (s *Source) GetExtend() source.Scheme {
 	return s.opt.Extend
