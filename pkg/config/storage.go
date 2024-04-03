@@ -110,7 +110,11 @@ func (o *Storage) Init() {
 
 	if o.Region == "" || o.AccessKeyID == "" || o.SecretAccessKey == "" {
 		//use default config
-		cfg, err := config.LoadDefaultConfig(context.TODO())
+		opts := make([]func(*config.LoadOptions) error, 0)
+		if o.Region != "" {
+			opts = append(opts, config.WithRegion(o.Region))
+		}
+		cfg, err := config.LoadDefaultConfig(context.TODO(), opts...)
 		if err != nil {
 			log.Fatalf("failed to load SDK configuration, %v", err)
 		}
