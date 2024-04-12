@@ -1,7 +1,7 @@
 //go:build sqlite3
 // +build sqlite3
 
-package database
+package gormdb
 
 import (
 	"gorm.io/driver/mysql"
@@ -10,7 +10,7 @@ import (
 	"gorm.io/gorm"
 )
 
-var opens = map[string]func(string) gorm.Dialector{
+var Opens = map[string]func(string) gorm.Dialector{
 	"mysql":    mysql.Open,
 	"postgres": postgres.Open,
 	"sqlite3":  sqlite.Open,
