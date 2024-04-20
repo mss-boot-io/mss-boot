@@ -13,16 +13,16 @@ import (
 	"net/http"
 
 	"github.com/gin-gonic/gin"
+	"gorm.io/gorm"
+
 	"github.com/mss-boot-io/mss-boot/pkg"
 	"github.com/mss-boot-io/mss-boot/pkg/config/gormdb"
 	"github.com/mss-boot-io/mss-boot/pkg/response"
-	"gorm.io/gorm"
 )
 
 // Control action
 type Control struct {
-	Base
-	Key string
+	opts *Options
 }
 
 // String action name
@@ -31,16 +31,19 @@ func (*Control) String() string {
 }
 
 // NewControl new control action
-func NewControl(b Base, key string) *Control {
+func NewControl(opts ...Option) *Control {
+	o := &Options{}
+	for _, opt := range opts {
+		opt(o)
+	}
 	return &Control{
-		Base: b,
-		Key:  key,
+		opts: o,
 	}
 }
 
 func (e *Control) Handler() gin.HandlersChain {
 	h := func(c *gin.Context) {
-		if e.Model == nil {
+		if e.opts.Model == nil {
 			response.Make(c).Err(http.StatusNotImplemented, "not implemented")
 			return
 		}
@@ -53,18 +56,26 @@ func (e *Control) Handler() gin.HandlersChain {
 			response.Make(c).Err(http.StatusNotImplemented, "not implemented")
 		}
 	}
-	if e.Handlers != nil {
-		return append(e.Handlers, h)
+	if e.opts.Handlers != nil {
+		return append(e.opts.Handlers, h)
 	}
 	return gin.HandlersChain{h}
 }
 
 func (e *Control) create(c *gin.Context) {
-	m := pkg.TablerDeepCopy(e.Model)
+	m := pkg.TablerDeepCopy(e.opts.Model)
 	api := response.Make(c).Bind(m)
 	if api.Error != nil {
 		api.Err(http.StatusUnprocessableEntity)
 		return
+	}
+	if e.opts.BeforeCreate != nil {
+		err := e.opts.BeforeCreate(c, gormdb.DB, m)
+		if err != nil {
+			api.AddError(err).Log.Error("BeforeCreate error", "error", err)
+			api.Err(http.StatusInternalServerError)
+			return
+		}
 	}
 	err := gormdb.DB.WithContext(c).Transaction(func(tx *gorm.DB) error {
 		err := tx.Create(m).Error
@@ -86,6 +97,14 @@ func (e *Control) create(c *gin.Context) {
 				return err
 			}
 		}
+		if e.opts.AfterCreate != nil {
+			err = e.opts.AfterCreate(c, tx, m)
+			if err != nil {
+				api.AddError(err).Log.Error("AfterCreate error", "error", err)
+				api.Err(http.StatusInternalServerError)
+				return err
+			}
+		}
 		return nil
 	})
 
@@ -98,23 +117,23 @@ func (e *Control) create(c *gin.Context) {
 }
 
 func (e *Control) update(c *gin.Context) {
-	m := pkg.TablerDeepCopy(e.Model)
-	id := c.Param(e.Key)
+	m := pkg.TablerDeepCopy(e.opts.Model)
+	id := c.Param(e.opts.Key)
 	api := response.Make(c)
 	if id == "" {
 		api.AddError(errors.New("id is empty"))
 		api.Err(http.StatusUnprocessableEntity)
 		return
 	}
-	query := gormdb.DB.Where(e.Key, id)
-	if e.Scope != nil {
-		query = query.Scopes(e.Scope(c, m))
+	query := gormdb.DB.Where(e.opts.Key, id)
+	if e.opts.Scope != nil {
+		query = query.Scopes(e.opts.Scope(c, m))
 	}
 	//find object
 	err := query.First(m).Error
 	if err != nil {
 		if errors.Is(err, gorm.ErrRecordNotFound) {
-			api.AddError(fmt.Errorf("%s(%s) record not found", e.Key, id))
+			api.AddError(fmt.Errorf("%s(%s) record not found", e.opts.Key, id))
 			api.Err(http.StatusNotFound)
 			return
 		}
@@ -128,15 +147,29 @@ func (e *Control) update(c *gin.Context) {
 		api.Err(http.StatusUnprocessableEntity)
 		return
 	}
+	if e.opts.BeforeUpdate != nil {
+		err = e.opts.BeforeUpdate(c, gormdb.DB, m)
+		if err != nil {
+			api.AddError(err).Err(http.StatusInternalServerError)
+			return
+		}
+	}
 	query = gormdb.DB.WithContext(c)
-	if e.Scope != nil {
-		query = query.Scopes(e.Scope(c, m))
+	if e.opts.Scope != nil {
+		query = query.Scopes(e.opts.Scope(c, m))
 	}
 	err = query.Save(m).Error
 	if err != nil {
 		api.AddError(err).Log.ErrorContext(c, "Update error", "error", err.Error())
 		api.Err(http.StatusInternalServerError)
 		return
+	}
+	if e.opts.AfterUpdate != nil {
+		err = e.opts.AfterUpdate(c, query, m)
+		if err != nil {
+			api.AddError(err).Err(http.StatusInternalServerError)
+			return
+		}
 	}
 	api.OK(m)
 }

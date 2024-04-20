@@ -12,32 +12,35 @@ import (
 	"net/http"
 
 	"github.com/gin-gonic/gin"
+
 	"github.com/mss-boot-io/mss-boot/pkg/config/gormdb"
 	"github.com/mss-boot-io/mss-boot/pkg/response"
 )
 
 // Delete action
 type Delete struct {
-	Base
-	Key string
+	opts *Options
 }
 
 // NewDelete new delete action
-func NewDelete(b Base, key string) *Delete {
+func NewDelete(opts ...Option) *Delete {
+	o := &Options{}
+	for _, opt := range opts {
+		opt(o)
+	}
 	return &Delete{
-		Base: b,
-		Key:  key,
+		opts: o,
 	}
 }
 
 func (e *Delete) Handler() gin.HandlersChain {
 	h := func(c *gin.Context) {
-		if e.Model == nil {
+		if e.opts.Model == nil {
 			response.Make(c).Err(http.StatusNotImplemented, "not implemented")
 			return
 		}
 		ids := make([]string, 0)
-		v := c.Param(e.Key)
+		v := c.Param(e.opts.Key)
 		if v == "batch" {
 			api := response.Make(c).Bind(&ids)
 			if api.Error != nil || len(ids) == 0 {
@@ -49,8 +52,8 @@ func (e *Delete) Handler() gin.HandlersChain {
 		}
 		e.delete(c, v)
 	}
-	if e.Handlers != nil {
-		return append(e.Handlers, h)
+	if e.opts.Handlers != nil {
+		return append(e.opts.Handlers, h)
 	}
 	return gin.HandlersChain{h}
 }
@@ -66,15 +69,29 @@ func (e *Delete) delete(c *gin.Context, ids ...string) {
 		api.Err(http.StatusUnprocessableEntity)
 		return
 	}
-	query := gormdb.DB.WithContext(c).Where(fmt.Sprintf("%s IN ?", e.Key), ids)
-	if e.Scope != nil {
-		query = query.Scopes(e.Scope(c, e.Model))
+	if e.opts.BeforeDelete != nil {
+		if err := e.opts.BeforeDelete(c, gormdb.DB, e.opts.Model); err != nil {
+			api.AddError(err).Log.ErrorContext(c, "BeforeDelete error", "error", err)
+			api.Err(http.StatusInternalServerError)
+			return
+		}
 	}
-	err := query.Delete(e.Model).Error
+	query := gormdb.DB.WithContext(c).Where(fmt.Sprintf("%s IN ?", e.opts.Key), ids)
+	if e.opts.Scope != nil {
+		query = query.Scopes(e.opts.Scope(c, e.opts.Model))
+	}
+	err := query.Delete(e.opts.Model).Error
 	if err != nil {
 		api.AddError(err).Log.ErrorContext(c, "Delete error", "error", err)
 		api.Err(http.StatusInternalServerError)
 		return
+	}
+	if e.opts.AfterDelete != nil {
+		if err = e.opts.AfterDelete(c, gormdb.DB, e.opts.Model); err != nil {
+			api.AddError(err).Log.ErrorContext(c, "AfterDelete error", "error", err)
+			api.Err(http.StatusInternalServerError)
+			return
+		}
 	}
 	api.OK(nil)
 }
