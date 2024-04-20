@@ -94,16 +94,26 @@ func (e *Simple) getActionGorm(key string) response.Action {
 	}
 	switch key {
 	case response.Get:
-		opts = append(opts, gorm.WithKey(e.GetKey()))
+		opts = append(opts, gorm.WithKey(e.GetKey()),
+			gorm.WithBeforeGet(e.options.beforeGet),
+			gorm.WithAfterGet(e.options.afterGet))
 		return gorm.NewGet(opts...)
 	case response.Control:
-		opts = append(opts, gorm.WithKey(e.GetKey()))
+		opts = append(opts, gorm.WithKey(e.GetKey()),
+			gorm.WithBeforeCreate(e.options.beforeCreate),
+			gorm.WithAfterCreate(e.options.afterCreate),
+			gorm.WithBeforeUpdate(e.options.beforeUpdate),
+			gorm.WithAfterUpdate(e.options.afterUpdate))
 		return gorm.NewControl(opts...)
 	case response.Delete:
-		opts = append(opts, gorm.WithKey(e.GetKey()))
+		opts = append(opts, gorm.WithKey(e.GetKey()),
+			gorm.WithBeforeDelete(e.options.beforeDelete),
+			gorm.WithAfterDelete(e.options.afterDelete))
 		return gorm.NewDelete(opts...)
 	case response.Search:
-		opts = append(opts, gorm.WithSearch(e.options.search))
+		opts = append(opts, gorm.WithSearch(e.options.search),
+			gorm.WithBeforeSearch(e.options.beforeSearch),
+			gorm.WithAfterSearch(e.options.afterSearch))
 		return gorm.NewSearch(opts...)
 	default:
 		return nil
