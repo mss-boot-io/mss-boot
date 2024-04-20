@@ -11,9 +11,9 @@ import (
 	"errors"
 	"net/http"
 
+	"github.com/gin-gonic/gin"
 	"gorm.io/gorm"
 
-	"github.com/gin-gonic/gin"
 	"github.com/mss-boot-io/mss-boot/pkg"
 	"github.com/mss-boot-io/mss-boot/pkg/config/gormdb"
 	"github.com/mss-boot-io/mss-boot/pkg/response"
@@ -21,8 +21,7 @@ import (
 
 // Get action
 type Get struct {
-	Base
-	Key string
+	opts *Options
 }
 
 // String action name
@@ -31,23 +30,26 @@ func (*Get) String() string {
 }
 
 // NewGet new get action
-func NewGet(b Base, key string) *Get {
+func NewGet(opts ...Option) *Get {
+	o := &Options{}
+	for _, opt := range opts {
+		opt(o)
+	}
 	return &Get{
-		Base: b,
-		Key:  key,
+		opts: o,
 	}
 }
 
 func (e *Get) Handler() gin.HandlersChain {
 	h := func(c *gin.Context) {
-		if e.Model == nil {
+		if e.opts.Model == nil {
 			response.Make(c).Err(http.StatusNotImplemented, "not implemented")
 			return
 		}
-		e.get(c, e.Key)
+		e.get(c, e.opts.Key)
 	}
-	if e.Handlers != nil {
-		return append(e.Handlers, h)
+	if e.opts.Handlers != nil {
+		return append(e.opts.Handlers, h)
 	}
 	return gin.HandlersChain{h}
 }
@@ -55,15 +57,22 @@ func (e *Get) Handler() gin.HandlersChain {
 // get one record by id
 func (e *Get) get(c *gin.Context, key string) {
 	api := response.Make(c)
-	m := pkg.TablerDeepCopy(e.Model)
+	m := pkg.TablerDeepCopy(e.opts.Model)
 	preloads := c.QueryArray("preloads[]")
 	query := gormdb.DB.Model(m).Where("id = ?", c.Param(key))
 
+	if e.opts.BeforeGet != nil {
+		if err := e.opts.BeforeGet(c, query, m); err != nil {
+			api.AddError(err).Log.Error("BeforeGet error", "error", err)
+			api.Err(http.StatusInternalServerError)
+			return
+		}
+	}
 	for _, preload := range preloads {
 		query = query.Preload(preload)
 	}
-	if e.Scope != nil {
-		query = query.Scopes(e.Scope(c, m))
+	if e.opts.Scope != nil {
+		query = query.Scopes(e.opts.Scope(c, m))
 	}
 	err := query.First(m).Error
 	if err != nil {
@@ -74,6 +83,13 @@ func (e *Get) get(c *gin.Context, key string) {
 		api.AddError(err).Log.ErrorContext(c, "Get error", "error", err)
 		api.Err(http.StatusInternalServerError)
 		return
+	}
+	if e.opts.AfterGet != nil {
+		if err = e.opts.AfterGet(c, query, m); err != nil {
+			api.AddError(err).Log.Error("AfterGet error", "error", err)
+			api.Err(http.StatusInternalServerError)
+			return
+		}
 	}
 	api.OK(m)
 }

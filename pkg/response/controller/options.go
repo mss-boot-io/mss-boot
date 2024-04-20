@@ -29,6 +29,16 @@ type Options struct {
 	treeField     string
 	modelProvider actions.ModelProvider
 	scope         func(ctx *gin.Context, table schema.Tabler) func(db *gorm.DB) *gorm.DB
+	beforeCreate  func(ctx *gin.Context, db *gorm.DB, m schema.Tabler) error
+	beforeUpdate  func(ctx *gin.Context, db *gorm.DB, m schema.Tabler) error
+	afterCreate   func(ctx *gin.Context, db *gorm.DB, m schema.Tabler) error
+	afterUpdate   func(ctx *gin.Context, db *gorm.DB, m schema.Tabler) error
+	beforeGet     func(ctx *gin.Context, db *gorm.DB, m schema.Tabler) error
+	afterGet      func(ctx *gin.Context, db *gorm.DB, m schema.Tabler) error
+	beforeDelete  func(ctx *gin.Context, db *gorm.DB, m schema.Tabler) error
+	afterDelete   func(ctx *gin.Context, db *gorm.DB, m schema.Tabler) error
+	beforeSearch  func(ctx *gin.Context, db *gorm.DB, m schema.Tabler) error
+	afterSearch   func(ctx *gin.Context, db *gorm.DB, m schema.Tabler) error
 }
 
 func (o *Options) needAuth(name string) bool {
@@ -124,4 +134,8 @@ func WithTreeField(treeField string) Option {
 	return func(o *Options) {
 		o.treeField = treeField
 	}
+}
+
+func WithBeforeControl() {
+
 }

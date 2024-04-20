@@ -11,17 +11,11 @@ import (
 	"net/http"
 
 	"github.com/gin-gonic/gin"
-	"gorm.io/gorm"
-	"gorm.io/gorm/schema"
 )
 
 // Base action
 type Base struct {
-	Model     schema.Tabler
-	Scope     func(ctx *gin.Context, table schema.Tabler) func(db *gorm.DB) *gorm.DB
-	Handlers  gin.HandlersChain
-	TreeField string
-	Depth     int
+	opts *Options
 }
 
 // String string
