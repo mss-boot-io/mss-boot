@@ -83,24 +83,28 @@ func (e *Simple) getActionMgm(key string) response.Action {
 }
 
 func (e *Simple) getActionGorm(key string) response.Action {
-	b := gorm.Base{
-		Model:     e.options.model,
-		Scope:     e.options.scope,
-		TreeField: e.options.treeField,
-		Depth:     e.options.depth,
+	opts := []gorm.Option{
+		gorm.WithModel(e.options.model),
+		gorm.WithScope(e.options.scope),
+		gorm.WithTreeField(e.options.treeField),
+		gorm.WithDepth(e.options.depth),
 	}
 	if e.options.needAuth(key) {
-		b.Handlers = gin.HandlersChain{response.AuthHandler}
+		opts = append(opts, gorm.WithHandlers(gin.HandlersChain{response.AuthHandler}))
 	}
 	switch key {
 	case response.Get:
-		return gorm.NewGet(b, e.GetKey())
+		opts = append(opts, gorm.WithKey(e.GetKey()))
+		return gorm.NewGet(opts...)
 	case response.Control:
-		return gorm.NewControl(b, e.GetKey())
+		opts = append(opts, gorm.WithKey(e.GetKey()))
+		return gorm.NewControl(opts...)
 	case response.Delete:
-		return gorm.NewDelete(b, e.GetKey())
+		opts = append(opts, gorm.WithKey(e.GetKey()))
+		return gorm.NewDelete(opts...)
 	case response.Search:
-		return gorm.NewSearch(b, e.options.search)
+		opts = append(opts, gorm.WithSearch(e.options.search))
+		return gorm.NewSearch(opts...)
 	default:
 		return nil
 	}
