@@ -19,23 +19,28 @@ type ActionHook func(ctx *gin.Context, db *gorm.DB, m schema.Tabler) error
 type Option func(*Options)
 
 type Options struct {
-	Model        schema.Tabler
-	Scope        func(ctx *gin.Context, table schema.Tabler) func(db *gorm.DB) *gorm.DB
-	Handlers     gin.HandlersChain
-	TreeField    string
-	Depth        int
-	Key          string
-	Search       response.Searcher
-	BeforeCreate ActionHook
-	AfterCreate  ActionHook
-	BeforeUpdate ActionHook
-	AfterUpdate  ActionHook
-	BeforeGet    ActionHook
-	AfterGet     ActionHook
-	BeforeDelete ActionHook
-	AfterDelete  ActionHook
-	BeforeSearch ActionHook
-	AfterSearch  ActionHook
+	Model           schema.Tabler
+	Scope           func(ctx *gin.Context, table schema.Tabler) func(db *gorm.DB) *gorm.DB
+	Handlers        gin.HandlersChain
+	TreeField       string
+	Depth           int
+	Key             string
+	Search          response.Searcher
+	BeforeCreate    ActionHook
+	AfterCreate     ActionHook
+	BeforeUpdate    ActionHook
+	AfterUpdate     ActionHook
+	BeforeGet       ActionHook
+	AfterGet        ActionHook
+	BeforeDelete    ActionHook
+	AfterDelete     ActionHook
+	BeforeSearch    ActionHook
+	AfterSearch     ActionHook
+	handlers        gin.HandlersChain
+	controlHandlers gin.HandlersChain
+	getHandlers     gin.HandlersChain
+	deleteHandlers  gin.HandlersChain
+	searchHandlers  gin.HandlersChain
 }
 
 func WithModel(m schema.Tabler) Option {
@@ -137,5 +142,29 @@ func WithBeforeSearch(hook ActionHook) Option {
 func WithAfterSearch(hook ActionHook) Option {
 	return func(o *Options) {
 		o.AfterSearch = hook
+	}
+}
+
+func WithControlHandlers(handlers gin.HandlersChain) Option {
+	return func(o *Options) {
+		o.controlHandlers = handlers
+	}
+}
+
+func WithGetHandlers(handlers gin.HandlersChain) Option {
+	return func(o *Options) {
+		o.getHandlers = handlers
+	}
+}
+
+func WithDeleteHandlers(handlers gin.HandlersChain) Option {
+	return func(o *Options) {
+		o.deleteHandlers = handlers
+	}
+}
+
+func WithSearchHandlers(handlers gin.HandlersChain) Option {
+	return func(o *Options) {
+		o.searchHandlers = handlers
 	}
 }

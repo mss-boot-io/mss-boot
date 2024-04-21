@@ -88,32 +88,35 @@ func (e *Simple) getActionGorm(key string) response.Action {
 		gorm.WithScope(e.options.scope),
 		gorm.WithTreeField(e.options.treeField),
 		gorm.WithDepth(e.options.depth),
+		gorm.WithHandlers(e.options.handlers),
+		gorm.WithControlHandlers(e.options.createHandlers),
+		gorm.WithGetHandlers(e.options.getHandlers),
+		gorm.WithDeleteHandlers(e.options.deleteHandlers),
+		gorm.WithSearchHandlers(e.options.searchHandlers),
+		gorm.WithBeforeGet(e.options.beforeGet),
+		gorm.WithAfterGet(e.options.afterGet),
+		gorm.WithBeforeCreate(e.options.beforeCreate),
+		gorm.WithAfterCreate(e.options.afterCreate),
+		gorm.WithBeforeUpdate(e.options.beforeUpdate),
+		gorm.WithAfterUpdate(e.options.afterUpdate),
+		gorm.WithBeforeDelete(e.options.beforeDelete),
+		gorm.WithAfterDelete(e.options.afterDelete),
+		gorm.WithBeforeSearch(e.options.beforeSearch),
+		gorm.WithAfterSearch(e.options.afterSearch),
+		gorm.WithKey(e.GetKey()),
+		gorm.WithSearch(e.options.search),
 	}
 	if e.options.needAuth(key) {
 		opts = append(opts, gorm.WithHandlers(gin.HandlersChain{response.AuthHandler}))
 	}
 	switch key {
 	case response.Get:
-		opts = append(opts, gorm.WithKey(e.GetKey()),
-			gorm.WithBeforeGet(e.options.beforeGet),
-			gorm.WithAfterGet(e.options.afterGet))
 		return gorm.NewGet(opts...)
 	case response.Control:
-		opts = append(opts, gorm.WithKey(e.GetKey()),
-			gorm.WithBeforeCreate(e.options.beforeCreate),
-			gorm.WithAfterCreate(e.options.afterCreate),
-			gorm.WithBeforeUpdate(e.options.beforeUpdate),
-			gorm.WithAfterUpdate(e.options.afterUpdate))
 		return gorm.NewControl(opts...)
 	case response.Delete:
-		opts = append(opts, gorm.WithKey(e.GetKey()),
-			gorm.WithBeforeDelete(e.options.beforeDelete),
-			gorm.WithAfterDelete(e.options.afterDelete))
 		return gorm.NewDelete(opts...)
 	case response.Search:
-		opts = append(opts, gorm.WithSearch(e.options.search),
-			gorm.WithBeforeSearch(e.options.beforeSearch),
-			gorm.WithAfterSearch(e.options.afterSearch))
 		return gorm.NewSearch(opts...)
 	default:
 		return nil

@@ -52,10 +52,14 @@ func (e *Delete) Handler() gin.HandlersChain {
 		}
 		e.delete(c, v)
 	}
-	if e.opts.Handlers != nil {
-		return append(e.opts.Handlers, h)
+	chain := gin.HandlersChain{h}
+	if e.opts.deleteHandlers != nil {
+		chain = append(e.opts.deleteHandlers, chain...)
 	}
-	return gin.HandlersChain{h}
+	if e.opts.Handlers != nil {
+		chain = append(e.opts.handlers, chain...)
+	}
+	return chain
 }
 
 // String action name
