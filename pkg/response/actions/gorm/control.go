@@ -56,10 +56,14 @@ func (e *Control) Handler() gin.HandlersChain {
 			response.Make(c).Err(http.StatusNotImplemented, "not implemented")
 		}
 	}
-	if e.opts.Handlers != nil {
-		return append(e.opts.Handlers, h)
+	chain := gin.HandlersChain{h}
+	if e.opts.controlHandlers != nil {
+		chain = append(e.opts.controlHandlers, chain...)
 	}
-	return gin.HandlersChain{h}
+	if e.opts.Handlers != nil {
+		chain = append(e.opts.handlers, chain...)
+	}
+	return chain
 }
 
 func (e *Control) create(c *gin.Context) {

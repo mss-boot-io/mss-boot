@@ -20,25 +20,31 @@ type Option func(*Options)
 
 // Options options
 type Options struct {
-	actions       []response.Action
-	search        response.Searcher
-	model         actions.Model
-	auth          bool
-	noAuthAction  []string
-	depth         int
-	treeField     string
-	modelProvider actions.ModelProvider
-	scope         func(ctx *gin.Context, table schema.Tabler) func(db *gorm.DB) *gorm.DB
-	beforeCreate  func(ctx *gin.Context, db *gorm.DB, m schema.Tabler) error
-	beforeUpdate  func(ctx *gin.Context, db *gorm.DB, m schema.Tabler) error
-	afterCreate   func(ctx *gin.Context, db *gorm.DB, m schema.Tabler) error
-	afterUpdate   func(ctx *gin.Context, db *gorm.DB, m schema.Tabler) error
-	beforeGet     func(ctx *gin.Context, db *gorm.DB, m schema.Tabler) error
-	afterGet      func(ctx *gin.Context, db *gorm.DB, m schema.Tabler) error
-	beforeDelete  func(ctx *gin.Context, db *gorm.DB, m schema.Tabler) error
-	afterDelete   func(ctx *gin.Context, db *gorm.DB, m schema.Tabler) error
-	beforeSearch  func(ctx *gin.Context, db *gorm.DB, m schema.Tabler) error
-	afterSearch   func(ctx *gin.Context, db *gorm.DB, m schema.Tabler) error
+	actions        []response.Action
+	search         response.Searcher
+	model          actions.Model
+	auth           bool
+	noAuthAction   []string
+	depth          int
+	treeField      string
+	modelProvider  actions.ModelProvider
+	scope          func(ctx *gin.Context, table schema.Tabler) func(db *gorm.DB) *gorm.DB
+	beforeCreate   func(ctx *gin.Context, db *gorm.DB, m schema.Tabler) error
+	beforeUpdate   func(ctx *gin.Context, db *gorm.DB, m schema.Tabler) error
+	afterCreate    func(ctx *gin.Context, db *gorm.DB, m schema.Tabler) error
+	afterUpdate    func(ctx *gin.Context, db *gorm.DB, m schema.Tabler) error
+	beforeGet      func(ctx *gin.Context, db *gorm.DB, m schema.Tabler) error
+	afterGet       func(ctx *gin.Context, db *gorm.DB, m schema.Tabler) error
+	beforeDelete   func(ctx *gin.Context, db *gorm.DB, m schema.Tabler) error
+	afterDelete    func(ctx *gin.Context, db *gorm.DB, m schema.Tabler) error
+	beforeSearch   func(ctx *gin.Context, db *gorm.DB, m schema.Tabler) error
+	afterSearch    func(ctx *gin.Context, db *gorm.DB, m schema.Tabler) error
+	handlers       gin.HandlersChain
+	createHandlers gin.HandlersChain
+	updateHandlers gin.HandlersChain
+	getHandlers    gin.HandlersChain
+	deleteHandlers gin.HandlersChain
+	searchHandlers gin.HandlersChain
 }
 
 func (o *Options) needAuth(name string) bool {
@@ -136,6 +142,98 @@ func WithTreeField(treeField string) Option {
 	}
 }
 
-func WithBeforeControl() {
+func WithBeforeCreate(beforeCreate func(ctx *gin.Context, db *gorm.DB, m schema.Tabler) error) Option {
+	return func(o *Options) {
+		o.beforeCreate = beforeCreate
+	}
+}
 
+func WithAfterCreate(afterCreate func(ctx *gin.Context, db *gorm.DB, m schema.Tabler) error) Option {
+	return func(o *Options) {
+		o.afterCreate = afterCreate
+	}
+}
+
+func WithBeforeUpdate(beforeUpdate func(ctx *gin.Context, db *gorm.DB, m schema.Tabler) error) Option {
+	return func(o *Options) {
+		o.beforeUpdate = beforeUpdate
+	}
+}
+
+func WithAfterUpdate(afterUpdate func(ctx *gin.Context, db *gorm.DB, m schema.Tabler) error) Option {
+	return func(o *Options) {
+		o.afterUpdate = afterUpdate
+	}
+}
+
+func WithBeforeGet(beforeGet func(ctx *gin.Context, db *gorm.DB, m schema.Tabler) error) Option {
+	return func(o *Options) {
+		o.beforeGet = beforeGet
+	}
+}
+
+func WithAfterGet(afterGet func(ctx *gin.Context, db *gorm.DB, m schema.Tabler) error) Option {
+	return func(o *Options) {
+		o.afterGet = afterGet
+	}
+}
+
+func WithBeforeDelete(beforeDelete func(ctx *gin.Context, db *gorm.DB, m schema.Tabler) error) Option {
+	return func(o *Options) {
+		o.beforeDelete = beforeDelete
+	}
+}
+
+func WithAfterDelete(afterDelete func(ctx *gin.Context, db *gorm.DB, m schema.Tabler) error) Option {
+	return func(o *Options) {
+		o.afterDelete = afterDelete
+	}
+}
+
+func WithBeforeSearch(beforeSearch func(ctx *gin.Context, db *gorm.DB, m schema.Tabler) error) Option {
+	return func(o *Options) {
+		o.beforeSearch = beforeSearch
+	}
+}
+
+func WithAfterSearch(afterSearch func(ctx *gin.Context, db *gorm.DB, m schema.Tabler) error) Option {
+	return func(o *Options) {
+		o.afterSearch = afterSearch
+	}
+}
+
+func WithHandlers(handlers gin.HandlersChain) Option {
+	return func(o *Options) {
+		o.handlers = handlers
+	}
+}
+
+func WithCreateHandlers(handlers gin.HandlersChain) Option {
+	return func(o *Options) {
+		o.createHandlers = handlers
+	}
+}
+
+func WithUpdateHandlers(handlers gin.HandlersChain) Option {
+	return func(o *Options) {
+		o.updateHandlers = handlers
+	}
+}
+
+func WithGetHandlers(handlers gin.HandlersChain) Option {
+	return func(o *Options) {
+		o.getHandlers = handlers
+	}
+}
+
+func WithDeleteHandlers(handlers gin.HandlersChain) Option {
+	return func(o *Options) {
+		o.deleteHandlers = handlers
+	}
+}
+
+func WithSearchHandlers(handlers gin.HandlersChain) Option {
+	return func(o *Options) {
+		o.searchHandlers = handlers
+	}
 }

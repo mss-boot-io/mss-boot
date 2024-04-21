@@ -51,10 +51,14 @@ func (e *Search) Handler() gin.HandlersChain {
 		}
 		e.search(c)
 	}
-	if e.opts.Handlers != nil {
-		return append(e.opts.Handlers, h)
+	chain := gin.HandlersChain{h}
+	if e.opts.searchHandlers != nil {
+		chain = append(e.opts.searchHandlers, chain...)
 	}
-	return gin.HandlersChain{h}
+	if e.opts.Handlers != nil {
+		chain = append(e.opts.handlers, chain...)
+	}
+	return chain
 }
 
 func (e *Search) search(c *gin.Context) {

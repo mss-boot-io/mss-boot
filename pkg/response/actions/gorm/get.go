@@ -48,10 +48,14 @@ func (e *Get) Handler() gin.HandlersChain {
 		}
 		e.get(c, e.opts.Key)
 	}
-	if e.opts.Handlers != nil {
-		return append(e.opts.Handlers, h)
+	chain := gin.HandlersChain{h}
+	if e.opts.getHandlers != nil {
+		chain = append(e.opts.getHandlers, chain...)
 	}
-	return gin.HandlersChain{h}
+	if e.opts.Handlers != nil {
+		chain = append(e.opts.handlers, chain...)
+	}
+	return chain
 }
 
 // get one record by id
