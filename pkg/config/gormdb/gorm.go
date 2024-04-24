@@ -11,6 +11,8 @@ import (
 	"log/slog"
 	"os"
 
+	"github.com/mss-boot-io/mss-boot/pkg"
+
 	"github.com/casbin/casbin/v2"
 	"github.com/casbin/casbin/v2/model"
 	"github.com/casbin/casbin/v2/persist"
@@ -91,6 +93,17 @@ type GORMConfig struct {
 // Init init db
 func (e *Database) Init() {
 	var err error
+	//parse env
+	e.Source = pkg.ParseEnvTemplate(e.Source)
+	for i := range e.Registers {
+		for j := range e.Registers[i].Sources {
+			e.Registers[i].Sources[j] = pkg.ParseEnvTemplate(e.Registers[i].Sources[j])
+		}
+		for j := range e.Registers[i].Replicas {
+			e.Registers[i].Replicas[j] = pkg.ParseEnvTemplate(e.Registers[i].Replicas[j])
+		}
+	}
+
 	registers := make([]ResolverConfigure, len(e.Registers))
 	for i := range e.Registers {
 		registers[i] = NewResolverConfigure(
@@ -154,7 +167,6 @@ func (e *Database) Init() {
 		if err != nil {
 			slog.Error("Enforcer.LoadPolicy error", slog.Any("err", err))
 			os.Exit(-1)
-			slog.Default()
 		}
 		Enforcer.EnableAutoSave(true)
 		Enforcer.EnableAutoBuildRoleLinks(true)

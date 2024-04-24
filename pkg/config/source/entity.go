@@ -11,3 +11,7 @@ package source
 type Entity interface {
 	OnChange()
 }
+
+type PrefixHook interface {
+	Init()
+}
