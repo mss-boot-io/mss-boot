@@ -1,8 +1,11 @@
 package pkg
 
 import (
+	"os"
 	"reflect"
 	"strings"
+	"text/template"
+	"text/template/parse"
 
 	"github.com/mss-boot-io/mss-boot/pkg/enum"
 	"github.com/spf13/cast"
@@ -179,4 +182,49 @@ func SetValue(data any, key string, value any) {
 			valueOf.FieldByName(field.Name).Set(v)
 		}
 	}
+}
+
+// ParseEnvTemplate 替换环境变量模板
+func ParseEnvTemplate(t string) string {
+	var err error
+	temp := template.New("env")
+	temp, err = temp.Parse(t)
+	if err != nil {
+		return t
+	}
+	tree, err := parse.Parse("env", t, "{{", "}}")
+	if err != nil {
+		return t
+	}
+	vars := make(map[string]string)
+	for _, v := range getParseKeys(tree["env"].Root) {
+		vars[v] = os.Getenv(v)
+	}
+	var buf strings.Builder
+	err = temp.Execute(&buf, vars)
+	if err != nil {
+		return t
+	}
+	return buf.String()
+}
+
+// getParseKeys get parse keys from template text
+func getParseKeys(nodes *parse.ListNode) []string {
+	keys := make([]string, 0)
+	if nodes == nil {
+		return keys
+	}
+	for a := range nodes.Nodes {
+		if actionNode, ok := nodes.Nodes[a].(*parse.ActionNode); ok {
+			if actionNode == nil || actionNode.Pipe == nil {
+				continue
+			}
+			for b := range actionNode.Pipe.Cmds {
+				if strings.Index(actionNode.Pipe.Cmds[b].String(), ".") == 0 {
+					keys = append(keys, actionNode.Pipe.Cmds[b].String()[1:])
+				}
+			}
+		}
+	}
+	return keys
 }

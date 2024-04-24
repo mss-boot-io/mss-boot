@@ -69,16 +69,24 @@ func Init(cfg source.Entity, options ...source.Option) (err error) {
 		slog.Error(err.Error())
 		return err
 	}
-	rb, err = parseTemplateWithEnv(rb)
-	if err != nil {
-		return err
-	}
 	var unm func([]byte, any) error
 	switch f.GetExtend() {
 	case source.SchemeYaml, source.SchemeYml:
 		unm = yaml.Unmarshal
 	case source.SchemeJSOM:
 		unm = json.Unmarshal
+	}
+	if opts.PrefixHook != nil {
+		err = unm(rb, opts.PrefixHook)
+		if err != nil {
+			slog.Error(err.Error())
+			return err
+		}
+		opts.PrefixHook.Init()
+	}
+	rb, err = parseTemplateWithEnv(rb)
+	if err != nil {
+		return err
 	}
 	err = unm(rb, cfg)
 	if err != nil {
@@ -88,6 +96,14 @@ func Init(cfg source.Entity, options ...source.Option) (err error) {
 
 	rb, err = f.ReadFile(fmt.Sprintf("%s-%s", opts.Name, stage))
 	if err == nil {
+		if opts.PrefixHook != nil {
+			err = unm(rb, opts.PrefixHook)
+			if err != nil {
+				slog.Error(err.Error())
+				return err
+			}
+			opts.PrefixHook.Init()
+		}
 		rb, err = parseTemplateWithEnv(rb)
 		if err != nil {
 			return err

@@ -64,6 +64,7 @@ type Options struct {
 	GORMDriver        string
 	GORMDsn           string
 	Watch             bool
+	PrefixHook        PrefixHook
 }
 
 // DefaultOptions default options
@@ -71,7 +72,14 @@ func DefaultOptions() *Options {
 	return &Options{
 		Provider: Local,
 		Name:     "application",
-		Dir:      "cfg",
+		Dir:      "config",
+	}
+}
+
+// WithPrefixHook set prefix hook
+func WithPrefixHook(hook PrefixHook) Option {
+	return func(args *Options) {
+		args.PrefixHook = hook
 	}
 }
 
