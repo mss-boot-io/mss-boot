@@ -13,6 +13,7 @@ import (
 	"time"
 
 	"github.com/aws/aws-sdk-go-v2/service/s3"
+	"k8s.io/client-go/kubernetes"
 )
 
 // Provider provider
@@ -66,7 +67,10 @@ type Options struct {
 	GORMDriver        string
 	GORMDsn           string
 	Watch             bool
+	Namespace         string
+	Configmap         string
 	PrefixHook        PrefixHook
+	Clientset         *kubernetes.Clientset
 }
 
 // DefaultOptions default options
