@@ -21,7 +21,7 @@ type Provider string
 const (
 	// FS fs
 	FS Provider = "fs"
-	// Local local
+	// Local file
 	Local Provider = "local"
 	// S3 s3
 	S3 Provider = "s3"
@@ -29,6 +29,8 @@ const (
 	MGDB Provider = "mgdb"
 	// GORM gorm
 	GORM Provider = "gorm"
+	// ConfigMap k8s configmap
+	ConfigMap Provider = "configmap"
 )
 
 // Extends extends
