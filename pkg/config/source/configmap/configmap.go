@@ -130,6 +130,9 @@ func (s *Source) getClientset() error {
 				}
 			}
 			config, err = clientcmd.NewDefaultClientConfig(*apiConfig, &clientcmd.ConfigOverrides{}).ClientConfig()
+			if err != nil {
+				return err
+			}
 		}
 		s.opt.Clientset, err = kubernetes.NewForConfig(config)
 		if err != nil {
