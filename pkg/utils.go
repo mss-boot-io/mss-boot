@@ -228,3 +228,15 @@ func getParseKeys(nodes *parse.ListNode) []string {
 	}
 	return keys
 }
+
+// GetStage get stage
+func GetStage() string {
+	stage := os.Getenv("stage")
+	if stage == "" {
+		stage = os.Getenv("STAGE")
+	}
+	if stage == "" {
+		stage = "local"
+	}
+	return stage
+}

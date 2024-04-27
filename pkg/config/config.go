@@ -17,7 +17,10 @@ import (
 	"text/template"
 	"text/template/parse"
 
+	"github.com/mss-boot-io/mss-boot/pkg"
+
 	"github.com/mss-boot-io/mss-boot/pkg/config/source"
+	"github.com/mss-boot-io/mss-boot/pkg/config/source/configmap"
 	sourceFS "github.com/mss-boot-io/mss-boot/pkg/config/source/fs"
 	"github.com/mss-boot-io/mss-boot/pkg/config/source/gorm"
 	sourceLocal "github.com/mss-boot-io/mss-boot/pkg/config/source/local"
@@ -32,12 +35,11 @@ func Init(cfg source.Entity, options ...source.Option) (err error) {
 	for _, opt := range options {
 		opt(opts)
 	}
+	stage := pkg.GetStage()
 	var f source.Sourcer
 	switch opts.Provider {
 	case source.FS:
 		f, err = sourceFS.New(options...)
-	case source.Local:
-		f, err = sourceLocal.New(options...)
 	case source.S3:
 		s := &Storage{
 			Type:            ProviderType(os.Getenv("s3_provider")),
@@ -56,12 +58,18 @@ func Init(cfg source.Entity, options ...source.Option) (err error) {
 		f, err = mgdb.New(options...)
 	case source.GORM:
 		f, err = gorm.New(options...)
+	case source.ConfigMap:
+		options = append([]source.Option{source.WithNamespace(strings.ToLower(stage))}, options...)
+		f, err = configmap.New(options...)
+	default:
+		f, err = sourceLocal.New(options...)
 	}
 	if err != nil {
 		return err
 	}
-
-	stage := getStage()
+	if f == nil {
+		return fmt.Errorf("source not found")
+	}
 
 	var rb []byte
 	rb, err = f.ReadFile(opts.Name)
@@ -117,17 +125,6 @@ func Init(cfg source.Entity, options ...source.Option) (err error) {
 		return nil
 	}
 	return f.Watch(cfg, unm)
-}
-
-func getStage() string {
-	stage := os.Getenv("stage")
-	if stage == "" {
-		stage = os.Getenv("STAGE")
-	}
-	if stage == "" {
-		stage = "local"
-	}
-	return stage
 }
 
 func parseTemplateWithEnv(rb []byte) ([]byte, error) {
