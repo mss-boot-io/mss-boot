@@ -71,6 +71,13 @@ type Options struct {
 	Configmap         string
 	PrefixHook        PrefixHook
 	Clientset         *kubernetes.Clientset
+	Kubeconfig        string
+	KubeconfigPath    string
+}
+
+func (o *Options) GetExtend() Scheme {
+	return o.Extend
+
 }
 
 // DefaultOptions default options
@@ -205,5 +212,40 @@ func WithDriver(driver Driver) Option {
 func WithWatch(watch bool) Option {
 	return func(args *Options) {
 		args.Watch = watch
+	}
+}
+
+// WithClientset set k8s clientset
+func WithClientset(clientset *kubernetes.Clientset) Option {
+	return func(args *Options) {
+		args.Clientset = clientset
+	}
+}
+
+// WithNamespace set k8s namespace
+func WithNamespace(namespace string) Option {
+	return func(args *Options) {
+		args.Namespace = namespace
+	}
+}
+
+// WithConfigmap set k8s configmap name
+func WithConfigmap(configmap string) Option {
+	return func(args *Options) {
+		args.Configmap = configmap
+	}
+}
+
+// WithKubeconfig set k8s kubeconfig
+func WithKubeconfig(kubeconfig string) Option {
+	return func(args *Options) {
+		args.Kubeconfig = kubeconfig
+	}
+}
+
+// WithKubeconfigPath set k8s kubeconfig path
+func WithKubeconfigPath(kubeconfigPath string) Option {
+	return func(args *Options) {
+		args.KubeconfigPath = kubeconfigPath
 	}
 }
