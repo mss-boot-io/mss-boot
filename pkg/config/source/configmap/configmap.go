@@ -30,8 +30,7 @@ import (
 
 // Source is a k8s configmap source
 type Source struct {
-	opt  *source.Options
-	done chan struct{}
+	opt *source.Options
 }
 
 func (s *Source) GetExtend() source.Scheme {
@@ -74,9 +73,6 @@ func (s *Source) Watch(c source.Entity, unm func([]byte, any) error) error {
 	}
 	go func(sc *Source, cfg source.Entity, w watch.Interface, decoder func([]byte, any) error) {
 		defer w.Stop()
-		if sc.done == nil {
-			sc.done = make(chan struct{})
-		}
 		for event := range w.ResultChan() {
 			if event.Type == watch.Modified {
 				cm, ok := event.Object.(*corev1.ConfigMap)

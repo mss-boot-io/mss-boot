@@ -17,6 +17,8 @@ import (
 	"text/template"
 	"text/template/parse"
 
+	"github.com/mss-boot-io/mss-boot/pkg/config/source/consul"
+
 	"github.com/mss-boot-io/mss-boot/pkg"
 
 	"github.com/mss-boot-io/mss-boot/pkg/config/source"
@@ -61,6 +63,8 @@ func Init(cfg source.Entity, options ...source.Option) (err error) {
 	case source.ConfigMap:
 		options = append([]source.Option{source.WithNamespace(strings.ToLower(stage))}, options...)
 		f, err = configmap.New(options...)
+	case source.Consul:
+		f, err = consul.New(options...)
 	default:
 		f, err = sourceLocal.New(options...)
 	}
