@@ -17,18 +17,17 @@ import (
 	"text/template"
 	"text/template/parse"
 
-	"github.com/mss-boot-io/mss-boot/pkg/config/source/consul"
+	"gopkg.in/yaml.v3"
 
 	"github.com/mss-boot-io/mss-boot/pkg"
-
 	"github.com/mss-boot-io/mss-boot/pkg/config/source"
 	"github.com/mss-boot-io/mss-boot/pkg/config/source/configmap"
+	sourceConsul "github.com/mss-boot-io/mss-boot/pkg/config/source/consul"
 	sourceFS "github.com/mss-boot-io/mss-boot/pkg/config/source/fs"
 	"github.com/mss-boot-io/mss-boot/pkg/config/source/gorm"
 	sourceLocal "github.com/mss-boot-io/mss-boot/pkg/config/source/local"
 	"github.com/mss-boot-io/mss-boot/pkg/config/source/mgdb"
 	sourceS3 "github.com/mss-boot-io/mss-boot/pkg/config/source/s3"
-	"gopkg.in/yaml.v3"
 )
 
 // Init 初始化配置
@@ -64,7 +63,7 @@ func Init(cfg source.Entity, options ...source.Option) (err error) {
 		options = append([]source.Option{source.WithNamespace(strings.ToLower(stage))}, options...)
 		f, err = configmap.New(options...)
 	case source.Consul:
-		f, err = consul.New(options...)
+		f, err = sourceConsul.New(options...)
 	default:
 		f, err = sourceLocal.New(options...)
 	}
