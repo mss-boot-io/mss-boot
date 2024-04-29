@@ -6,7 +6,6 @@ import (
 	"io/fs"
 	"log/slog"
 	"path/filepath"
-	"time"
 
 	corev1 "k8s.io/api/core/v1"
 	metav1 "k8s.io/apimachinery/pkg/apis/meta/v1"
@@ -30,8 +29,7 @@ import (
 
 // Source is a k8s configmap source
 type Source struct {
-	opt  *source.Options
-	done chan struct{}
+	opt *source.Options
 }
 
 func (s *Source) GetExtend() source.Scheme {
@@ -74,9 +72,6 @@ func (s *Source) Watch(c source.Entity, unm func([]byte, any) error) error {
 	}
 	go func(sc *Source, cfg source.Entity, w watch.Interface, decoder func([]byte, any) error) {
 		defer w.Stop()
-		if sc.done == nil {
-			sc.done = make(chan struct{})
-		}
 		for event := range w.ResultChan() {
 			if event.Type == watch.Modified {
 				cm, ok := event.Object.(*corev1.ConfigMap)
@@ -148,9 +143,6 @@ func New(options ...source.Option) (*Source, error) {
 	}
 	for _, opt := range options {
 		opt(s.opt)
-	}
-	if s.opt.Timeout == 0 {
-		s.opt.Timeout = 5 * time.Second
 	}
 	err := s.getClientset()
 	if err != nil {

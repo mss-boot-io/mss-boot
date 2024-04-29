@@ -32,6 +32,8 @@ const (
 	GORM Provider = "gorm"
 	// ConfigMap k8s configmap
 	ConfigMap Provider = "configmap"
+	// Consul consul
+	Consul Provider = "consul"
 )
 
 // Extends extends
@@ -86,6 +88,7 @@ func DefaultOptions() *Options {
 		Provider: Local,
 		Name:     "application",
 		Dir:      "config",
+		Timeout:  5 * time.Second,
 	}
 }
 
