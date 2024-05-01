@@ -134,7 +134,7 @@ func (m *Model) TenantScope(ctx *gin.Context,
 			_ = db.AddError(err)
 			return db
 		}
-		return db.Where(fmt.Sprintf("`%s`.`tenant_id` = ?", m.TableName()), tenantID)
+		return db.Where(fmt.Sprintf("%s.tenant_id = ?", m.TableName()), tenantID)
 	}
 }
 
