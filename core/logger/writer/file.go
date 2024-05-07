@@ -24,11 +24,13 @@ type FileWriter struct {
 
 // NewFileWriter 实例化FileWriter, 支持大文件分割
 func NewFileWriter(opts ...Option) (*FileWriter, error) {
-	p := &FileWriter{
-		opts: setDefault(),
-	}
+	options := setDefault()
 	for _, o := range opts {
-		o(&p.opts)
+		o(&options)
+	}
+	p := &FileWriter{
+		opts:  options,
+		input: make(chan []byte, options.bufferSize),
 	}
 	var filename string
 	var err error
@@ -56,7 +58,6 @@ func NewFileWriter(opts ...Option) (*FileWriter, error) {
 	if err != nil {
 		return nil, err
 	}
-	p.input = make(chan []byte, 100)
 	go p.write()
 	return p, nil
 }
