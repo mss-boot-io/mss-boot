@@ -22,12 +22,27 @@ import (
 
 // Logger logger配置
 type Logger struct {
-	Path      string     `yaml:"path" json:"path"`
-	Level     slog.Level `yaml:"level" json:"level"`
-	Stdout    string     `yaml:"stdout" json:"stdout"`
-	AddSource bool       `yaml:"addSource" json:"addSource"`
-	Cap       uint       `yaml:"cap" json:"cap"`
-	Json      bool       `yaml:"json" json:"json"`
+	Path       string     `yaml:"path" json:"path"`
+	Level      slog.Level `yaml:"level" json:"level"`
+	Stdout     string     `yaml:"stdout" json:"stdout"`
+	AddSource  bool       `yaml:"addSource" json:"addSource"`
+	Cap        uint       `yaml:"cap" json:"cap"`
+	Json       bool       `yaml:"json" json:"json"`
+	BufferSize uint       `yaml:"bufferSize" json:"bufferSize"`
+	Loki       *Loki      `yaml:"loki" json:"loki"`
+}
+
+type Loki struct {
+	URL      string            `yaml:"url" json:"url"`
+	Labels   map[string]string `yaml:"labels" json:"labels"`
+	Interval time.Duration     `yaml:"interval" json:"interval"`
+}
+
+func (l *Loki) MergeLabels(labels map[string]string) {
+	for k, v := range l.Labels {
+		labels[k] = v
+	}
+	l.Labels = labels
 }
 
 // Init 初始化日志
@@ -37,9 +52,10 @@ func (e *Logger) Init() {
 	switch e.Stdout {
 	case "file":
 		if !pathExist(e.Path) {
-			err := pathCreate(e.Path)
+			err = pathCreate(e.Path)
 			if err != nil {
-				log.Fatalf("create dir error: %s", err.Error())
+				slog.Error("create dir error", slog.Any("error", err))
+				os.Exit(-1)
 			}
 		}
 		output, err = writer.NewFileWriter(
@@ -48,7 +64,24 @@ func (e *Logger) Init() {
 			writer.WithCap(e.Cap),
 		)
 		if err != nil {
-			log.Fatalf("logger setup error: %s", err.Error())
+			slog.Error("logger setup error", slog.Any("error", err))
+			os.Exit(-1)
+		}
+	case "loki":
+		opts := make([]writer.Option, 0)
+		if e.Loki != nil && e.Loki.URL != "" {
+			opts = append(opts, writer.WithLokiEndpoint(e.Loki.URL))
+		}
+		if e.Loki != nil && len(e.Loki.Labels) > 0 {
+			opts = append(opts, writer.WithLokiLabels(e.Loki.Labels))
+		}
+		if e.Loki != nil && e.Loki.Interval > 0 {
+			opts = append(opts, writer.WithLokiInterval(e.Loki.Interval))
+		}
+		output, err = writer.NewLokiWriter(opts...)
+		if err != nil {
+			slog.Error("logger setup error", slog.Any("error", err))
+			os.Exit(-1)
 		}
 	default:
 		output = os.Stderr
