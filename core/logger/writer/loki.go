@@ -55,7 +55,9 @@ func (p *LokiWriter) Write(data []byte) (n int, err error) {
 
 func (p *LokiWriter) write() {
 	entries := make([]logproto.Entry, 0)
-	defer p.send(entries)
+	defer func() {
+		_ = p.send(entries)
+	}()
 	for {
 		select {
 		case <-time.After(p.opts.lokiInterval):
