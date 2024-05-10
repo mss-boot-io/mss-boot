@@ -6,6 +6,9 @@ import (
 	"io"
 	"log/slog"
 	"net/http"
+	"os"
+	"os/signal"
+	"syscall"
 	"time"
 
 	"github.com/gogo/protobuf/proto"
@@ -55,11 +58,19 @@ func (p *LokiWriter) Write(data []byte) (n int, err error) {
 
 func (p *LokiWriter) write() {
 	entries := make([]logproto.Entry, 0)
-	defer func() {
-		_ = p.send(entries)
-	}()
+
+	done := make(chan os.Signal, 1)
+	signal.Notify(done, os.Interrupt, syscall.SIGINT, syscall.SIGTERM)
 	for {
 		select {
+		case <-done:
+			err := p.send(entries)
+			if err != nil {
+				slog.Error("application exit, send to loki failed", slog.String("error", err.Error()))
+				err = nil
+			}
+			entries = make([]logproto.Entry, 0)
+			return
 		case <-time.After(p.opts.lokiInterval):
 			// send to loki
 			if len(entries) > 0 {

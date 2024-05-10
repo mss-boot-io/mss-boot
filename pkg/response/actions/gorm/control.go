@@ -8,6 +8,7 @@ package gorm
  */
 
 import (
+	"context"
 	"errors"
 	"fmt"
 	"net/http"
@@ -129,7 +130,7 @@ func (e *Control) update(c *gin.Context) {
 		api.Err(http.StatusUnprocessableEntity)
 		return
 	}
-	query := gormdb.DB.Where(e.opts.Key, id)
+	query := gormdb.DB.WithContext(context.WithValue(c, "gorm:cache:tag", m.TableName())).Where(e.opts.Key, id)
 	if e.opts.Scope != nil {
 		query = query.Scopes(e.opts.Scope(c, m))
 	}
@@ -167,6 +168,9 @@ func (e *Control) update(c *gin.Context) {
 		api.AddError(err).Log.ErrorContext(c, "Update error", "error", err.Error())
 		api.Err(http.StatusInternalServerError)
 		return
+	}
+	if CleanCacheFromTag != nil {
+		_ = CleanCacheFromTag(c, m.TableName())
 	}
 	if e.opts.AfterUpdate != nil {
 		err = e.opts.AfterUpdate(c, query, m)

@@ -8,6 +8,7 @@ package gorm
  */
 
 import (
+	"context"
 	"errors"
 	"net/http"
 
@@ -63,7 +64,7 @@ func (e *Get) get(c *gin.Context, key string) {
 	api := response.Make(c)
 	m := pkg.TablerDeepCopy(e.opts.Model)
 	preloads := c.QueryArray("preloads[]")
-	query := gormdb.DB.Model(m).Where("id = ?", c.Param(key))
+	query := gormdb.DB.WithContext(context.WithValue(c, "gorm:cache:tag", m.TableName())).Model(m).Where("id = ?", c.Param(key))
 
 	if e.opts.BeforeGet != nil {
 		if err := e.opts.BeforeGet(c, query, m); err != nil {
