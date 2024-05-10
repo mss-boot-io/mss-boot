@@ -69,7 +69,6 @@ func (p *LokiWriter) write() {
 				slog.Error("application exit, send to loki failed", slog.String("error", err.Error()))
 				err = nil
 			}
-			entries = make([]logproto.Entry, 0)
 			return
 		case <-time.After(p.opts.lokiInterval):
 			// send to loki
