@@ -8,10 +8,13 @@ package gorm
  */
 
 import (
+	"context"
 	"net/http"
 
 	"github.com/gin-gonic/gin"
 )
+
+var CleanCacheFromTag func(ctx context.Context, tag string) error
 
 // Base action
 type Base struct {

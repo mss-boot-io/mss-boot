@@ -8,6 +8,7 @@ package gorm
  */
 
 import (
+	"context"
 	"errors"
 	"net/http"
 	"strings"
@@ -68,8 +69,9 @@ func (e *Search) search(c *gin.Context) {
 		api.Err(http.StatusUnprocessableEntity)
 		return
 	}
-	db := gormdb.DB
 	m := pkg.TablerDeepCopy(e.opts.Model)
+
+	db := gormdb.DB.WithContext(context.WithValue(c, "gorm:cache:tag", m.TableName()))
 
 	if e.opts.BeforeSearch != nil {
 		if err := e.opts.BeforeSearch(c, db, m); err != nil {
@@ -87,7 +89,7 @@ func (e *Search) search(c *gin.Context) {
 	if e.opts.Scope != nil {
 		scopes = append(scopes, e.opts.Scope(c, m))
 	}
-	query := db.WithContext(c).Model(m).Scopes(scopes...)
+	query := db.Model(m).Scopes(scopes...)
 	//if err := query.Limit(-1).Offset(-1).Count(&count).Error; err != nil && !errors.Is(err, gorm.ErrRecordNotFound) {
 	//	api.AddError(err).Log.ErrorContext(c, "Search error", "error", err)
 	//	api.Err(http.StatusInternalServerError)

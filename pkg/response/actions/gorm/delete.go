@@ -8,6 +8,7 @@ package gorm
  */
 
 import (
+	"context"
 	"fmt"
 	"net/http"
 
@@ -80,7 +81,8 @@ func (e *Delete) delete(c *gin.Context, ids ...string) {
 			return
 		}
 	}
-	query := gormdb.DB.WithContext(c).Where(fmt.Sprintf("%s IN ?", e.opts.Key), ids)
+	query := gormdb.DB.WithContext(context.WithValue(c, "gorm:cache:tag", e.opts.Model.TableName())).
+		Where(fmt.Sprintf("%s IN ?", e.opts.Key), ids)
 	if e.opts.Scope != nil {
 		query = query.Scopes(e.opts.Scope(c, e.opts.Model))
 	}
@@ -89,6 +91,9 @@ func (e *Delete) delete(c *gin.Context, ids ...string) {
 		api.AddError(err).Log.ErrorContext(c, "Delete error", "error", err)
 		api.Err(http.StatusInternalServerError)
 		return
+	}
+	if CleanCacheFromTag != nil {
+		_ = CleanCacheFromTag(c, e.opts.Model.TableName())
 	}
 	if e.opts.AfterDelete != nil {
 		if err = e.opts.AfterDelete(c, gormdb.DB, e.opts.Model); err != nil {

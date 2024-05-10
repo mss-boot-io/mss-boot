@@ -12,7 +12,10 @@ import (
 	"errors"
 	"fmt"
 	"log/slog"
+	"os"
+	"os/signal"
 	"sync"
+	"syscall"
 )
 
 // Server server
@@ -44,7 +47,7 @@ func New(opts ...Option) Manager {
 	return s
 }
 
-// Add add runnable
+// Add runnable
 func (e *Server) Add(r ...Runnable) {
 	if e.services == nil {
 		e.services = make(map[string]Runnable)
@@ -57,7 +60,7 @@ func (e *Server) Add(r ...Runnable) {
 	}
 }
 
-// Start start runnable
+// Start runnable
 func (e *Server) Start(ctx context.Context) (err error) {
 	//e.mux.Lock()
 	//defer e.mux.Unlock()
@@ -87,12 +90,18 @@ func (e *Server) Start(ctx context.Context) (err error) {
 		e.startRunnable(e.services[k])
 		e.setStarted(k)
 	}
+	done := make(chan os.Signal, 1)
+	signal.Notify(done, os.Interrupt, syscall.SIGINT, syscall.SIGTERM)
 	e.waitForRunnable.Wait()
 	select {
 	case <-ctx.Done():
 		return nil
-	case err := <-e.errChan:
+	case err = <-e.errChan:
 		return err
+	case <-done:
+		// 优雅退出
+		fmt.Println("received SIGINT, shutting down server")
+		return nil
 	}
 }
 
