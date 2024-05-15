@@ -53,6 +53,12 @@ func TablerDeepCopy(m schema.Tabler) schema.Tabler {
 	return reflect.New(reflect.TypeOf(m).Elem()).Interface().(schema.Tabler)
 }
 
+func DeepSlice(m schema.Tabler) any {
+	// 获取x的反射Value
+	v := reflect.ValueOf(m)
+	return reflect.MakeSlice(reflect.SliceOf(v.Type()), 0, 0).Interface()
+}
+
 // DeepCopy deep copy
 func DeepCopy(d any) any {
 	return reflect.New(reflect.TypeOf(d).Elem()).Interface()
