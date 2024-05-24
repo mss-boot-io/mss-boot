@@ -102,7 +102,9 @@ func (e *Search) search(c *gin.Context) {
 	api.PageOK(list, count, 0, 99999999)
 }
 
-func searchResource(c context.Context, resourceType ResourceType, namespace string, filter string) (any, int64, error) {
+func searchResource(c context.Context,
+	resourceType ResourceType,
+	namespace, filter string) (any, int64, error) {
 	var count int
 	var result any
 	listOption := metav1.ListOptions{

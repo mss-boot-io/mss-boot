@@ -190,39 +190,56 @@ func transferObjectToResource(resourceType ResourceType, object any) (any, error
 func updateResource(ctx context.Context, namespace string, object any) (any, error) {
 	switch object.(type) {
 	case *appsv1.Deployment:
-		return k8s.ClientSet.AppsV1().Deployments(namespace).Update(ctx, object.(*appsv1.Deployment), metav1.UpdateOptions{})
+		return k8s.ClientSet.AppsV1().Deployments(namespace).
+			Update(ctx, object.(*appsv1.Deployment), metav1.UpdateOptions{})
 	case *corev1.ConfigMap:
-		return k8s.ClientSet.CoreV1().ConfigMaps(namespace).Update(ctx, object.(*corev1.ConfigMap), metav1.UpdateOptions{})
+		return k8s.ClientSet.CoreV1().ConfigMaps(namespace).
+			Update(ctx, object.(*corev1.ConfigMap), metav1.UpdateOptions{})
 	case *corev1.Secret:
-		return k8s.ClientSet.CoreV1().Secrets(namespace).Update(ctx, object.(*corev1.Secret), metav1.UpdateOptions{})
+		return k8s.ClientSet.CoreV1().Secrets(namespace).
+			Update(ctx, object.(*corev1.Secret), metav1.UpdateOptions{})
 	case *corev1.Service:
-		return k8s.ClientSet.CoreV1().Services(namespace).Update(ctx, object.(*corev1.Service), metav1.UpdateOptions{})
+		return k8s.ClientSet.CoreV1().Services(namespace).
+			Update(ctx, object.(*corev1.Service), metav1.UpdateOptions{})
 	case *corev1.Pod:
-		return k8s.ClientSet.CoreV1().Pods(namespace).Update(ctx, object.(*corev1.Pod), metav1.UpdateOptions{})
+		return k8s.ClientSet.CoreV1().Pods(namespace).
+			Update(ctx, object.(*corev1.Pod), metav1.UpdateOptions{})
 	case *appsv1.StatefulSet:
-		return k8s.ClientSet.AppsV1().StatefulSets(namespace).Update(ctx, object.(*appsv1.StatefulSet), metav1.UpdateOptions{})
+		return k8s.ClientSet.AppsV1().StatefulSets(namespace).
+			Update(ctx, object.(*appsv1.StatefulSet), metav1.UpdateOptions{})
 	case *batchv1.Job:
-		return k8s.ClientSet.BatchV1().Jobs(namespace).Update(ctx, object.(*batchv1.Job), metav1.UpdateOptions{})
+		return k8s.ClientSet.BatchV1().Jobs(namespace).
+			Update(ctx, object.(*batchv1.Job), metav1.UpdateOptions{})
 	case *batchv1.CronJob:
-		return k8s.ClientSet.BatchV1().CronJobs(namespace).Update(ctx, object.(*batchv1.CronJob), metav1.UpdateOptions{})
+		return k8s.ClientSet.BatchV1().CronJobs(namespace).
+			Update(ctx, object.(*batchv1.CronJob), metav1.UpdateOptions{})
 	case *appsv1.DaemonSet:
-		return k8s.ClientSet.AppsV1().DaemonSets(namespace).Update(ctx, object.(*appsv1.DaemonSet), metav1.UpdateOptions{})
+		return k8s.ClientSet.AppsV1().DaemonSets(namespace).
+			Update(ctx, object.(*appsv1.DaemonSet), metav1.UpdateOptions{})
 	case *networkingv1.Ingress:
-		return k8s.ClientSet.NetworkingV1().Ingresses(namespace).Update(ctx, object.(*networkingv1.Ingress), metav1.UpdateOptions{})
+		return k8s.ClientSet.NetworkingV1().Ingresses(namespace).
+			Update(ctx, object.(*networkingv1.Ingress), metav1.UpdateOptions{})
 	case *corev1.ResourceQuota:
-		return k8s.ClientSet.CoreV1().ResourceQuotas(namespace).Update(ctx, object.(*corev1.ResourceQuota), metav1.UpdateOptions{})
+		return k8s.ClientSet.CoreV1().ResourceQuotas(namespace).
+			Update(ctx, object.(*corev1.ResourceQuota), metav1.UpdateOptions{})
 	case *corev1.LimitRange:
-		return k8s.ClientSet.CoreV1().LimitRanges(namespace).Update(ctx, object.(*corev1.LimitRange), metav1.UpdateOptions{})
+		return k8s.ClientSet.CoreV1().LimitRanges(namespace).
+			Update(ctx, object.(*corev1.LimitRange), metav1.UpdateOptions{})
 	case *corev1.PersistentVolume:
-		return k8s.ClientSet.CoreV1().PersistentVolumes().Update(ctx, object.(*corev1.PersistentVolume), metav1.UpdateOptions{})
+		return k8s.ClientSet.CoreV1().PersistentVolumes().
+			Update(ctx, object.(*corev1.PersistentVolume), metav1.UpdateOptions{})
 	case *corev1.PersistentVolumeClaim:
-		return k8s.ClientSet.CoreV1().PersistentVolumeClaims(namespace).Update(ctx, object.(*corev1.PersistentVolumeClaim), metav1.UpdateOptions{})
+		return k8s.ClientSet.CoreV1().PersistentVolumeClaims(namespace).
+			Update(ctx, object.(*corev1.PersistentVolumeClaim), metav1.UpdateOptions{})
 	case *corev1.Namespace:
-		return k8s.ClientSet.CoreV1().Namespaces().Update(ctx, object.(*corev1.Namespace), metav1.UpdateOptions{})
+		return k8s.ClientSet.CoreV1().Namespaces().
+			Update(ctx, object.(*corev1.Namespace), metav1.UpdateOptions{})
 	case *storagev1.StorageClass:
-		return k8s.ClientSet.StorageV1().StorageClasses().Update(ctx, object.(*storagev1.StorageClass), metav1.UpdateOptions{})
+		return k8s.ClientSet.StorageV1().StorageClasses().
+			Update(ctx, object.(*storagev1.StorageClass), metav1.UpdateOptions{})
 	case *networkingv1.IngressClass:
-		return k8s.ClientSet.NetworkingV1().IngressClasses().Update(ctx, object.(*networkingv1.IngressClass), metav1.UpdateOptions{})
+		return k8s.ClientSet.NetworkingV1().IngressClasses().
+			Update(ctx, object.(*networkingv1.IngressClass), metav1.UpdateOptions{})
 	}
 	return nil, errors.New("not support resource type")
 }
