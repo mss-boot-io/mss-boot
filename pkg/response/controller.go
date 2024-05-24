@@ -7,7 +7,11 @@ package response
  * @Last Modified time: 2021/6/17 10:44 上午
  */
 
-import "github.com/gin-gonic/gin"
+import (
+	"fmt"
+
+	"github.com/gin-gonic/gin"
+)
 
 // Controllers controllers
 var Controllers = make([]Controller, 0)
@@ -24,6 +28,8 @@ type Controller interface {
 	Other(*gin.RouterGroup)
 	// GetKey get key
 	GetKey() string
+	// GetProvider get provider
+	GetProvider() fmt.Stringer
 }
 
 // AppendController add controllers to Controllers

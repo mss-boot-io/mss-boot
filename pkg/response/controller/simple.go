@@ -8,7 +8,10 @@ package controller
  */
 
 import (
+	"fmt"
 	"strings"
+
+	"github.com/mss-boot-io/mss-boot/pkg/response/actions/k8s"
 
 	"github.com/gin-gonic/gin"
 	"github.com/kamva/mgm/v3"
@@ -36,6 +39,12 @@ func NewSimple(options ...Option) *Simple {
 	return s
 }
 
+// GetProvider get provider
+func (e *Simple) GetProvider() fmt.Stringer {
+	return e.options.modelProvider
+
+}
+
 // Path route path
 func (e *Simple) Path() string {
 	if e.options.model == nil {
@@ -59,6 +68,8 @@ func (e *Simple) GetAction(key string) response.Action {
 		return e.getActionMgm(key)
 	case actions.ModelProviderGorm:
 		return e.getActionGorm(key)
+	case actions.ModelProviderK8S:
+		return e.getActionK8S(key)
 	default:
 		return nil
 	}
@@ -118,6 +129,44 @@ func (e *Simple) getActionGorm(key string) response.Action {
 		return gorm.NewDelete(opts...)
 	case response.Search:
 		return gorm.NewSearch(opts...)
+	default:
+		return nil
+	}
+}
+
+func (e *Simple) getActionK8S(key string) response.Action {
+	opts := []k8s.Option{
+		k8s.WithModel(e.options.resourceModel),
+		k8s.WithResourceType(e.options.resourceType),
+		k8s.WithHandlers(e.options.handlers),
+		k8s.WithControlHandlers(e.options.createHandlers),
+		k8s.WithGetHandlers(e.options.getHandlers),
+		k8s.WithDeleteHandlers(e.options.deleteHandlers),
+		k8s.WithSearchHandlers(e.options.searchHandlers),
+		k8s.WithBeforeGet(e.options.resourceBeforeGet),
+		k8s.WithAfterGet(e.options.resourceAfterGet),
+		k8s.WithBeforeCreate(e.options.resourceBeforeCreate),
+		k8s.WithAfterCreate(e.options.resourceAfterCreate),
+		k8s.WithBeforeUpdate(e.options.resourceBeforeUpdate),
+		k8s.WithAfterUpdate(e.options.resourceAfterUpdate),
+		k8s.WithBeforeDelete(e.options.resourceBeforeDelete),
+		k8s.WithAfterDelete(e.options.resourceAfterDelete),
+		k8s.WithBeforeSearch(e.options.resourceBeforeSearch),
+		k8s.WithAfterSearch(e.options.resourceAfterSearch),
+		k8s.WithKey(e.GetKey()),
+	}
+	if e.options.needAuth(key) {
+		opts = append(opts, k8s.WithHandlers(gin.HandlersChain{response.AuthHandler}))
+	}
+	switch key {
+	case response.Get:
+		return k8s.NewGet(opts...)
+	case response.Control:
+		return k8s.NewControl(opts...)
+	case response.Delete:
+		return k8s.NewDelete(opts...)
+	case response.Search:
+		return k8s.NewSearch(opts...)
 	default:
 		return nil
 	}

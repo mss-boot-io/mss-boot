@@ -20,3 +20,7 @@ type ModelImpl interface {
 	mgm.Model
 	schema.Tabler
 }
+
+func (p ModelProvider) String() string {
+	return string(p)
+}

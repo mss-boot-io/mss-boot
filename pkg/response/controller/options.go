@@ -8,11 +8,15 @@ package controller
  */
 
 import (
+	"fmt"
+
 	"github.com/gin-gonic/gin"
 	"github.com/mss-boot-io/mss-boot/pkg/response"
 	"github.com/mss-boot-io/mss-boot/pkg/response/actions"
+	"github.com/mss-boot-io/mss-boot/pkg/response/actions/k8s"
 	"gorm.io/gorm"
 	"gorm.io/gorm/schema"
+	"k8s.io/client-go/kubernetes"
 )
 
 // Option set options
@@ -27,7 +31,7 @@ type Options struct {
 	noAuthAction   []string
 	depth          int
 	treeField      string
-	modelProvider  actions.ModelProvider
+	modelProvider  fmt.Stringer
 	scope          func(ctx *gin.Context, table schema.Tabler) func(db *gorm.DB) *gorm.DB
 	beforeCreate   func(ctx *gin.Context, db *gorm.DB, m schema.Tabler) error
 	beforeUpdate   func(ctx *gin.Context, db *gorm.DB, m schema.Tabler) error
@@ -45,6 +49,19 @@ type Options struct {
 	getHandlers    gin.HandlersChain
 	deleteHandlers gin.HandlersChain
 	searchHandlers gin.HandlersChain
+	// k8s action option
+	resourceType         k8s.ResourceType
+	resourceModel        any
+	resourceBeforeCreate func(ctx *gin.Context, db *kubernetes.Clientset, m any) error
+	resourceAfterCreate  func(ctx *gin.Context, db *kubernetes.Clientset, m any) error
+	resourceBeforeUpdate func(ctx *gin.Context, db *kubernetes.Clientset, m any) error
+	resourceAfterUpdate  func(ctx *gin.Context, db *kubernetes.Clientset, m any) error
+	resourceBeforeGet    func(ctx *gin.Context, db *kubernetes.Clientset, m any) error
+	resourceAfterGet     func(ctx *gin.Context, db *kubernetes.Clientset, m any) error
+	resourceBeforeDelete func(ctx *gin.Context, db *kubernetes.Clientset, m any) error
+	resourceAfterDelete  func(ctx *gin.Context, db *kubernetes.Clientset, m any) error
+	resourceBeforeSearch func(ctx *gin.Context, db *kubernetes.Clientset, m any) error
+	resourceAfterSearch  func(ctx *gin.Context, db *kubernetes.Clientset, m any) error
 }
 
 func (o *Options) needAuth(name string) bool {
@@ -72,7 +89,8 @@ func (o *Options) getAction(key string) response.Action {
 // DefaultOptions make default options
 func DefaultOptions() Options {
 	return Options{
-		actions: make([]response.Action, 0),
+		actions:       make([]response.Action, 0),
+		modelProvider: actions.ModelProviderGorm,
 	}
 }
 
@@ -235,5 +253,77 @@ func WithDeleteHandlers(handlers gin.HandlersChain) Option {
 func WithSearchHandlers(handlers gin.HandlersChain) Option {
 	return func(o *Options) {
 		o.searchHandlers = handlers
+	}
+}
+
+func WithResourceModel(model any) Option {
+	return func(o *Options) {
+		o.resourceModel = model
+	}
+}
+
+func WithResourceType(resourceType k8s.ResourceType) Option {
+	return func(o *Options) {
+		o.resourceType = resourceType
+	}
+}
+
+func WithResourceBeforeCreate(beforeCreate func(ctx *gin.Context, db *kubernetes.Clientset, m any) error) Option {
+	return func(o *Options) {
+		o.resourceBeforeCreate = beforeCreate
+	}
+}
+
+func WithResourceAfterCreate(afterCreate func(ctx *gin.Context, db *kubernetes.Clientset, m any) error) Option {
+	return func(o *Options) {
+		o.resourceAfterCreate = afterCreate
+	}
+}
+
+func WithResourceBeforeUpdate(beforeUpdate func(ctx *gin.Context, db *kubernetes.Clientset, m any) error) Option {
+	return func(o *Options) {
+		o.resourceBeforeUpdate = beforeUpdate
+	}
+}
+
+func WithResourceAfterUpdate(afterUpdate func(ctx *gin.Context, db *kubernetes.Clientset, m any) error) Option {
+	return func(o *Options) {
+		o.resourceAfterUpdate = afterUpdate
+	}
+}
+
+func WithResourceBeforeGet(beforeGet func(ctx *gin.Context, db *kubernetes.Clientset, m any) error) Option {
+	return func(o *Options) {
+		o.resourceBeforeGet = beforeGet
+	}
+}
+
+func WithResourceAfterGet(afterGet func(ctx *gin.Context, db *kubernetes.Clientset, m any) error) Option {
+	return func(o *Options) {
+		o.resourceAfterGet = afterGet
+	}
+}
+
+func WithResourceBeforeDelete(beforeDelete func(ctx *gin.Context, db *kubernetes.Clientset, m any) error) Option {
+	return func(o *Options) {
+		o.resourceBeforeDelete = beforeDelete
+	}
+}
+
+func WithResourceAfterDelete(afterDelete func(ctx *gin.Context, db *kubernetes.Clientset, m any) error) Option {
+	return func(o *Options) {
+		o.resourceAfterDelete = afterDelete
+	}
+}
+
+func WithResourceBeforeSearch(beforeSearch func(ctx *gin.Context, db *kubernetes.Clientset, m any) error) Option {
+	return func(o *Options) {
+		o.resourceBeforeSearch = beforeSearch
+	}
+}
+
+func WithResourceAfterSearch(afterSearch func(ctx *gin.Context, db *kubernetes.Clientset, m any) error) Option {
+	return func(o *Options) {
+		o.resourceAfterSearch = afterSearch
 	}
 }

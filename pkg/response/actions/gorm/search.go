@@ -75,7 +75,7 @@ func (e *Search) search(c *gin.Context) {
 
 	if e.opts.BeforeSearch != nil {
 		if err := e.opts.BeforeSearch(c, db, m); err != nil {
-			api.AddError(err).Log.Error("BeforeSearch error", "error", err)
+			api.AddError(err).Log.Error("BeforeSearch error")
 			api.Err(http.StatusInternalServerError)
 			return
 		}
@@ -90,6 +90,11 @@ func (e *Search) search(c *gin.Context) {
 		scopes = append(scopes, e.opts.Scope(c, m))
 	}
 	query := db.Model(m).Scopes(scopes...)
+	//if err := query.Limit(-1).Offset(-1).Count(&count).Error; err != nil && !errors.Is(err, gorm.ErrRecordNotFound) {
+	//	api.AddError(err).Log.ErrorContext(c, "Search error", "error", err)
+	//	api.Err(http.StatusInternalServerError)
+	//	return
+	//}
 
 	if e.opts.TreeField != "" && e.opts.Depth > 0 {
 		treeFields := make([]string, 0, e.opts.Depth)
@@ -98,12 +103,24 @@ func (e *Search) search(c *gin.Context) {
 		}
 		query = query.Preload(strings.Join(treeFields, "."))
 	}
-	list := pkg.DeepSlice(m)
-	err := query.Find(&list).Error
+
+	rows, err := query.Rows()
 	if err != nil {
 		api.AddError(err).Log.ErrorContext(c, "Search error", "error", err)
 		api.Err(http.StatusInternalServerError)
 		return
+	}
+	defer rows.Close()
+	items := make([]any, 0, req.GetPageSize())
+	for rows.Next() {
+		m = pkg.TablerDeepCopy(e.opts.Model)
+		err = db.ScanRows(rows, m)
+		if err != nil {
+			api.AddError(err).Log.ErrorContext(c, "search error", "error", err)
+			api.Err(http.StatusInternalServerError)
+			return
+		}
+		items = append(items, m)
 	}
 	err = query.Limit(-1).Offset(-1).Count(&count).Error
 	if err != nil && !errors.Is(err, gorm.ErrRecordNotFound) {
@@ -118,6 +135,6 @@ func (e *Search) search(c *gin.Context) {
 			return
 		}
 	}
-	api.PageOK(list, count, req.GetPage(), req.GetPageSize(), "search success")
+	api.PageOK(items, count, req.GetPage(), req.GetPageSize(), "search success")
 	c.Next()
 }
