@@ -1,8 +1,9 @@
 package api
 
 import (
-	"github.com/gin-gonic/gin"
+	"fmt"
 
+	"github.com/gin-gonic/gin"
 	"github.com/mss-boot-io/mss-boot/pkg/response"
 	"github.com/mss-boot-io/mss-boot/virtual/action"
 )
@@ -31,6 +32,10 @@ func NewVirtual(provider *action.Base, options ...Option) *Virtual {
 		options[i](&v.options)
 	}
 	return v
+}
+
+func (v *Virtual) GetProvider() fmt.Stringer {
+	return v.options.modelProvider
 }
 
 // Path http path

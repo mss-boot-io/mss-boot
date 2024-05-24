@@ -26,7 +26,12 @@ const (
 	ModelProviderMgm ModelProvider = "mgm"
 	// ModelProviderGorm gorm model provider
 	ModelProviderGorm ModelProvider = "gorm"
+	ModelProviderK8S  ModelProvider = "k8s"
 )
+
+func (p ModelProvider) String() string {
+	return string(p)
+}
 
 // Model gorm and mgm model
 type Model interface {

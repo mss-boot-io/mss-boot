@@ -8,6 +8,8 @@ package api
  */
 
 import (
+	"fmt"
+
 	"github.com/mss-boot-io/mss-boot/pkg/response"
 	"github.com/mss-boot-io/mss-boot/virtual/model"
 )
@@ -21,7 +23,7 @@ type Options struct {
 	search        response.Searcher
 	model         model.ModelImpl
 	auth          bool
-	modelProvider model.ModelProvider
+	modelProvider fmt.Stringer
 }
 
 // getAction get action

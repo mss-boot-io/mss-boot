@@ -68,7 +68,7 @@ func (e *Get) get(c *gin.Context, key string) {
 
 	if e.opts.BeforeGet != nil {
 		if err := e.opts.BeforeGet(c, query, m); err != nil {
-			api.AddError(err).Log.Error("BeforeGet error", "error", err)
+			api.AddError(err).Log.Error("BeforeGet error")
 			api.Err(http.StatusInternalServerError)
 			return
 		}

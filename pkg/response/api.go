@@ -106,7 +106,7 @@ func (e *API) AddError(err error) *API {
 	}
 	if e.Error == nil {
 		e.Error = err
-	} else if err != nil {
+	} else {
 		e.Error = fmt.Errorf("%v; %w", e.Error, err)
 	}
 	if e.Error != nil {
