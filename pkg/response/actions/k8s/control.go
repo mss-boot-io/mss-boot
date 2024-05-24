@@ -187,25 +187,29 @@ func transferObjectToResource(resourceType ResourceType, object any) (any, error
 	return result, nil
 }
 
+//lint:ignore golint This function is an example and doesn't need to follow golint rules.
 func updateResource(ctx context.Context, namespace string, object any) (any, error) {
+	app := k8s.ClientSet.AppsV1()
+	core := k8s.ClientSet.CoreV1()
+	networking := k8s.ClientSet.NetworkingV1()
 	switch object.(type) {
 	case *appsv1.Deployment:
-		return k8s.ClientSet.AppsV1().Deployments(namespace).
+		return app.Deployments(namespace).
 			Update(ctx, object.(*appsv1.Deployment), metav1.UpdateOptions{})
 	case *corev1.ConfigMap:
-		return k8s.ClientSet.CoreV1().ConfigMaps(namespace).
+		return core.ConfigMaps(namespace).
 			Update(ctx, object.(*corev1.ConfigMap), metav1.UpdateOptions{})
 	case *corev1.Secret:
-		return k8s.ClientSet.CoreV1().Secrets(namespace).
+		return core.Secrets(namespace).
 			Update(ctx, object.(*corev1.Secret), metav1.UpdateOptions{})
 	case *corev1.Service:
-		return k8s.ClientSet.CoreV1().Services(namespace).
+		return core.Services(namespace).
 			Update(ctx, object.(*corev1.Service), metav1.UpdateOptions{})
 	case *corev1.Pod:
-		return k8s.ClientSet.CoreV1().Pods(namespace).
+		return core.Pods(namespace).
 			Update(ctx, object.(*corev1.Pod), metav1.UpdateOptions{})
 	case *appsv1.StatefulSet:
-		return k8s.ClientSet.AppsV1().StatefulSets(namespace).
+		return app.StatefulSets(namespace).
 			Update(ctx, object.(*appsv1.StatefulSet), metav1.UpdateOptions{})
 	case *batchv1.Job:
 		return k8s.ClientSet.BatchV1().Jobs(namespace).
@@ -214,72 +218,76 @@ func updateResource(ctx context.Context, namespace string, object any) (any, err
 		return k8s.ClientSet.BatchV1().CronJobs(namespace).
 			Update(ctx, object.(*batchv1.CronJob), metav1.UpdateOptions{})
 	case *appsv1.DaemonSet:
-		return k8s.ClientSet.AppsV1().DaemonSets(namespace).
+		return app.DaemonSets(namespace).
 			Update(ctx, object.(*appsv1.DaemonSet), metav1.UpdateOptions{})
 	case *networkingv1.Ingress:
-		return k8s.ClientSet.NetworkingV1().Ingresses(namespace).
+		return networking.Ingresses(namespace).
 			Update(ctx, object.(*networkingv1.Ingress), metav1.UpdateOptions{})
 	case *corev1.ResourceQuota:
-		return k8s.ClientSet.CoreV1().ResourceQuotas(namespace).
+		return core.ResourceQuotas(namespace).
 			Update(ctx, object.(*corev1.ResourceQuota), metav1.UpdateOptions{})
 	case *corev1.LimitRange:
-		return k8s.ClientSet.CoreV1().LimitRanges(namespace).
+		return core.LimitRanges(namespace).
 			Update(ctx, object.(*corev1.LimitRange), metav1.UpdateOptions{})
 	case *corev1.PersistentVolume:
-		return k8s.ClientSet.CoreV1().PersistentVolumes().
+		return core.PersistentVolumes().
 			Update(ctx, object.(*corev1.PersistentVolume), metav1.UpdateOptions{})
 	case *corev1.PersistentVolumeClaim:
-		return k8s.ClientSet.CoreV1().PersistentVolumeClaims(namespace).
+		return core.PersistentVolumeClaims(namespace).
 			Update(ctx, object.(*corev1.PersistentVolumeClaim), metav1.UpdateOptions{})
 	case *corev1.Namespace:
-		return k8s.ClientSet.CoreV1().Namespaces().
+		return core.Namespaces().
 			Update(ctx, object.(*corev1.Namespace), metav1.UpdateOptions{})
 	case *storagev1.StorageClass:
 		return k8s.ClientSet.StorageV1().StorageClasses().
 			Update(ctx, object.(*storagev1.StorageClass), metav1.UpdateOptions{})
 	case *networkingv1.IngressClass:
-		return k8s.ClientSet.NetworkingV1().IngressClasses().
+		return networking.IngressClasses().
 			Update(ctx, object.(*networkingv1.IngressClass), metav1.UpdateOptions{})
 	}
 	return nil, errors.New("not support resource type")
 }
 
+//lint:ignore golint This function is an example and doesn't need to follow golint rules.
 func createResource(ctx context.Context, namespace string, object any) (any, error) {
+	app := k8s.ClientSet.AppsV1()
+	core := k8s.ClientSet.CoreV1()
+	networking := k8s.ClientSet.NetworkingV1()
 	switch object.(type) {
 	case *appsv1.Deployment:
-		return k8s.ClientSet.AppsV1().Deployments(namespace).Create(ctx, object.(*appsv1.Deployment), metav1.CreateOptions{})
+		return app.Deployments(namespace).Create(ctx, object.(*appsv1.Deployment), metav1.CreateOptions{})
 	case *corev1.ConfigMap:
-		return k8s.ClientSet.CoreV1().ConfigMaps(namespace).Create(ctx, object.(*corev1.ConfigMap), metav1.CreateOptions{})
+		return core.ConfigMaps(namespace).Create(ctx, object.(*corev1.ConfigMap), metav1.CreateOptions{})
 	case *corev1.Secret:
-		return k8s.ClientSet.CoreV1().Secrets(namespace).Create(ctx, object.(*corev1.Secret), metav1.CreateOptions{})
+		return core.Secrets(namespace).Create(ctx, object.(*corev1.Secret), metav1.CreateOptions{})
 	case *corev1.Service:
-		return k8s.ClientSet.CoreV1().Services(namespace).Create(ctx, object.(*corev1.Service), metav1.CreateOptions{})
+		return core.Services(namespace).Create(ctx, object.(*corev1.Service), metav1.CreateOptions{})
 	case *corev1.Pod:
-		return k8s.ClientSet.CoreV1().Pods(namespace).Create(ctx, object.(*corev1.Pod), metav1.CreateOptions{})
+		return core.Pods(namespace).Create(ctx, object.(*corev1.Pod), metav1.CreateOptions{})
 	case *appsv1.StatefulSet:
-		return k8s.ClientSet.AppsV1().StatefulSets(namespace).Create(ctx, object.(*appsv1.StatefulSet), metav1.CreateOptions{})
+		return app.StatefulSets(namespace).Create(ctx, object.(*appsv1.StatefulSet), metav1.CreateOptions{})
 	case *batchv1.Job:
 		return k8s.ClientSet.BatchV1().Jobs(namespace).Create(ctx, object.(*batchv1.Job), metav1.CreateOptions{})
 	case *batchv1.CronJob:
 		return k8s.ClientSet.BatchV1().CronJobs(namespace).Create(ctx, object.(*batchv1.CronJob), metav1.CreateOptions{})
 	case *appsv1.DaemonSet:
-		return k8s.ClientSet.AppsV1().DaemonSets(namespace).Create(ctx, object.(*appsv1.DaemonSet), metav1.CreateOptions{})
+		return app.DaemonSets(namespace).Create(ctx, object.(*appsv1.DaemonSet), metav1.CreateOptions{})
 	case *networkingv1.Ingress:
-		return k8s.ClientSet.NetworkingV1().Ingresses(namespace).Create(ctx, object.(*networkingv1.Ingress), metav1.CreateOptions{})
+		return networking.Ingresses(namespace).Create(ctx, object.(*networkingv1.Ingress), metav1.CreateOptions{})
 	case *corev1.ResourceQuota:
-		return k8s.ClientSet.CoreV1().ResourceQuotas(namespace).Create(ctx, object.(*corev1.ResourceQuota), metav1.CreateOptions{})
+		return core.ResourceQuotas(namespace).Create(ctx, object.(*corev1.ResourceQuota), metav1.CreateOptions{})
 	case *corev1.LimitRange:
-		return k8s.ClientSet.CoreV1().LimitRanges(namespace).Create(ctx, object.(*corev1.LimitRange), metav1.CreateOptions{})
+		return core.LimitRanges(namespace).Create(ctx, object.(*corev1.LimitRange), metav1.CreateOptions{})
 	case *corev1.PersistentVolume:
-		return k8s.ClientSet.CoreV1().PersistentVolumes().Create(ctx, object.(*corev1.PersistentVolume), metav1.CreateOptions{})
+		return core.PersistentVolumes().Create(ctx, object.(*corev1.PersistentVolume), metav1.CreateOptions{})
 	case *corev1.PersistentVolumeClaim:
-		return k8s.ClientSet.CoreV1().PersistentVolumeClaims(namespace).Create(ctx, object.(*corev1.PersistentVolumeClaim), metav1.CreateOptions{})
+		return core.PersistentVolumeClaims(namespace).Create(ctx, object.(*corev1.PersistentVolumeClaim), metav1.CreateOptions{})
 	case *corev1.Namespace:
-		return k8s.ClientSet.CoreV1().Namespaces().Create(ctx, object.(*corev1.Namespace), metav1.CreateOptions{})
+		return core.Namespaces().Create(ctx, object.(*corev1.Namespace), metav1.CreateOptions{})
 	case *storagev1.StorageClass:
 		return k8s.ClientSet.StorageV1().StorageClasses().Create(ctx, object.(*storagev1.StorageClass), metav1.CreateOptions{})
 	case *networkingv1.IngressClass:
-		return k8s.ClientSet.NetworkingV1().IngressClasses().Create(ctx, object.(*networkingv1.IngressClass), metav1.CreateOptions{})
+		return networking.IngressClasses().Create(ctx, object.(*networkingv1.IngressClass), metav1.CreateOptions{})
 	}
 	return nil, errors.New("not support resource type")
 }

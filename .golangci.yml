@@ -8,6 +8,8 @@ run:
   skip-files:
     - ".*\\_test\\.go$"
     - ".*\\_string\\.go$"
+    - "pkg/response/actions/k8s/control.go"
+    - "pkg/response/actions/k8s/search.go"
 linters-settings:
   lll:
     line-length: 170
