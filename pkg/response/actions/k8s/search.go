@@ -3,7 +3,6 @@ package k8s
 import (
 	"context"
 	"errors"
-	"fmt"
 	"net/http"
 
 	"github.com/gin-gonic/gin"
@@ -65,9 +64,6 @@ func (e *Search) search(c *gin.Context) {
 		api.Err(http.StatusUnprocessableEntity)
 		return
 	}
-	data, ok := c.GetQueryMap("label")
-	fmt.Println("data:", data)
-	fmt.Println("ok:", ok)
 	m := pkg.DeepCopy(e.opts.Model)
 	namespace := c.Param("namespace")
 	if namespace == "" {
@@ -81,7 +77,15 @@ func (e *Search) search(c *gin.Context) {
 			return
 		}
 	}
-	list, count, err := searchResource(c, e.opts.ResourceType, namespace, "")
+	var filter string
+	labels, ok := c.GetQueryMap("labels")
+	if ok && len(labels) > 0 {
+		labelSelector := metav1.LabelSelector{
+			MatchLabels: labels,
+		}
+		filter = metav1.FormatLabelSelector(&labelSelector)
+	}
+	list, count, err := searchResource(c, e.opts.ResourceType, namespace, filter)
 	if err != nil {
 		api.AddError(err).Log.Error("searchResource error")
 		api.Err(http.StatusInternalServerError)

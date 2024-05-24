@@ -80,7 +80,6 @@ func Init(cfg source.Entity, options ...source.Option) (err error) {
 		slog.Error(err.Error())
 		return err
 	}
-	fmt.Println(string(rb))
 	var unm func([]byte, any) error
 	switch f.GetExtend() {
 	case source.SchemeYaml, source.SchemeYml:
@@ -125,7 +124,6 @@ func Init(cfg source.Entity, options ...source.Option) (err error) {
 			slog.Error(err.Error())
 		}
 	}
-	fmt.Println(string(rb))
 	if !opts.Watch {
 		return nil
 	}
