@@ -25,6 +25,18 @@ func NewConfigure(
 	connMaxIdleTime,
 	connMaxLifetime int,
 	registers []ResolverConfigure) Configure {
+	if connMaxIdleTime == 0 {
+		connMaxIdleTime = 3600
+	}
+	if connMaxLifetime == 0 {
+		connMaxLifetime = 86400
+	}
+	if maxIdleConns == 0 {
+		maxIdleConns = 100
+	}
+	if maxOpenConns == 0 {
+		maxOpenConns = 200
+	}
 	return &DBConfig{
 		dsn:             dsn,
 		connMaxIdleTime: connMaxIdleTime,
