@@ -8,7 +8,6 @@ package gorm
  */
 
 import (
-	"context"
 	"fmt"
 	"net/http"
 
@@ -81,7 +80,7 @@ func (e *Delete) delete(c *gin.Context, ids ...string) {
 			return
 		}
 	}
-	query := gormdb.DB.WithContext(context.WithValue(c, "gorm:cache:tag", e.opts.Model.TableName())).
+	query := gormdb.DB.WithContext(c).
 		Where(fmt.Sprintf("%s IN ?", e.opts.Key), ids)
 	if e.opts.Scope != nil {
 		query = query.Scopes(e.opts.Scope(c, e.opts.Model))
