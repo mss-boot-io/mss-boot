@@ -241,7 +241,7 @@ require (
 	github.com/youmark/pkcs8 v0.0.0-20240424034433-3c2c7870ae76 // indirect
 	go.mongodb.org/mongo-driver v1.15.0
 	golang.org/x/crypto v0.24.0
-	golang.org/x/image v0.15.0 // indirect
+	golang.org/x/image v0.18.0 // indirect
 	golang.org/x/net v0.26.0 // indirect
 	golang.org/x/oauth2 v0.19.0
 	golang.org/x/sync v0.7.0 // indirect
