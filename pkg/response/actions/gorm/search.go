@@ -56,7 +56,7 @@ func (e *Search) Handler() gin.HandlersChain {
 	if e.opts.searchHandlers != nil {
 		chain = append(e.opts.searchHandlers, chain...)
 	}
-	if e.opts.Handlers != nil {
+	if e.opts.handlers != nil {
 		chain = append(e.opts.handlers, chain...)
 	}
 	return chain

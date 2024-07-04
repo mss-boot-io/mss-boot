@@ -26,7 +26,6 @@ type Option func(*Options)
 type Options struct {
 	Model           schema.Tabler
 	Scope           func(ctx *gin.Context, table schema.Tabler) func(db *gorm.DB) *gorm.DB
-	Handlers        gin.HandlersChain
 	TreeField       string
 	Depth           int
 	Key             string
@@ -62,7 +61,7 @@ func WithScope(scope func(ctx *gin.Context, table schema.Tabler) func(db *gorm.D
 
 func WithHandlers(handlers gin.HandlersChain) Option {
 	return func(o *Options) {
-		o.Handlers = handlers
+		o.handlers = handlers
 	}
 }
 
