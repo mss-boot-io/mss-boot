@@ -53,7 +53,7 @@ func (e *Get) Handler() gin.HandlersChain {
 	if e.opts.getHandlers != nil {
 		chain = append(e.opts.getHandlers, chain...)
 	}
-	if e.opts.Handlers != nil {
+	if e.opts.handlers != nil {
 		chain = append(e.opts.handlers, chain...)
 	}
 	return chain

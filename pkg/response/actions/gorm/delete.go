@@ -56,7 +56,7 @@ func (e *Delete) Handler() gin.HandlersChain {
 	if e.opts.deleteHandlers != nil {
 		chain = append(e.opts.deleteHandlers, chain...)
 	}
-	if e.opts.Handlers != nil {
+	if e.opts.handlers != nil {
 		chain = append(e.opts.handlers, chain...)
 	}
 	return chain
