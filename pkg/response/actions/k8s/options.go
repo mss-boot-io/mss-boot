@@ -77,7 +77,11 @@ func WithModel(m any) Option {
 // WithHandlers set handlers
 func WithHandlers(handlers gin.HandlersChain) Option {
 	return func(o *Options) {
-		o.Handlers = handlers
+		if len(o.Handlers) == 0 {
+			o.Handlers = handlers
+			return
+		}
+		o.Handlers = append(o.Handlers, handlers...)
 	}
 }
 
