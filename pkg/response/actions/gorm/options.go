@@ -61,7 +61,11 @@ func WithScope(scope func(ctx *gin.Context, table schema.Tabler) func(db *gorm.D
 
 func WithHandlers(handlers gin.HandlersChain) Option {
 	return func(o *Options) {
-		o.handlers = handlers
+		if len(o.handlers) == 0 {
+			o.handlers = handlers
+			return
+		}
+		o.handlers = append(o.handlers, handlers...)
 	}
 }
 
