@@ -25,7 +25,7 @@ type ServerParams struct {
 	Timeout  time.Duration `yaml:"timeout" json:"timeout"` // default: 10
 }
 
-// Init init
+// Init grpc server
 func (e *GRPC) Init(
 	register func(srv *serverGRPC.Server),
 	opts ...serverGRPC.Option) server.Runnable {
