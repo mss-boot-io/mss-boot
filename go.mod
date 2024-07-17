@@ -23,7 +23,7 @@ require (
 	github.com/grafana/loki/v3 v3.0.0
 	github.com/grpc-ecosystem/go-grpc-middleware/providers/prometheus v1.0.1
 	github.com/grpc-ecosystem/go-grpc-middleware/v2 v2.1.0
-	github.com/hashicorp/consul/api v1.28.2
+	github.com/hashicorp/consul/api v1.29.2
 	github.com/kamva/mgm/v3 v3.5.0
 	github.com/nfjBill/gorm-driver-dm v1.0.1
 	github.com/prometheus/client_golang v1.19.0
@@ -77,7 +77,7 @@ require (
 	github.com/emicklei/go-restful/v3 v3.12.0 // indirect
 	github.com/emirpasic/gods v1.18.1 // indirect
 	github.com/facette/natsort v0.0.0-20181210072756-2cd4dd1e2dcb // indirect
-	github.com/fatih/color v1.15.0 // indirect
+	github.com/fatih/color v1.16.0 // indirect
 	github.com/felixge/httpsnoop v1.0.4 // indirect
 	github.com/gabriel-vasile/mimetype v1.4.3 // indirect
 	github.com/go-jose/go-jose/v4 v4.0.1 // indirect
