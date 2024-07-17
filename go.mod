@@ -41,9 +41,9 @@ require (
 	gorm.io/driver/postgres v1.5.7
 	gorm.io/gorm v1.25.10
 	gorm.io/plugin/dbresolver v1.5.1
-	k8s.io/api v0.30.0
-	k8s.io/apimachinery v0.30.0
-	k8s.io/client-go v0.30.0
+	k8s.io/api v0.30.2
+	k8s.io/apimachinery v0.30.2
+	k8s.io/client-go v0.30.2
 )
 
 require (
