@@ -45,12 +45,14 @@ func (e *GRPC) Init(
 
 type Clients map[string]ServerParams
 
-func (cs Clients) makeClient(key string) *grpc.ClientConn {
+func (cs Clients) makeClient(key string, opts ...grpc.DialOption) *grpc.ClientConn {
 	params, ok := cs[key]
 	if !ok {
 		return nil
 	}
-	opts := make([]grpc.DialOption, 0)
+	if opts == nil {
+		opts = make([]grpc.DialOption, 0)
+	}
 	if params.CertFile != "" && params.KeyFile != "" {
 		creds, err := credentials.NewClientTLSFromFile(params.CertFile, params.KeyFile)
 		if err != nil {
@@ -66,13 +68,13 @@ func (cs Clients) makeClient(key string) *grpc.ClientConn {
 				timeout.UnaryClientInterceptor(params.Timeout),
 			))
 	}
-	conn, err := grpc.Dial(params.Addr, opts...)
+	conn, err := grpc.NewClient(params.Addr, opts...)
 	if err != nil {
 		return nil
 	}
 	return conn
 }
 
-func (e *GRPC) GetGRPCClient(key string) *grpc.ClientConn {
-	return e.Clients.makeClient(key)
+func (e *GRPC) GetGRPCClient(key string, opts ...grpc.DialOption) *grpc.ClientConn {
+	return e.Clients.makeClient(key, opts...)
 }
