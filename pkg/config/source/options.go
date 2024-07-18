@@ -12,6 +12,7 @@ import (
 	"strings"
 	"time"
 
+	"github.com/aws/aws-sdk-go-v2/service/appconfigdata"
 	"github.com/aws/aws-sdk-go-v2/service/s3"
 	"k8s.io/client-go/kubernetes"
 )
@@ -34,6 +35,8 @@ const (
 	ConfigMap Provider = "configmap"
 	// Consul consul
 	Consul Provider = "consul"
+	// APPConfig aws appconfig
+	APPConfig Provider = "appconfig"
 )
 
 // Extends extends
@@ -51,30 +54,31 @@ type Option func(*Options)
 
 // Options options
 type Options struct {
-	Provider          Provider
-	Driver            Driver
-	Name              string
-	Extend            Scheme
-	Dir               string
-	Region            string
-	Bucket            string
-	ProjectName       string
-	Timeout           time.Duration
-	Client            *s3.Client
-	FS                fs.ReadFileFS
-	MongoDBURL        string
-	MongoDBName       string
-	MongoDBCollection string
-	Datasource        string
-	GORMDriver        string
-	GORMDsn           string
-	Watch             bool
-	Namespace         string
-	Configmap         string
-	PrefixHook        PrefixHook
-	Clientset         *kubernetes.Clientset
-	Kubeconfig        string
-	KubeconfigPath    string
+	Provider            Provider
+	Driver              Driver
+	Name                string
+	Extend              Scheme
+	Dir                 string
+	Region              string
+	Bucket              string
+	ProjectName         string
+	Timeout             time.Duration
+	S3Client            *s3.Client
+	APPConfigDataClient *appconfigdata.Client
+	FS                  fs.ReadFileFS
+	MongoDBURL          string
+	MongoDBName         string
+	MongoDBCollection   string
+	Datasource          string
+	GORMDriver          string
+	GORMDsn             string
+	Watch               bool
+	Namespace           string
+	Configmap           string
+	PrefixHook          PrefixHook
+	Clientset           *kubernetes.Clientset
+	Kubeconfig          string
+	KubeconfigPath      string
 }
 
 func (o *Options) GetExtend() Scheme {
@@ -194,7 +198,7 @@ func WithTimeout(timeout time.Duration) Option {
 // WithClient set s3 client
 func WithClient(client *s3.Client) Option {
 	return func(args *Options) {
-		args.Client = client
+		args.S3Client = client
 	}
 }
 

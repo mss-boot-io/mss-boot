@@ -34,11 +34,11 @@ func (s *Source) Open(string) (fs.File, error) {
 }
 
 // ReadFile read file
-func (s *Source) ReadFile(name string) (rb []byte, err error) {
+func (s *Source) ReadFile(name string) ([]byte, error) {
 	ctx, cancel := context.WithTimeout(context.TODO(), s.opt.Timeout)
 	defer cancel()
 	for i := range source.Extends {
-		object, err := s.opt.Client.GetObject(ctx, &s3.GetObjectInput{
+		object, err := s.opt.S3Client.GetObject(ctx, &s3.GetObjectInput{
 			Bucket: aws.String(s.opt.Bucket),
 			Key: aws.String(
 				fmt.Sprintf("%s/%s",
@@ -48,14 +48,14 @@ func (s *Source) ReadFile(name string) (rb []byte, err error) {
 		if err != nil {
 			return nil, err
 		}
-		rb, err = io.ReadAll(object.Body)
+		rb, err := io.ReadAll(object.Body)
 		if err == nil {
 			_ = object.Body.Close()
 			s.opt.Extend = source.Extends[i]
 			return rb, nil
 		}
 	}
-	return nil, err
+	return nil, nil
 }
 
 func (s *Source) Watch(_ source.Entity, _ func([]byte, any) error) error {
@@ -81,7 +81,7 @@ func New(options ...source.Option) (*Source, error) {
 	if s.opt.ProjectName != "" {
 		s.opt.Dir = s.opt.Dir[strings.Index(s.opt.Dir, s.opt.ProjectName+"/"):]
 	}
-	if s.opt.Client != nil {
+	if s.opt.S3Client != nil {
 		return s, nil
 	}
 
@@ -91,6 +91,6 @@ func New(options ...source.Option) (*Source, error) {
 	if err != nil {
 		return nil, err
 	}
-	s.opt.Client = s3.NewFromConfig(cfg)
+	s.opt.S3Client = s3.NewFromConfig(cfg)
 	return s, nil
 }
