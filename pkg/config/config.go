@@ -21,6 +21,7 @@ import (
 
 	"github.com/mss-boot-io/mss-boot/pkg"
 	"github.com/mss-boot-io/mss-boot/pkg/config/source"
+	"github.com/mss-boot-io/mss-boot/pkg/config/source/appconfig"
 	"github.com/mss-boot-io/mss-boot/pkg/config/source/configmap"
 	sourceConsul "github.com/mss-boot-io/mss-boot/pkg/config/source/consul"
 	sourceFS "github.com/mss-boot-io/mss-boot/pkg/config/source/fs"
@@ -64,6 +65,8 @@ func Init(cfg source.Entity, options ...source.Option) (err error) {
 		f, err = configmap.New(options...)
 	case source.Consul:
 		f, err = sourceConsul.New(options...)
+	case source.APPConfig:
+		f, err = appconfig.New(options...)
 	default:
 		f, err = sourceLocal.New(options...)
 	}
