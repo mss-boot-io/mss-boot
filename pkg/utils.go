@@ -240,3 +240,14 @@ func GetStage() string {
 	}
 	return stage
 }
+
+func GetProjectName() string {
+	project := os.Getenv("project_name")
+	if project == "" {
+		project = os.Getenv("PROJECT_NAME")
+	}
+	if project == "" {
+		project = "mss-boot-io"
+	}
+	return project
+}
