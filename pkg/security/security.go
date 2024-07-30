@@ -1,6 +1,8 @@
 package security
 
-import "context"
+import (
+	"context"
+)
 
 /*
  * @Author: lwnmengjing
@@ -16,6 +18,9 @@ type Verifier interface {
 	GetRoleID() string
 	GetEmail() string
 	GetUsername() string
+	GetRefreshTokenDisable() bool
+	SetRefreshTokenDisable(bool)
+	CheckToken(context.Context, string) error
 	Root() bool
 	Verify(context.Context) (bool, Verifier, error)
 }
