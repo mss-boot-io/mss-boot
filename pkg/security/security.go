@@ -1,8 +1,6 @@
 package security
 
-import (
-	"context"
-)
+import "context"
 
 /*
  * @Author: lwnmengjing
