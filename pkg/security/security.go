@@ -21,4 +21,6 @@ type Verifier interface {
 	CheckToken(context.Context, string) error
 	Root() bool
 	Verify(context.Context) (bool, Verifier, error)
+	GetPersonAccessToken() string
+	SetPersonAccessToken(string)
 }
