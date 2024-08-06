@@ -25,6 +25,7 @@ const (
  *	lt / lte 小于 / 小于等于
  *	startswith / istartswith 以…起始
  *	endswith / iendswith 以…结束
+ *	between 范围     e.g. receiveAt[]=2021-01-01&receiveAt[]=2021-01-02
  *	in
  *	isnull
  *  order 排序		e.g. order[key]=desc     order[key]=asc
@@ -117,6 +118,9 @@ func parseSQL(driver string, searchTag *resolveSearchTag, condition Condition, q
 		if !(qValue.Field(i).IsZero() && qValue.Field(i).IsNil()) {
 			condition.SetWhere(fmt.Sprintf("%s`%s` isnull", searchTag.Table, searchTag.Column), make([]interface{}, 0))
 		}
+	case "between":
+		condition.SetWhere(fmt.Sprintf("%s`%s` between ? and ?", searchTag.Table, searchTag.Column),
+			[]interface{}{qValue.Field(i).Index(0).Interface(), qValue.Field(i).Index(1).Interface()})
 	case "order":
 		switch strings.ToLower(qValue.Field(i).String()) {
 		case "desc", "asc":
