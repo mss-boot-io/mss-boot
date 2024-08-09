@@ -11,11 +11,12 @@ import (
 	"context"
 	"errors"
 	"fmt"
-	"log"
 	"log/slog"
 	"net"
 	"os"
 	"sync"
+
+	"github.com/mss-boot-io/mss-boot/core/server"
 
 	"go.opentelemetry.io/contrib/instrumentation/google.golang.org/grpc/otelgrpc"
 
@@ -122,21 +123,28 @@ func (e *Server) Start(ctx context.Context) error {
 	if err != nil {
 		return fmt.Errorf("gRPC Server listening on %s failed: %w", e.options.addr, err)
 	}
-	log.Printf("gRPC Server listening on %s\n", ts.Addr().String())
+	//log.Printf("gRPC Server listening on %s\n", ts.Addr().String())
+	e.started = true
 
 	go func() {
 		if err = e.srv.Serve(ts); err != nil {
 			slog.ErrorContext(ctx, "gRPC Server start error", slog.Any("err", err))
 		}
+		<-ctx.Done()
+		err = e.Shutdown(ctx)
+		if err != nil {
+			slog.ErrorContext(ctx, "gRPC Server shutdown error", slog.Any("err", err))
+		}
 	}()
-	e.started = true
-	<-ctx.Done()
-	return e.Shutdown(ctx)
+	if e.options.startedHook != nil {
+		e.options.startedHook()
+	}
+	server.PrintRunningInfo(e.options.addr, "grpc")
+	return nil
 }
 
 // Shutdown shutdown
 func (e *Server) Shutdown(ctx context.Context) error {
-	<-ctx.Done()
 	slog.InfoContext(ctx, "gRPC Server will be shutdown gracefully")
 	e.srv.GracefulStop()
 	return nil

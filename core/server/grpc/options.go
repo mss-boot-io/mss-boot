@@ -55,6 +55,8 @@ type Options struct {
 	id                       string
 	domain                   string
 	addr                     string
+	startedHook              func()
+	endHook                  func()
 	certFile                 string
 	keyFile                  string
 	tls                      *tls.Config

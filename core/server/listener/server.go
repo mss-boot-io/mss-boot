@@ -129,7 +129,7 @@ func (e *Server) Start(ctx context.Context) error {
 	if e.options.startedHook != nil {
 		e.options.startedHook()
 	}
-	e.PrintRunningInfo()
+	server.PrintRunningInfo(e.options.addr, "http")
 	return nil
 }
 
@@ -178,6 +178,6 @@ func (e *Server) PrintRunningInfo() {
 		prefix = "        "
 	}
 	fmt.Println("        \033[90m║\033[0m                                                    \033[90m║\033[0m")
-	fmt.Println("        \033[90m║\033[0m \033[1;97mNow you can open browser with the above addresses↑\033[0m \033[90m║\033[0m")
+	fmt.Println("        \033[90m║\033[0m \033[1;97mNow you can reqeust the above addresses↑\033[0m \033[90m║\033[0m")
 	fmt.Println("        \033[90m╚════════════════════════════════════════════════════╝\033[0m")
 }
