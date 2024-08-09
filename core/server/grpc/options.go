@@ -56,7 +56,6 @@ type Options struct {
 	domain                   string
 	addr                     string
 	startedHook              func()
-	endHook                  func()
 	certFile                 string
 	keyFile                  string
 	tls                      *tls.Config
@@ -97,6 +96,13 @@ func WithDomain(s string) Option {
 func WithAddr(s string) Option {
 	return func(o *Options) {
 		o.addr = s
+	}
+}
+
+// WithStartedHook 设置启动回调函数
+func WithStartedHook(f func()) Option {
+	return func(o *Options) {
+		o.startedHook = f
 	}
 }
 
