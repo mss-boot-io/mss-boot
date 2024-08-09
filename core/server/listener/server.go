@@ -9,14 +9,15 @@ package listener
 
 import (
 	"context"
-	ginPprof "github.com/gin-contrib/pprof"
-	"github.com/gin-gonic/gin"
-	"github.com/mss-boot-io/mss-boot/core/server"
-	"github.com/prometheus/client_golang/prometheus/promhttp"
 	"log/slog"
 	"net"
 	"net/http"
 	"net/http/pprof"
+
+	ginPprof "github.com/gin-contrib/pprof"
+	"github.com/gin-gonic/gin"
+	"github.com/mss-boot-io/mss-boot/core/server"
+	"github.com/prometheus/client_golang/prometheus/promhttp"
 )
 
 // Server server manage
