@@ -9,17 +9,14 @@ package listener
 
 import (
 	"context"
-	"fmt"
-	"log/slog"
-	"net"
-	"net/http"
-	"net/http/pprof"
-	"strings"
-
 	ginPprof "github.com/gin-contrib/pprof"
 	"github.com/gin-gonic/gin"
 	"github.com/mss-boot-io/mss-boot/core/server"
 	"github.com/prometheus/client_golang/prometheus/promhttp"
+	"log/slog"
+	"net"
+	"net/http"
+	"net/http/pprof"
 )
 
 // Server server manage
@@ -136,48 +133,4 @@ func (e *Server) Start(ctx context.Context) error {
 // Shutdown 停止
 func (e *Server) Shutdown(ctx context.Context) error {
 	return e.srv.Shutdown(ctx)
-}
-
-func (e *Server) PrintRunningInfo() {
-	var port string
-	//todo 优雅输出
-	fmt.Println("        \033[90m╔════════════════════════════════════════════════════╗\033[0m")
-	fmt.Println("        \033[90m║\033[0m App listening at:                                  \033[90m║\033[0m")
-	arr := strings.Split(e.options.addr, ":")
-	if len(arr) <= 1 {
-		port = "80"
-	} else {
-		port = arr[len(arr)-1]
-	}
-	hosts := []string{"localhost", "127.0.0.1"}
-	if strings.Contains(e.options.addr, "0.0.0.0") || !strings.Contains(e.options.addr, ".") {
-		interfaces, _ := net.Interfaces()
-		for i := range interfaces {
-			if interfaces[i].Flags&net.FlagUp == 0 {
-				continue
-			}
-			addresses, _ := interfaces[i].Addrs()
-			for _, addr := range addresses {
-				ipNet, ok := addr.(*net.IPNet)
-				if ok && !ipNet.IP.IsLoopback() && ipNet.IP.To4() != nil {
-					hosts = append(hosts, ipNet.IP.String())
-				}
-			}
-		}
-	}
-	prefix := "        "
-	for i := range hosts {
-		if i == 1 {
-			prefix = "\033[32mready\033[0m - "
-		}
-		s := fmt.Sprintf("%s\033[90m║  >\033[0m   http://%s:%s", prefix, hosts[i], port)
-		fmt.Println(s + strings.Repeat(
-			" ",
-			46-len(fmt.Sprintf("http://%s:%s", hosts[i], port)),
-		) + "\033[90m║\033[0m")
-		prefix = "        "
-	}
-	fmt.Println("        \033[90m║\033[0m                                                    \033[90m║\033[0m")
-	fmt.Println("        \033[90m║\033[0m \033[1;97mNow you can reqeust the above addresses↑\033[0m \033[90m║\033[0m")
-	fmt.Println("        \033[90m╚════════════════════════════════════════════════════╝\033[0m")
 }
