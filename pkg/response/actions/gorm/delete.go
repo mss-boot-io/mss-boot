@@ -80,6 +80,7 @@ func (e *Delete) delete(c *gin.Context, ids ...string) {
 			return
 		}
 	}
+	c.Set("ids", ids)
 	query := gormdb.DB.WithContext(c).
 		Where(fmt.Sprintf("%s IN ?", e.opts.Key), ids)
 	if e.opts.Scope != nil {
