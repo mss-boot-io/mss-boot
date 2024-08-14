@@ -1,8 +1,8 @@
 module github.com/mss-boot-io/mss-boot
 
-go 1.23
+go 1.22.0
 
-toolchain go1.23.0
+toolchain go1.22.6
 
 require (
 	github.com/aws/aws-sdk-go-v2 v1.30.3

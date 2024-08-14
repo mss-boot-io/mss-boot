@@ -53,7 +53,7 @@ func PrintRunningInfo(address, protocol string) {
 		if i == 1 {
 			prefix = "\033[32mready\033[0m - "
 		}
-		s := fmt.Sprintf("%s\033[90m║  >\033[0m   grpc://%s:%s", prefix, hosts[i], port)
+		s := fmt.Sprintf("%s\033[90m║  >\033[0m   %s://%s:%s", prefix, protocol, hosts[i], port)
 		fmt.Println(s + strings.Repeat(
 			" ",
 			51-len(fmt.Sprintf("%s://%s:%s", protocol, hosts[i], port)),
