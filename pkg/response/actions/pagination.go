@@ -9,7 +9,7 @@ package actions
 
 // Pagination pagination params
 type Pagination struct {
-	Page     int64 `form:"page" query:"page"`
+	Page     int64 `form:"current" query:"current"`
 	PageSize int64 `form:"pageSize" query:"pageSize"`
 }
 
