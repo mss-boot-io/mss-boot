@@ -90,11 +90,6 @@ func (e *Search) search(c *gin.Context) {
 		scopes = append(scopes, e.opts.Scope(c, m))
 	}
 	query := db.Model(m).Scopes(scopes...)
-	//if err := query.Limit(-1).Offset(-1).Count(&count).Error; err != nil && !errors.Is(err, gorm.ErrRecordNotFound) {
-	//	api.AddError(err).Log.ErrorContext(c, "Search error", "error", err)
-	//	api.Err(http.StatusInternalServerError)
-	//	return
-	//}
 
 	if e.opts.TreeField != "" && e.opts.Depth > 0 {
 		treeFields := make([]string, 0, e.opts.Depth)
@@ -122,7 +117,9 @@ func (e *Search) search(c *gin.Context) {
 		}
 		items = append(items, m)
 	}
-	err = query.Limit(-1).Offset(-1).Count(&count).Error
+	err = query.Scopes(func(db *gorm.DB) *gorm.DB {
+		return db.Limit(-1).Offset(-1)
+	}).Count(&count).Error
 	if err != nil && !errors.Is(err, gorm.ErrRecordNotFound) {
 		api.AddError(err).Log.ErrorContext(c, "search error", "error", err)
 		api.Err(http.StatusInternalServerError)
