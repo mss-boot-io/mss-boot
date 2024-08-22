@@ -107,6 +107,14 @@ func Init(cfg source.Entity, options ...source.Option) (err error) {
 		slog.Error(err.Error())
 		return err
 	}
+	//postfix hook
+	if opts.PostfixHook != nil {
+		err = unm(rb, opts.PostfixHook)
+		if err != nil {
+			slog.Error(err.Error())
+			return err
+		}
+	}
 
 	rb, err = f.ReadFile(fmt.Sprintf("%s-%s", opts.Name, stage))
 	if err == nil {
@@ -127,8 +135,23 @@ func Init(cfg source.Entity, options ...source.Option) (err error) {
 			slog.Error(err.Error())
 		}
 	}
+	//postfix hook
+	if opts.PostfixHook != nil {
+		err = unm(rb, opts.PostfixHook)
+		if err != nil {
+			slog.Error(err.Error())
+			return err
+		}
+	}
+
 	if !opts.Watch {
 		return nil
+	}
+	err = f.Watch(opts.PostfixHook, unm)
+	if err != nil {
+		slog.Warn("watch custom config failed", "err", err)
+		// ignore error
+		err = nil
 	}
 	return f.Watch(cfg, unm)
 }

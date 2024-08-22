@@ -76,6 +76,7 @@ type Options struct {
 	Namespace           string
 	Configmap           string
 	PrefixHook          PrefixHook
+	PostfixHook         PostHook
 	Clientset           *kubernetes.Clientset
 	Kubeconfig          string
 	KubeconfigPath      string
@@ -100,6 +101,12 @@ func DefaultOptions() *Options {
 func WithPrefixHook(hook PrefixHook) Option {
 	return func(args *Options) {
 		args.PrefixHook = hook
+	}
+}
+
+func WithPostfixHook(hook PostHook) Option {
+	return func(args *Options) {
+		args.PostfixHook = hook
 	}
 }
 
