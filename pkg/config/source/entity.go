@@ -15,3 +15,7 @@ type Entity interface {
 type PrefixHook interface {
 	Init()
 }
+
+type PostHook interface {
+	Entity
+}
