@@ -9,6 +9,7 @@ package mgm
 
 import (
 	"fmt"
+	"github.com/sanity-io/litter"
 	"net/http"
 	"reflect"
 	"strings"
@@ -48,6 +49,18 @@ func (*Search) String() string {
 	return "search"
 }
 
+func (e *Search) Handler() gin.HandlersChain {
+	h := func(c *gin.Context) {
+		if e.Model == nil {
+			response.Make(c).Err(http.StatusNotImplemented, "not implemented")
+			return
+		}
+		e.searchMgm(c)
+	}
+	chain := gin.HandlersChain{h}
+	return chain
+}
+
 func (e *Search) searchMgm(c *gin.Context) {
 	req := pkg.DeepCopy(e.Search).(response.Searcher)
 	api := response.Make(c).Bind(req)
@@ -81,16 +94,21 @@ func (e *Search) searchMgm(c *gin.Context) {
 		defer result.Close(c)
 		items := make([]any, 0, req.GetPageSize())
 		for result.Next(c) {
+			//var data any
 			m := pkg.ModelDeepCopy(e.Model)
+			//err = result.Decode(&data)
+			//litter.Dump(data)
 			err = result.Decode(m)
 			if err != nil {
 				api.AddError(err).Log.ErrorContext(c, "decode items error", "error", err)
 				api.Err(http.StatusInternalServerError)
 				return
 			}
+			litter.Dump(m)
 			items = append(items, m)
 		}
 		api.PageOK(items, count, req.GetPage(), req.GetPageSize())
+		return
 	}
 	//use Aggregate
 	//https://docs.mongodb.com/manual/reference/operator/aggregation/lookup/
@@ -110,9 +128,12 @@ func (e *Search) searchMgm(c *gin.Context) {
 		{Key: "$limit", Value: req.GetPageSize()},
 	}, bson.D{
 		{Key: "$skip", Value: req.GetPageSize() * (req.GetPage() - 1)},
-	}, bson.D{
-		{Key: "$sort", Value: sort},
 	})
+	if sort != nil {
+		pipeline = append(pipeline, bson.D{
+			{Key: "$sort", Value: sort},
+		})
+	}
 	result, err := mgm.Coll(e.Model).Aggregate(c, pipeline)
 	if err != nil {
 		api.AddError(err).Log.ErrorContext(c, "find items error", "error", err)

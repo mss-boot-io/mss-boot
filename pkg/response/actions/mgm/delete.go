@@ -33,6 +33,25 @@ func NewDelete(b Base, key string) *Delete {
 	}
 }
 
+func (e *Delete) Handler() gin.HandlersChain {
+	h := func(c *gin.Context) {
+		ids := make([]string, 0)
+		v := c.Param(e.Key)
+		if v == "batch" {
+			api := response.Make(c).Bind(&ids)
+			if api.Error != nil || len(ids) == 0 {
+				api.Err(http.StatusUnprocessableEntity)
+				return
+			}
+			e.delete(c, ids...)
+			return
+		}
+		e.delete(c, v)
+	}
+	chain := gin.HandlersChain{h}
+	return chain
+}
+
 // String action name
 func (*Delete) String() string {
 	return "deleteMgm"

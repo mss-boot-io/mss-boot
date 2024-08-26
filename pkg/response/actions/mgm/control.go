@@ -33,6 +33,25 @@ func NewControl(b Base, key string) *Control {
 	}
 }
 
+func (e *Control) Handler() gin.HandlersChain {
+	h := func(c *gin.Context) {
+		if e.Model == nil {
+			response.Make(c).Err(http.StatusNotImplemented, "not implemented")
+			return
+		}
+		switch c.Request.Method {
+		case http.MethodPost:
+			e.create(c)
+		case http.MethodPut:
+			e.update(c)
+		default:
+			response.Make(c).Err(http.StatusNotImplemented, "not implemented")
+		}
+	}
+	chain := gin.HandlersChain{h}
+	return chain
+}
+
 // String action name
 func (*Control) String() string {
 	return "control"
