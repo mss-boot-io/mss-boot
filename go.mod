@@ -12,7 +12,7 @@ require (
 	github.com/aws/aws-sdk-go-v2/service/dynamodb v1.34.5
 	github.com/aws/aws-sdk-go-v2/service/s3 v1.60.0
 	github.com/casbin/casbin/v2 v2.98.0
-	github.com/casbin/gorm-adapter/v3 v3.27.0
+	github.com/casbin/gorm-adapter/v3 v3.28.0
 	github.com/casbin/mongodb-adapter/v3 v3.7.0
 	github.com/coreos/go-oidc/v3 v3.11.0
 	github.com/fsnotify/fsnotify v1.7.0
