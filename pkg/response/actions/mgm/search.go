@@ -9,7 +9,6 @@ package mgm
 
 import (
 	"fmt"
-	"github.com/sanity-io/litter"
 	"net/http"
 	"reflect"
 	"strings"
@@ -96,15 +95,12 @@ func (e *Search) searchMgm(c *gin.Context) {
 		for result.Next(c) {
 			//var data any
 			m := pkg.ModelDeepCopy(e.Model)
-			//err = result.Decode(&data)
-			//litter.Dump(data)
 			err = result.Decode(m)
 			if err != nil {
 				api.AddError(err).Log.ErrorContext(c, "decode items error", "error", err)
 				api.Err(http.StatusInternalServerError)
 				return
 			}
-			litter.Dump(m)
 			items = append(items, m)
 		}
 		api.PageOK(items, count, req.GetPage(), req.GetPageSize())
