@@ -40,6 +40,17 @@ func (*Get) String() string {
 	return "get"
 }
 
+func (e *Get) Handler() gin.HandlersChain {
+	h := func(c *gin.Context) {
+		if e.Model == nil {
+			response.Make(c).Err(http.StatusNotImplemented, "not implemented")
+		}
+		e.get(c, e.Key)
+	}
+	chain := gin.HandlersChain{h}
+	return chain
+}
+
 func (e *Get) get(c *gin.Context, key string) {
 	api := response.Make(c)
 	m := pkg.ModelDeepCopy(e.Model)
