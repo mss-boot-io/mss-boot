@@ -6,13 +6,13 @@ toolchain go1.22.6
 
 require (
 	github.com/aws/aws-sdk-go-v2 v1.30.4
-	github.com/aws/aws-sdk-go-v2/config v1.27.27
-	github.com/aws/aws-sdk-go-v2/credentials v1.17.27
-	github.com/aws/aws-sdk-go-v2/service/appconfigdata v1.16.4
-	github.com/aws/aws-sdk-go-v2/service/dynamodb v1.34.5
-	github.com/aws/aws-sdk-go-v2/service/s3 v1.60.0
+	github.com/aws/aws-sdk-go-v2/config v1.27.31
+	github.com/aws/aws-sdk-go-v2/credentials v1.17.30
+	github.com/aws/aws-sdk-go-v2/service/appconfigdata v1.16.5
+	github.com/aws/aws-sdk-go-v2/service/dynamodb v1.34.6
+	github.com/aws/aws-sdk-go-v2/service/s3 v1.61.0
 	github.com/casbin/casbin/v2 v2.98.0
-	github.com/casbin/gorm-adapter/v3 v3.27.0
+	github.com/casbin/gorm-adapter/v3 v3.28.0
 	github.com/casbin/mongodb-adapter/v3 v3.7.0
 	github.com/coreos/go-oidc/v3 v3.11.0
 	github.com/fsnotify/fsnotify v1.7.0
@@ -24,19 +24,19 @@ require (
 	github.com/grafana/loki/v3 v3.1.1
 	github.com/grpc-ecosystem/go-grpc-middleware/providers/prometheus v1.0.1
 	github.com/grpc-ecosystem/go-grpc-middleware/v2 v2.1.0
-	github.com/hashicorp/consul/api v1.29.2
+	github.com/hashicorp/consul/api v1.29.4
 	github.com/kamva/mgm/v3 v3.5.0
 	github.com/nfjBill/gorm-driver-dm v1.0.1
-	github.com/prometheus/client_golang v1.19.1
+	github.com/prometheus/client_golang v1.20.2
 	github.com/robfig/cron/v3 v3.0.1
 	github.com/sanity-io/litter v1.5.5
 	github.com/skip2/go-qrcode v0.0.0-20200617195104-da1b6568686e
 	github.com/smartystreets/goconvey v1.8.1
 	github.com/spf13/cast v1.7.0
-	go.opentelemetry.io/contrib/instrumentation/google.golang.org/grpc/otelgrpc v0.53.0
-	go.opentelemetry.io/otel/trace v1.28.0
+	go.opentelemetry.io/contrib/instrumentation/google.golang.org/grpc/otelgrpc v0.54.0
+	go.opentelemetry.io/otel/trace v1.29.0
 	golang.org/x/time v0.6.0
-	google.golang.org/grpc v1.65.0
+	google.golang.org/grpc v1.66.0
 	google.golang.org/protobuf v1.34.2
 	gorm.io/driver/mysql v1.5.7
 	gorm.io/driver/postgres v1.5.9
@@ -47,32 +47,34 @@ require (
 	k8s.io/client-go v0.31.0
 )
 
+require dario.cat/mergo v1.0.1 // indirect
+
 require (
 	filippo.io/edwards25519 v1.1.0 // indirect
 	github.com/HdrHistogram/hdrhistogram-go v1.1.2 // indirect
 	github.com/Masterminds/goutils v1.1.1 // indirect
-	github.com/Masterminds/semver/v3 v3.2.1 // indirect
-	github.com/Masterminds/sprig/v3 v3.2.3 // indirect
+	github.com/Masterminds/semver/v3 v3.3.0 // indirect
+	github.com/Masterminds/sprig/v3 v3.3.0 // indirect
 	github.com/alecthomas/units v0.0.0-20240626203959-61d1e3462e30 // indirect
 	github.com/armon/go-metrics v0.4.1 // indirect
 	github.com/aws/aws-sdk-go v1.54.20 // indirect
 	github.com/aws/aws-sdk-go-v2/aws/protocol/eventstream v1.6.4 // indirect
-	github.com/aws/aws-sdk-go-v2/feature/ec2/imds v1.16.11 // indirect
+	github.com/aws/aws-sdk-go-v2/feature/ec2/imds v1.16.12 // indirect
 	github.com/aws/aws-sdk-go-v2/internal/configsources v1.3.16 // indirect
 	github.com/aws/aws-sdk-go-v2/internal/endpoints/v2 v2.6.16 // indirect
-	github.com/aws/aws-sdk-go-v2/internal/ini v1.8.0 // indirect
+	github.com/aws/aws-sdk-go-v2/internal/ini v1.8.1 // indirect
 	github.com/aws/aws-sdk-go-v2/internal/v4a v1.3.16 // indirect
 	github.com/aws/aws-sdk-go-v2/service/internal/accept-encoding v1.11.4 // indirect
 	github.com/aws/aws-sdk-go-v2/service/internal/checksum v1.3.18 // indirect
 	github.com/aws/aws-sdk-go-v2/service/internal/endpoint-discovery v1.9.17 // indirect
 	github.com/aws/aws-sdk-go-v2/service/internal/presigned-url v1.11.18 // indirect
 	github.com/aws/aws-sdk-go-v2/service/internal/s3shared v1.17.16 // indirect
-	github.com/aws/aws-sdk-go-v2/service/sso v1.22.4 // indirect
-	github.com/aws/aws-sdk-go-v2/service/ssooidc v1.26.4 // indirect
-	github.com/aws/aws-sdk-go-v2/service/sts v1.30.3 // indirect
+	github.com/aws/aws-sdk-go-v2/service/sso v1.22.5 // indirect
+	github.com/aws/aws-sdk-go-v2/service/ssooidc v1.26.5 // indirect
+	github.com/aws/aws-sdk-go-v2/service/sts v1.30.5 // indirect
 	github.com/aws/smithy-go v1.20.4
 	github.com/beorn7/perks v1.0.1 // indirect
-	github.com/bytedance/sonic v1.12.1 // indirect
+	github.com/bytedance/sonic v1.12.2 // indirect
 	github.com/bytedance/sonic/loader v0.2.0 // indirect
 	github.com/c2h5oh/datasize v0.0.0-20231215233829-aa82cc1e6500 // indirect
 	github.com/casbin/govaluate v1.2.0 // indirect
@@ -118,17 +120,17 @@ require (
 	github.com/golang-sql/sqlexp v0.1.0 // indirect
 	github.com/golang/protobuf v1.5.4 // indirect
 	github.com/golang/snappy v0.0.4
-	github.com/google/btree v1.1.2 // indirect
+	github.com/google/btree v1.1.3 // indirect
 	github.com/google/gnostic-models v0.6.8 // indirect
 	github.com/google/go-cmp v0.6.0 // indirect
 	github.com/google/gofuzz v1.2.0 // indirect
 	github.com/gopherjs/gopherjs v1.17.2 // indirect
 	github.com/gorilla/mux v1.8.1 // indirect
-	github.com/grafana/dskit v0.0.0-20240809111454-a84ba7a3fc42 // indirect
+	github.com/grafana/dskit v0.0.0-20240829123714-e455adb7444a // indirect
 	github.com/grafana/gomemcache v0.0.0-20240805133030-fdaf6a95408e // indirect
 	github.com/grafana/jsonparser v0.0.0-20240425183733-ea80629e1a32 // indirect
-	github.com/grafana/loki/pkg/push v0.0.0-20240813175630-8041bd29b90a // indirect
-	github.com/grafana/pyroscope-go/godeltaprof v0.1.7 // indirect
+	github.com/grafana/loki/pkg/push v0.0.0-20240829163656-ab1caea12325 // indirect
+	github.com/grafana/pyroscope-go/godeltaprof v0.1.8 // indirect
 	github.com/grafana/regexp v0.0.0-20240518133315-a468a5bfb3bc // indirect
 	github.com/hashicorp/errwrap v1.1.0 // indirect
 	github.com/hashicorp/go-cleanhttp v0.5.2 // indirect
@@ -176,15 +178,15 @@ require (
 	github.com/opentracing-contrib/go-grpc v0.0.0-20240724223109-9dec25a38fa8 // indirect
 	github.com/opentracing-contrib/go-stdlib v1.0.0 // indirect
 	github.com/opentracing/opentracing-go v1.2.0 // indirect
-	github.com/pelletier/go-toml/v2 v2.2.2 // indirect
+	github.com/pelletier/go-toml/v2 v2.2.3 // indirect
 	github.com/pires/go-proxyproto v0.7.0 // indirect
 	github.com/pkg/errors v0.9.1 // indirect
 	github.com/pmezard/go-difflib v1.0.1-0.20181226105442-5d4384ee4fb2 // indirect
 	github.com/prometheus/client_model v0.6.1 // indirect
-	github.com/prometheus/common v0.55.0
+	github.com/prometheus/common v0.57.0
 	github.com/prometheus/exporter-toolkit v0.11.0 // indirect
 	github.com/prometheus/procfs v0.15.1 // indirect
-	github.com/prometheus/prometheus v0.54.0 // indirect
+	github.com/prometheus/prometheus v0.54.1 // indirect
 	github.com/remyoudompheng/bigfft v0.0.0-20230129092748-24d4a6f8daec // indirect
 	github.com/sean-/seed v0.0.0-20170313163322-e2103e2c3529 // indirect
 	github.com/sercand/kuberesolver/v5 v5.1.1 // indirect
@@ -208,15 +210,15 @@ require (
 	go.etcd.io/etcd/client/pkg/v3 v3.5.15 // indirect
 	go.etcd.io/etcd/client/v3 v3.5.15 // indirect
 	go.mongodb.org/mongo-driver v1.16.1
-	go.opentelemetry.io/otel v1.28.0 // indirect
-	go.opentelemetry.io/otel/metric v1.28.0 // indirect
+	go.opentelemetry.io/otel v1.29.0 // indirect
+	go.opentelemetry.io/otel/metric v1.29.0 // indirect
 	go.uber.org/atomic v1.11.0 // indirect
 	go.uber.org/multierr v1.11.0 // indirect
 	go.uber.org/zap v1.27.0 // indirect
 	go4.org/netipx v0.0.0-20231129151722-fdeea329fbba // indirect
 	golang.org/x/arch v0.9.0 // indirect
 	golang.org/x/crypto v0.26.0
-	golang.org/x/exp v0.0.0-20240808152545-0cdaa3abc0fa // indirect
+	golang.org/x/exp v0.0.0-20240823005443-9b4947da3948 // indirect
 	golang.org/x/image v0.19.0 // indirect
 	golang.org/x/mod v0.20.0 // indirect
 	golang.org/x/net v0.28.0 // indirect
@@ -226,16 +228,16 @@ require (
 	golang.org/x/term v0.23.0 // indirect
 	golang.org/x/text v0.17.0 // indirect
 	golang.org/x/tools v0.24.0 // indirect
-	google.golang.org/genproto/googleapis/api v0.0.0-20240812133136-8ffd90a71988 // indirect
-	google.golang.org/genproto/googleapis/rpc v0.0.0-20240812133136-8ffd90a71988 // indirect
+	google.golang.org/genproto/googleapis/api v0.0.0-20240827150818-7e3bb234dfed // indirect
+	google.golang.org/genproto/googleapis/rpc v0.0.0-20240827150818-7e3bb234dfed // indirect
 	gopkg.in/inf.v0 v0.9.1 // indirect
 	gopkg.in/yaml.v2 v2.4.0 // indirect
 	gopkg.in/yaml.v3 v3.0.1
 	gorm.io/driver/sqlserver v1.5.3 // indirect
 	k8s.io/klog/v2 v2.130.1 // indirect
-	k8s.io/kube-openapi v0.0.0-20240812233141-91dab695df6f // indirect
-	k8s.io/utils v0.0.0-20240711033017-18e509b52bc8 // indirect
-	modernc.org/libc v1.59.3 // indirect
+	k8s.io/kube-openapi v0.0.0-20240827152857-f7e401e7b4c2 // indirect
+	k8s.io/utils v0.0.0-20240821151609-f90d01438635 // indirect
+	modernc.org/libc v1.60.0 // indirect
 	modernc.org/mathutil v1.6.0 // indirect
 	modernc.org/memory v1.8.0 // indirect
 	modernc.org/sqlite v1.32.0 // indirect
