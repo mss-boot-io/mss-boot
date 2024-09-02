@@ -11,7 +11,7 @@ require (
 	github.com/aws/aws-sdk-go-v2/service/appconfigdata v1.16.5
 	github.com/aws/aws-sdk-go-v2/service/dynamodb v1.34.6
 	github.com/aws/aws-sdk-go-v2/service/s3 v1.61.0
-	github.com/casbin/casbin/v2 v2.98.0
+	github.com/casbin/casbin/v2 v2.99.0
 	github.com/casbin/gorm-adapter/v3 v3.28.0
 	github.com/casbin/mongodb-adapter/v3 v3.7.0
 	github.com/coreos/go-oidc/v3 v3.11.0
@@ -47,7 +47,10 @@ require (
 	k8s.io/client-go v0.31.0
 )
 
-require dario.cat/mergo v1.0.1 // indirect
+require (
+	dario.cat/mergo v1.0.1 // indirect
+	github.com/bmatcuk/doublestar/v4 v4.6.1 // indirect
+)
 
 require (
 	filippo.io/edwards25519 v1.1.0 // indirect
