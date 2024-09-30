@@ -43,7 +43,7 @@ require (
 	gorm.io/gorm v1.25.12
 	gorm.io/plugin/dbresolver v1.5.3
 	k8s.io/api v0.31.0
-	k8s.io/apimachinery v0.31.0
+	k8s.io/apimachinery v0.31.1
 	k8s.io/client-go v0.31.0
 )
 
