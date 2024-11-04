@@ -13,7 +13,7 @@ require (
 	github.com/casbin/gorm-adapter/v3 v3.28.0
 	github.com/casbin/mongodb-adapter/v3 v3.7.0
 	github.com/coreos/go-oidc/v3 v3.11.0
-	github.com/fsnotify/fsnotify v1.7.0
+	github.com/fsnotify/fsnotify v1.8.0
 	github.com/gin-contrib/pprof v1.5.0
 	github.com/go-openapi/spec v0.21.0
 	github.com/gogo/protobuf v1.3.2
