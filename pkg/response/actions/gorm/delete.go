@@ -73,6 +73,7 @@ func (e *Delete) delete(c *gin.Context, ids ...string) {
 		api.Err(http.StatusUnprocessableEntity)
 		return
 	}
+	c.Set("ids", ids)
 	if e.opts.BeforeDelete != nil {
 		if err := e.opts.BeforeDelete(c, gormdb.DB, e.opts.Model); err != nil {
 			api.AddError(err).Log.ErrorContext(c, "BeforeDelete error", "error", err)
@@ -80,7 +81,6 @@ func (e *Delete) delete(c *gin.Context, ids ...string) {
 			return
 		}
 	}
-	c.Set("ids", ids)
 	query := gormdb.DB.WithContext(c).
 		Where(fmt.Sprintf("%s IN ?", e.opts.Key), ids)
 	if e.opts.Scope != nil {
