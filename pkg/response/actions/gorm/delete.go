@@ -81,7 +81,8 @@ func (e *Delete) delete(c *gin.Context, ids ...string) {
 	fmt.Println(m)
 	fmt.Println("-------------------------------")
 	if e.opts.BeforeDelete != nil {
-		if err := e.opts.BeforeDelete(c, gormdb.DB, m); err != nil {
+		gormdb.DB.Set("id", ids)
+		if err := e.opts.BeforeDelete(c, gormdb.DB.Set("id", ids), m); err != nil {
 			api.AddError(err).Log.ErrorContext(c, "BeforeDelete error", "error", err)
 			api.Err(http.StatusInternalServerError)
 			return
