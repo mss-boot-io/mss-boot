@@ -9,6 +9,7 @@ package gorm
 
 import (
 	"fmt"
+	"github.com/mss-boot-io/mss-boot/pkg"
 	"net/http"
 
 	"github.com/gin-gonic/gin"
@@ -68,18 +69,19 @@ func (*Delete) String() string {
 }
 
 func (e *Delete) delete(c *gin.Context, ids ...string) {
-	api := response.Make(c).Bind(ids)
+	//api := response.Make(c)
+	m := pkg.TablerDeepCopy(e.opts.Model)
+	api := response.Make(c).Bind(m)
 	if len(ids) == 0 {
 		api.Err(http.StatusUnprocessableEntity)
 		return
 	}
 	fmt.Println("-------------------------------")
-	fmt.Println(c.Param("id"))
-	fmt.Println(c.Query("id"))
 	fmt.Println(e.opts.Key)
+	fmt.Println(m)
 	fmt.Println("-------------------------------")
 	if e.opts.BeforeDelete != nil {
-		if err := e.opts.BeforeDelete(c, gormdb.DB, e.opts.Model); err != nil {
+		if err := e.opts.BeforeDelete(c, gormdb.DB, m); err != nil {
 			api.AddError(err).Log.ErrorContext(c, "BeforeDelete error", "error", err)
 			api.Err(http.StatusInternalServerError)
 			return
