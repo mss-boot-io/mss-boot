@@ -147,11 +147,13 @@ func Init(cfg source.Entity, options ...source.Option) (err error) {
 	if !opts.Watch {
 		return nil
 	}
-	err = f.Watch(opts.PostfixHook, unm)
-	if err != nil {
-		slog.Warn("watch custom config failed", "err", err)
-		// ignore error
-		err = nil
+	if opts.PostfixHook != nil {
+		err = f.Watch(opts.PostfixHook, unm)
+		if err != nil {
+			slog.Warn("watch custom config failed", "err", err)
+			// ignore error
+			err = nil
+		}
 	}
 	return f.Watch(cfg, unm)
 }
