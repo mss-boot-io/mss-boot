@@ -2,6 +2,7 @@ package queue
 
 import (
 	"context"
+	"encoding/json"
 	"sync"
 	"time"
 
@@ -45,7 +46,13 @@ func (m *Memory) Append(opts ...storage.Option) error {
 	memoryMessage := new(Message)
 	memoryMessage.SetID(o.Message.GetID())
 	memoryMessage.SetStream(o.Message.GetStream())
-	memoryMessage.SetValues(o.Message.GetValues())
+	rb, err := json.Marshal(o.Message.GetValues())
+	if err != nil {
+		return err
+	}
+	data := make(map[string]any)
+	_ = json.Unmarshal(rb, &data)
+	memoryMessage.SetValues(data)
 
 	v, ok := m.queue.Load(o.Message.GetStream())
 
