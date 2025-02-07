@@ -84,24 +84,23 @@ func (k *Kafka) getConfig() *sarama.Config {
 			c.Net.KeepAlive = k.KeepAlive
 		}
 		c.Net.TLS.Enable = true
-		c.Net.TLS.Config = &tls.Config{
-			InsecureSkipVerify: true,
-			ClientAuth:         0,
+		tlsConfig := &tls.Config{
+			ClientAuth: tls.RequireAndVerifyClientCert,
 		}
 
 		if k.KeyFile != "" || k.CertFile != "" || k.CaFile != "" {
 			caCertPool := x509.NewCertPool()
-			caCertPool.AppendCertsFromPEM([]byte(k.CaFile))
+			if !caCertPool.AppendCertsFromPEM([]byte(k.CaFile)) {
+				log.Fatalf("queue kafka failed to append CA certificate")
+			}
 			clientCert, err := tls.X509KeyPair([]byte(k.CertFile), []byte(k.KeyFile))
 			if err != nil {
 				log.Fatalf("queue kafka load cert error: %s", err.Error())
 			}
-			c.Net.TLS.Config = &tls.Config{
-				RootCAs:      caCertPool,
-				Certificates: []tls.Certificate{clientCert},
-				ClientAuth:   tls.RequireAndVerifyClientCert,
-			}
+			tlsConfig.RootCAs = caCertPool
+			tlsConfig.Certificates = []tls.Certificate{clientCert}
 		}
+		c.Net.TLS.Config = tlsConfig
 
 		if k.SASL != nil {
 			c.Net.SASL.Enable = k.SASL.Enable
