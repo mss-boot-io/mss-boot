@@ -3,8 +3,8 @@ package queue
 import (
 	"crypto/sha256"
 	"crypto/sha512"
-	"github.com/IBM/sarama"
 
+	"github.com/IBM/sarama"
 	"github.com/xdg-go/scram"
 )
 

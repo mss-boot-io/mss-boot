@@ -105,7 +105,6 @@ func (m *Memory) Register(opts ...storage.Option) {
 					time.Sleep(i)
 					out <- message
 				}
-				err = nil
 			}
 		}
 	}(q, o.F)
