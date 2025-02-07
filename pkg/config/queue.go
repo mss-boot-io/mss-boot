@@ -85,7 +85,8 @@ func (k *Kafka) getConfig() *sarama.Config {
 		}
 		c.Net.TLS.Enable = true
 		tlsConfig := &tls.Config{
-			ClientAuth: tls.RequireAndVerifyClientCert,
+			InsecureSkipVerify: true,
+			ClientAuth:         tls.NoClientCert,
 		}
 
 		if k.KeyFile != "" || k.CertFile != "" || k.CaFile != "" {
