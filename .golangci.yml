@@ -1,5 +1,6 @@
 run:
-  timeout: 5m
+  path: ./...
+  deadline: 5m
   skip-dirs:
     - vendor
     - proto
@@ -9,7 +10,6 @@ run:
     - ".*\\_string\\.go$"
     - "pkg/response/actions/k8s/control.go"
     - "pkg/response/actions/k8s/search.go"
-
 linters-settings:
   lll:
     line-length: 170
@@ -25,7 +25,6 @@ issues:
   exclude-rules:
     - linters: [errcheck]
       text: "Error return value of .((os\\.)?std(out|err)\\..*|.*Close|.*Flush|os\\.Remove(All)?|.*printf?|os\\.(Un)?Setenv). is not checked"
-
 linters:
   disable-all: true
   enable:
