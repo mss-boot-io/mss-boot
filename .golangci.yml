@@ -1,11 +1,11 @@
 run:
   path: ./...
   deadline: 5m
-  skip-dirs:
+  exclude-dirs:
     - vendor
     - proto
     - test
-  skip-files:
+  exclude-files:
     - ".*\\_test\\.go$"
     - ".*\\_string\\.go$"
     - "pkg/response/actions/k8s/control.go"
