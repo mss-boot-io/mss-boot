@@ -35,7 +35,7 @@ require (
 	github.com/nfjBill/gorm-driver-dm v1.0.1
 	github.com/nsqio/go-nsq v1.1.0
 	github.com/prometheus/client_golang v1.21.1
-	github.com/redis/go-redis/v9 v9.5.1
+	github.com/redis/go-redis/v9 v9.7.3
 	github.com/robfig/cron/v3 v3.0.1
 	github.com/sanity-io/litter v1.5.8
 	github.com/skip2/go-qrcode v0.0.0-20200617195104-da1b6568686e
