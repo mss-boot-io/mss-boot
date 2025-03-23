@@ -11,8 +11,6 @@ import (
 	"log/slog"
 	"os"
 
-	"github.com/mss-boot-io/mss-boot/pkg"
-
 	"github.com/casbin/casbin/v2"
 	"github.com/casbin/casbin/v2/model"
 	"github.com/casbin/casbin/v2/persist"
@@ -20,6 +18,9 @@ import (
 	"gorm.io/gorm"
 	"gorm.io/gorm/logger"
 	"gorm.io/gorm/schema"
+
+	"github.com/mss-boot-io/mss-boot/pkg"
+	"github.com/mss-boot-io/mss-boot/pkg/search/gorms"
 )
 
 // DB gorm db
@@ -171,5 +172,6 @@ func (e *Database) Init() {
 		Enforcer.EnableAutoSave(true)
 		Enforcer.EnableAutoBuildRoleLinks(true)
 		Enforcer.EnableLog(true)
+		gorms.Driver = e.Driver
 	}
 }
