@@ -41,11 +41,6 @@ func ResolveSearchQuery(driver string, q interface{}, condition Condition) {
 	}
 	var t *resolveSearchTag
 
-	//var sep = "`"
-	//if driver == Postgres {
-	//	sep = "\""
-	//}
-
 	for i := 0; i < qType.NumField(); i++ {
 		tag, ok := qType.Field(i).Tag.Lookup(FromQueryTag)
 		if !ok {
@@ -67,6 +62,11 @@ func ResolveSearchQuery(driver string, q interface{}, condition Condition) {
 }
 
 func parseSQL(driver string, searchTag *resolveSearchTag, condition Condition, qValue reflect.Value, i int) {
+	var sep = "`"
+	if driver == Postgres {
+		sep = "\""
+	}
+
 	if driver == Dm {
 		searchTag.Table = strings.ToUpper(searchTag.Table)
 		searchTag.Column = strings.ToUpper(searchTag.Column)
@@ -76,55 +76,62 @@ func parseSQL(driver string, searchTag *resolveSearchTag, condition Condition, q
 		iStr = "i"
 	}
 	if searchTag.Table != "" {
-		searchTag.Table = fmt.Sprintf("`%s`.", searchTag.Table)
+		searchTag.Table = fmt.Sprintf("%s%s%s.", sep, searchTag.Table, sep)
 	}
+	column := fmt.Sprintf("%s%s%s", sep, searchTag.Column, sep)
 	switch searchTag.Type {
 	case "left":
 		//左关联
 		join := condition.SetJoinOn(searchTag.Type, fmt.Sprintf(
-			"left join `%s` on `%s`.`%s` = %s.`%s`",
+			"left join %s%s%s on %s%s%s.%s%s%s = %s%s%s.%s%s%s",
+			sep,
 			searchTag.Join,
+			sep, sep,
 			searchTag.Join,
+			sep, sep,
 			searchTag.On[0],
+			sep, sep,
 			searchTag.Table,
+			sep, sep,
 			searchTag.On[1],
+			sep,
 		))
 		ResolveSearchQuery(driver, qValue.Field(i).Interface(), join)
 	case "exact", "iexact":
-		condition.SetWhere(fmt.Sprintf("%s`%s` = ?", searchTag.Table, searchTag.Column), []interface{}{qValue.Field(i).Interface()})
+		condition.SetWhere(fmt.Sprintf("%s = ?", column), []interface{}{qValue.Field(i).Interface()})
 	case "contains":
-		condition.SetWhere(fmt.Sprintf("%s`%s` like ?", searchTag.Table, searchTag.Column), []interface{}{"%" + qValue.Field(i).String() + "%"})
+		condition.SetWhere(fmt.Sprintf("%s like ?", column), []interface{}{"%" + qValue.Field(i).String() + "%"})
 	case "icontains":
-		condition.SetWhere(fmt.Sprintf("%s`%s` %slike ?", searchTag.Table, searchTag.Column, iStr), []interface{}{"%" + qValue.Field(i).String() + "%"})
+		condition.SetWhere(fmt.Sprintf("%s %slike ?", column, iStr), []interface{}{"%" + qValue.Field(i).String() + "%"})
 	case "gt":
-		condition.SetWhere(fmt.Sprintf("%s`%s` > ?", searchTag.Table, searchTag.Column), []interface{}{qValue.Field(i).Interface()})
+		condition.SetWhere(fmt.Sprintf("%s > ?", column), []interface{}{qValue.Field(i).Interface()})
 	case "gte":
-		condition.SetWhere(fmt.Sprintf("%s`%s` >= ?", searchTag.Table, searchTag.Column), []interface{}{qValue.Field(i).Interface()})
+		condition.SetWhere(fmt.Sprintf("%s >= ?", column), []interface{}{qValue.Field(i).Interface()})
 	case "lt":
-		condition.SetWhere(fmt.Sprintf("%s`%s` < ?", searchTag.Table, searchTag.Column), []interface{}{qValue.Field(i).Interface()})
+		condition.SetWhere(fmt.Sprintf("%s < ?", column), []interface{}{qValue.Field(i).Interface()})
 	case "lte":
-		condition.SetWhere(fmt.Sprintf("%s`%s` <= ?", searchTag.Table, searchTag.Column), []interface{}{qValue.Field(i).Interface()})
+		condition.SetWhere(fmt.Sprintf("%s <= ?", column), []interface{}{qValue.Field(i).Interface()})
 	case "startswith":
-		condition.SetWhere(fmt.Sprintf("%s`%s` like ?", searchTag.Table, searchTag.Column), []interface{}{qValue.Field(i).String() + "%"})
+		condition.SetWhere(fmt.Sprintf("%s like ?", column), []interface{}{qValue.Field(i).String() + "%"})
 	case "istartswith":
-		condition.SetWhere(fmt.Sprintf("%s`%s` %slike ?", searchTag.Table, searchTag.Column, iStr), []interface{}{qValue.Field(i).String() + "%"})
+		condition.SetWhere(fmt.Sprintf("%s %slike ?", column, iStr), []interface{}{qValue.Field(i).String() + "%"})
 	case "endswith":
-		condition.SetWhere(fmt.Sprintf("%s`%s` like ?", searchTag.Table, searchTag.Column), []interface{}{"%" + qValue.Field(i).String()})
+		condition.SetWhere(fmt.Sprintf("%s like ?", column), []interface{}{"%" + qValue.Field(i).String()})
 	case "iendswith":
-		condition.SetWhere(fmt.Sprintf("%s`%s` %slike ?", searchTag.Table, searchTag.Column, iStr), []interface{}{"%" + qValue.Field(i).String()})
+		condition.SetWhere(fmt.Sprintf("%s %slike ?", column, iStr), []interface{}{"%" + qValue.Field(i).String()})
 	case "in":
-		condition.SetWhere(fmt.Sprintf("%s`%s` in (?)", searchTag.Table, searchTag.Column), []interface{}{qValue.Field(i).Interface()})
+		condition.SetWhere(fmt.Sprintf("%s in (?)", column), []interface{}{qValue.Field(i).Interface()})
 	case "isnull":
 		if !(qValue.Field(i).IsZero() && qValue.Field(i).IsNil()) {
-			condition.SetWhere(fmt.Sprintf("%s`%s` isnull", searchTag.Table, searchTag.Column), make([]interface{}, 0))
+			condition.SetWhere(fmt.Sprintf("%s isnull", column), make([]interface{}, 0))
 		}
 	case "between":
-		condition.SetWhere(fmt.Sprintf("%s`%s` between ? and ?", searchTag.Table, searchTag.Column),
+		condition.SetWhere(fmt.Sprintf("%s between ? and ?", column),
 			[]interface{}{qValue.Field(i).Index(0).Interface(), qValue.Field(i).Index(1).Interface()})
 	case "order":
 		switch strings.ToLower(qValue.Field(i).String()) {
 		case "desc", "asc":
-			condition.SetOrder(fmt.Sprintf("%s`%s` %s", searchTag.Table, searchTag.Column, qValue.Field(i).String()))
+			condition.SetOrder(fmt.Sprintf("%s %s", column, qValue.Field(i).String()))
 		}
 	}
 }
