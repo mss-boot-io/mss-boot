@@ -25,7 +25,7 @@ func TestRedis_Append(t *testing.T) {
 		name    string
 		message storage.Messager
 	}
-	client := redis.NewClient(&redis.Options{})
+	client := redis.NewUniversalClient(&redis.UniversalOptions{})
 	tests := []struct {
 		name    string
 		fields  fields
