@@ -140,7 +140,7 @@ func getTLS(c *TLS) (*tls.Config, error) {
 
 		certPool := x509.NewCertPool()
 		if ok := certPool.AppendCertsFromPEM(caCert); !ok {
-			slog.Error("certPool.AppendCertsFromPEM err", "err", err, "ca", c.Ca)
+			slog.Error("failed to append CA cert", "ca", c.Ca)
 			return nil, fmt.Errorf("failed to append CA cert: %s", c.Ca)
 		}
 		tlsConfig.RootCAs = certPool
