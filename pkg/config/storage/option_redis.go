@@ -35,6 +35,9 @@ func SetRedisClient(c redis.UniversalClient) {
 }
 
 type RedisConnectOptions struct {
+	// Addr In order to be compatible with the previous configuration
+	// Deprecated: Use Addrs instead.
+	Addr             string        `yaml:"addr" json:"addr"`
 	Addrs            []string      `yaml:"addrs"`
 	ClientName       string        `yaml:"clientName"`
 	DB               int           `yaml:"db"`
@@ -108,6 +111,9 @@ func (e *RedisConnectOptions) GetRedisOptions() (opt *redis.UniversalOptions, er
 		DisableIdentity:       e.DisableIdentity,
 		IdentitySuffix:        e.IdentitySuffix,
 		UnstableResp3:         e.UnstableResp3,
+	}
+	if e.Addr != "" {
+		opt.Addrs = []string{e.Addr}
 	}
 	opt.TLSConfig, err = getTLS(e.TLS)
 	return opt, err
