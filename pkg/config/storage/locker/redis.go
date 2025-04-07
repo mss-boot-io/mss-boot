@@ -9,14 +9,14 @@ import (
 )
 
 // NewRedis 初始化locker
-func NewRedis(c *redis.Client) *Redis {
+func NewRedis(c redis.UniversalClient) *Redis {
 	return &Redis{
 		client: c,
 	}
 }
 
 type Redis struct {
-	client *redis.Client
+	client redis.UniversalClient
 	mutex  *redislock.Client
 }
 

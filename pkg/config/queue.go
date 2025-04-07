@@ -208,7 +208,7 @@ func (e *Queue) Init(set func(storage.AdapterQueue)) {
 			if err != nil {
 				log.Fatalf("queue redis init error: %s", err.Error())
 			}
-			client = redis.NewClient(options)
+			client = redis.NewUniversalClient(options)
 			storage.SetRedisClient(client)
 		}
 		e.Redis.Producer.RedisClient = client

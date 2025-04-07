@@ -34,7 +34,7 @@ func (e *Locker) Init(set func(storage.AdapterLocker)) {
 			if err != nil {
 				log.Fatalf("locker redis init error: %s", err.Error())
 			}
-			client = redis.NewClient(options)
+			client = redis.NewUniversalClient(options)
 			storage.SetRedisClient(client)
 		}
 		if set != nil {

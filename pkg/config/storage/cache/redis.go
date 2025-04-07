@@ -12,13 +12,13 @@ import (
 )
 
 // NewRedis redis模式
-func NewRedis(client *redis.Client, options *redis.Options, opts ...Option) (*Redis, error) {
+func NewRedis(client redis.UniversalClient, options *redis.UniversalOptions, opts ...Option) (*Redis, error) {
 	o := DefaultOptions()
 	for _, option := range opts {
 		option(&o)
 	}
 	if client == nil {
-		client = redis.NewClient(options)
+		client = redis.NewUniversalClient(options)
 	}
 	r := &Redis{
 		client: client,
@@ -33,7 +33,7 @@ func NewRedis(client *redis.Client, options *redis.Options, opts ...Option) (*Re
 
 // Redis cache implement
 type Redis struct {
-	client *redis.Client
+	client redis.UniversalClient
 	opts   Options
 }
 
@@ -180,7 +180,7 @@ func (r *Redis) RemoveFromTag(ctx context.Context, tag string) error {
 }
 
 // GetClient 暴露原生client
-func (r *Redis) GetClient() *redis.Client {
+func (r *Redis) GetClient() redis.UniversalClient {
 	return r.client
 }
 
