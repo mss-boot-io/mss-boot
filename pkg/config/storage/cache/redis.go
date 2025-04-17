@@ -76,6 +76,18 @@ func (r *Redis) HashGet(ctx context.Context, hk, key string) (string, error) {
 	return r.client.HGet(ctx, hk, key).Result()
 }
 
+func (r *Redis) HashAll(ctx context.Context, hk string) (map[string]string, error) {
+	return r.client.HGetAll(ctx, hk).Result()
+}
+
+func (r *Redis) HashSet(ctx context.Context, hk, key string, val interface{}, expire time.Duration) error {
+	err := r.client.HSet(ctx, hk, key, val).Err()
+	if err != nil {
+		return err
+	}
+	return r.client.Expire(ctx, hk, expire).Err()
+}
+
 // HashDel delete key in specify redis's hashtable
 func (r *Redis) HashDel(ctx context.Context, hk, key string) error {
 	return r.client.HDel(ctx, hk, key).Err()

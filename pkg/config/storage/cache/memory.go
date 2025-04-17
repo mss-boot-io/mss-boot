@@ -20,6 +20,11 @@ type item struct {
 	Expired time.Time
 }
 
+type HashItem struct {
+	Value   map[string]string
+	Expired time.Time
+}
+
 // NewMemory memory模式
 func NewMemory(options ...Option) *Memory {
 	o := DefaultOptions()
@@ -33,9 +38,10 @@ func NewMemory(options ...Option) *Memory {
 }
 
 type Memory struct {
-	items *sync.Map
-	mutex sync.RWMutex
-	opts  Options
+	items    *sync.Map
+	mutex    sync.RWMutex
+	opts     Options
+	hasItems *sync.Map
 }
 
 func (m *Memory) Initialize(tx *gorm.DB) error {
@@ -83,6 +89,50 @@ func (m *Memory) getItem(key string) (*item, error) {
 	}
 }
 
+func (m *Memory) getHashItem(hk, field string) (string, error) {
+	var err error
+	i, ok := m.hasItems.Load(hk)
+	if !ok {
+		return "", nil
+	}
+	switch i.(type) {
+	case *HashItem:
+		e := i.(*HashItem)
+		if e.Expired.Before(time.Now()) {
+			//过期
+			_ = m.delAllHash(hk)
+			//过期后删除
+			return "", nil
+		}
+		return e.Value[field], nil
+	default:
+		err = fmt.Errorf("value of %s type error", hk)
+		return "", err
+	}
+}
+
+func (m *Memory) getHashAll(hk string) (map[string]string, error) {
+	var err error
+	i, ok := m.hasItems.Load(hk)
+	if !ok {
+		return nil, nil
+	}
+	switch i.(type) {
+	case *HashItem:
+		e := i.(*HashItem)
+		if e.Expired.Before(time.Now()) {
+			//过期
+			_ = m.delAllHash(hk)
+			//过期后删除
+			return nil, nil
+		}
+		return e.Value, nil
+	default:
+		err = fmt.Errorf("value of %s type error", hk)
+		return nil, err
+	}
+}
+
 func (m *Memory) Set(_ context.Context, key string, val any, expire time.Duration) error {
 	s, err := cast.ToStringE(val)
 	if err != nil {
@@ -109,12 +159,45 @@ func (m *Memory) del(key string) error {
 	return nil
 }
 
+func (m *Memory) delAllHash(hk string) error {
+	m.hasItems.Delete(hk)
+	return nil
+
+}
+
+func (m *Memory) delHash(hk string, field string) error {
+	//todo
+	return nil
+}
+
 func (m *Memory) HashGet(_ context.Context, hk, key string) (string, error) {
 	e, err := m.getItem(hk + key)
 	if err != nil || e == nil {
 		return "", err
 	}
 	return e.Value, err
+}
+
+func (m *Memory) HashAll(_ context.Context, hk string) (map[string]string, error) {
+	e, err := m.getHashAll(hk)
+	if err != nil || e == nil {
+		return nil, err
+	}
+	return e, err
+
+}
+
+func (m *Memory) HashSet(_ context.Context, hk, key string, val any, expire time.Duration) error {
+	s, err := cast.ToStringE(val)
+	if err != nil {
+		return err
+	}
+	e := &item{
+		Value:   s,
+		Expired: time.Now().Add(expire),
+	}
+	return m.setItem(hk+key, e)
+
 }
 
 func (m *Memory) HashDel(_ context.Context, hk, key string) error {

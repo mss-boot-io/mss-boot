@@ -21,6 +21,8 @@ type AdapterCache interface {
 	Set(ctx context.Context, key string, val interface{}, expire time.Duration) error
 	Del(ctx context.Context, key string) error
 	HashGet(ctx context.Context, hk, key string) (string, error)
+	HashAll(ctx context.Context, hk string) (map[string]string, error)
+	HashSet(ctx context.Context, hk, key string, val interface{}, expire time.Duration) error
 	HashDel(ctx context.Context, hk, key string) error
 	Increase(ctx context.Context, key string) error
 	Decrease(ctx context.Context, key string) error
