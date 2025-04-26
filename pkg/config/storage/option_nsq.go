@@ -14,15 +14,15 @@ import (
 )
 
 type NSQOptions struct {
-	DialTimeout time.Duration `opt:"dial_timeout" default:"1s"`
+	DialTimeout time.Duration `opt:"dial_timeout" default:"1s" yaml:"dialTimeout" json:"dialTimeout"`
 
 	LookupdAddr string `opt:"-" json:"lookupdAddr" yaml:"lookupdAddr"`
 
 	AdminAddr string `opt:"-" json:"adminAddr" yaml:"adminAddr"`
 
 	// Deadlines for network reads and writes
-	ReadTimeout  time.Duration `opt:"read_timeout" min:"100ms" max:"5m" default:"60s"`
-	WriteTimeout time.Duration `opt:"write_timeout" min:"100ms" max:"5m" default:"1s"`
+	ReadTimeout  time.Duration `opt:"read_timeout" min:"100ms" max:"5m" default:"60s" yaml:"readTimeout" json:"readTimeout""`
+	WriteTimeout time.Duration `opt:"write_timeout" min:"100ms" max:"5m" default:"1s" yaml:"writeTimeout" json:"writeTimeout"`
 
 	// Addresses is the local address to use when dialing an nsqd.
 	Addresses []string `opt:"addresses" yaml:"addresses" json:"addresses"`
@@ -33,64 +33,64 @@ type NSQOptions struct {
 	//
 	// NOTE: when not using nsqlookupd, LookupdPollInterval represents the duration of time between
 	// reconnection attempts
-	LookupdPollInterval time.Duration `opt:"lookupd_poll_interval" min:"10ms" max:"5m" default:"60s"`
-	LookupdPollJitter   float64       `opt:"lookupd_poll_jitter" min:"0" max:"1" default:"0.3"`
+	LookupdPollInterval time.Duration `opt:"lookupd_poll_interval" min:"10ms" max:"5m" default:"60s" yaml:"lookupdPollInterval" json:"lookupdPollInterval"`
+	LookupdPollJitter   float64       `opt:"lookupd_poll_jitter" min:"0" max:"1" default:"0.3" yaml:"lookupdPollJitter" json:"lookupdPollJitter"`
 
 	// Maximum duration when REQueueing (for doubling of deferred requeue)
-	MaxRequeueDelay     time.Duration `opt:"max_requeue_delay" min:"0" max:"60m" default:"15m"`
-	DefaultRequeueDelay time.Duration `opt:"default_requeue_delay" min:"0" max:"60m" default:"90s"`
+	MaxRequeueDelay     time.Duration `opt:"max_requeue_delay" min:"0" max:"60m" default:"15m" yaml:"maxRequeueDelay" json:"maxRequeueDelay"`
+	DefaultRequeueDelay time.Duration `opt:"default_requeue_delay" min:"0" max:"60m" default:"90s" yaml:"defaultRequeueDelay" json:"defaultRequeueDelay"`
 
 	// Maximum amount of time to backoff when processing fails 0 == no backoff
-	MaxBackoffDuration time.Duration `opt:"max_backoff_duration" min:"0" max:"60m" default:"2m"`
+	MaxBackoffDuration time.Duration `opt:"max_backoff_duration" min:"0" max:"60m" default:"2m" yaml:"maxBackoffDuration" json:"maxBackoffDuration"`
 	// Unit of time for calculating consumer backoff
-	BackoffMultiplier time.Duration `opt:"backoff_multiplier" min:"0" max:"60m" default:"1s"`
+	BackoffMultiplier time.Duration `opt:"backoff_multiplier" min:"0" max:"60m" default:"1s" yaml:"backoffMultiplier" json:"backoffMultiplier"`
 
 	// Maximum number of times this consumer will attempt to process a message before giving up
-	MaxAttempts uint16 `opt:"max_attempts" min:"0" max:"65535" default:"5"`
+	MaxAttempts uint16 `opt:"max_attempts" min:"0" max:"65535" default:"5" yaml:"maxAttempts" json:"maxAttempts"`
 
 	// Duration to wait for a message from an nsqd when in a state where RDY
 	// counts are re-distributed (e.g. max_in_flight < num_producers)
-	LowRdyIdleTimeout time.Duration `opt:"low_rdy_idle_timeout" min:"1s" max:"5m" default:"10s"`
+	LowRdyIdleTimeout time.Duration `opt:"low_rdy_idle_timeout" min:"1s" max:"5m" default:"10s" yaml:"lowRdyIdleTimeout" json:"lowRdyIdleTimeout"`
 	// Duration to wait until redistributing RDY for an nsqd regardless of LowRdyIdleTimeout
-	LowRdyTimeout time.Duration `opt:"low_rdy_timeout" min:"1s" max:"5m" default:"30s"`
+	LowRdyTimeout time.Duration `opt:"low_rdy_timeout" min:"1s" max:"5m" default:"30s" yaml:"lowRdyTimeout" json:"lowRdyTimeout"`
 	// Duration between redistributing max-in-flight to connections
-	RDYRedistributeInterval time.Duration `opt:"rdy_redistribute_interval" min:"1ms" max:"5s" default:"5s"`
+	RDYRedistributeInterval time.Duration `opt:"rdy_redistribute_interval" min:"1ms" max:"5s" default:"5s" yaml:"rdyRedistributeInterval" json:"rdyRedistributeInterval"`
 
 	// Identifiers sent to nsqd representing this client
 	// UserAgent is in the spirit of HTTP (default: "<client_library_name>/<version>")
-	ClientID  string `opt:"client_id"` // (defaults: short hostname)
-	Hostname  string `opt:"hostname"`
-	UserAgent string `opt:"user_agent"`
+	ClientID  string `opt:"client_id" yaml:"clientID" json:"clientID"` // (defaults: short hostname)
+	Hostname  string `opt:"hostname" yaml:"hostname" json:"hostname"`
+	UserAgent string `opt:"user_agent" yaml:"userAgent" json:"userAgent"`
 
 	// Duration of time between heartbeats. This must be less than ReadTimeout
-	HeartbeatInterval time.Duration `opt:"heartbeat_interval" default:"30s"`
+	HeartbeatInterval time.Duration `opt:"heartbeat_interval" default:"30s" yaml:"heartbeatInterval" json:"heartbeatInterval"`
 	// Integer percentage to sample the channel (requires nsqd 0.2.25+)
-	SampleRate int32 `opt:"sample_rate" min:"0" max:"99"`
+	SampleRate int32 `opt:"sample_rate" min:"0" max:"99" yaml:"sampleRate" json:"sampleRate"`
 
 	Tls *TLS `yaml:"tls" json:"tls"`
 
 	// Compression Settings
-	Deflate      bool `opt:"deflate"`
-	DeflateLevel int  `opt:"deflate_level" min:"1" max:"9" default:"6"`
-	Snappy       bool `opt:"snappy"`
+	Deflate      bool `opt:"deflate" yaml:"deflate" json:"deflate"`
+	DeflateLevel int  `opt:"deflate_level" min:"1" max:"9" default:"6" yaml:"deflateLevel" json:"deflateLevel"`
+	Snappy       bool `opt:"snappy" yaml:"snappy" json:"snappy"`
 
 	// Size of the buffer (in bytes) used by nsqd for buffering writes to this connection
-	OutputBufferSize int64 `opt:"output_buffer_size" default:"16384"`
+	OutputBufferSize int64 `opt:"output_buffer_size" default:"16384" yaml:"outputBufferSize" json:"outputBufferSize"`
 	// Timeout used by nsqd before flushing buffered writes (set to 0 to disable).
 	//
 	// WARNING: configuring clients with an extremely low
 	// (< 25ms) output_buffer_timeout has a significant effect
 	// on nsqd CPU usage (particularly with > 50 clients connected).
-	OutputBufferTimeout time.Duration `opt:"output_buffer_timeout" default:"250ms"`
+	OutputBufferTimeout time.Duration `opt:"output_buffer_timeout" default:"250ms" yaml:"outputBufferTimeout" json:"outputBufferTimeout"`
 
 	// Maximum number of messages to allow in flight (concurrency knob)
-	MaxInFlight int `opt:"max_in_flight" min:"0" default:"1"`
+	MaxInFlight int `opt:"max_in_flight" min:"0" default:"1" yaml:"maxInFlight" json:"maxInFlight"`
 
 	// The server-side message timeout for messages delivered to this client
-	MsgTimeout time.Duration `opt:"msg_timeout" min:"0"`
+	MsgTimeout time.Duration `opt:"msg_timeout" min:"0" yaml:"msgTimeout" json:"msgTimeout"`
 
 	// secret for nsqd authentication (requires nsqd 0.2.29+)
-	AuthSecret string `opt:"auth_secret"`
+	AuthSecret string `opt:"auth_secret" yaml:"authSecret" json:"authSecret"`
 }
 
 func (e NSQOptions) GetNSQOptions() (*nsq.Config, error) {
