@@ -100,7 +100,7 @@ func (m *Memory) getHashItem(hk, field string) (string, error) {
 		e := i.(*HashItem)
 		if e.Expired.Before(time.Now()) {
 			//过期
-			_ = m.delAllHash(hk)
+			m.delAllHash(hk)
 			//过期后删除
 			return "", nil
 		}
@@ -122,7 +122,7 @@ func (m *Memory) getHashAll(hk string) (map[string]string, error) {
 		e := i.(*HashItem)
 		if e.Expired.Before(time.Now()) {
 			//过期
-			_ = m.delAllHash(hk)
+			m.delAllHash(hk)
 			//过期后删除
 			return nil, nil
 		}
@@ -159,10 +159,8 @@ func (m *Memory) del(key string) error {
 	return nil
 }
 
-func (m *Memory) delAllHash(hk string) error {
+func (m *Memory) delAllHash(hk string) {
 	m.hasItems.Delete(hk)
-	return nil
-
 }
 
 func (m *Memory) delHash(hk string, field string) error {
