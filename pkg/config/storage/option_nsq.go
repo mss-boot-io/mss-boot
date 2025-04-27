@@ -21,7 +21,7 @@ type NSQOptions struct {
 	AdminAddr string `opt:"-" json:"adminAddr" yaml:"adminAddr"`
 
 	// Deadlines for network reads and writes
-	ReadTimeout  time.Duration `opt:"read_timeout" min:"100ms" max:"5m" default:"60s" yaml:"readTimeout" json:"readTimeout""`
+	ReadTimeout  time.Duration `opt:"read_timeout" min:"100ms" max:"5m" default:"60s" yaml:"readTimeout" json:"readTimeout"`
 	WriteTimeout time.Duration `opt:"write_timeout" min:"100ms" max:"5m" default:"1s" yaml:"writeTimeout" json:"writeTimeout"`
 
 	// Addresses is the local address to use when dialing an nsqd.
