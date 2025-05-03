@@ -48,9 +48,18 @@ func Entry(entryID cron.EntryID) cron.Entry {
 // UpdateJob update or create job
 func UpdateJob(key string, spec string, job cron.Job) error {
 	var err error
-	entryID, _, _, ok, _ := task.opts.storage.Get(key)
-	if ok {
+	entryID, entrySpec, _, ok, _ := task.opts.storage.Get(key)
+	if ok && spec != entrySpec && entryID != 0 {
 		task.opts.task.Remove(entryID)
+		entryID, err = task.opts.task.AddJob(spec, job)
+		if err != nil {
+			slog.Error("task update job error", slog.Any("err", err))
+			return err
+		}
+		return task.opts.storage.Update(key, entryID)
+	}
+	if ok && entryID != 0 {
+		return nil
 	}
 	entryID, err = task.opts.task.AddJob(spec, job)
 	if err != nil {
