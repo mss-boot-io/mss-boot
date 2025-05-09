@@ -15,6 +15,7 @@ import (
 	"log/slog"
 	"net"
 	"net/http"
+	"os"
 	"strconv"
 	"strings"
 	"sync"
@@ -47,7 +48,7 @@ type NSQ struct {
 	adminAddr  string
 	cfg        *nsq.Config
 	producer   []*nsq.Producer
-	consumer   *nsq.Consumer
+	consumer   map[string]*nsq.Consumer
 	mux        sync.Mutex
 }
 
@@ -86,22 +87,28 @@ func (e *NSQ) newConsumer(topic, channel string, partition int, h nsq.Handler) (
 		e.cfg = nsq.NewConfig()
 	}
 	if e.consumer == nil {
-		e.consumer, err = nsq.NewConsumer(topic, channel, e.cfg)
+		e.consumer = make(map[string]*nsq.Consumer)
+	}
+
+	consumer, ok := e.consumer[fmt.Sprintf("%s:%s", topic, channel)]
+	if !ok {
+		consumer, err = nsq.NewConsumer(topic, channel, e.cfg)
 		if err != nil {
 			return err
 		}
+		e.consumer[fmt.Sprintf("%s:%s", topic, channel)] = consumer
 	}
-	e.consumer.AddHandler(h)
+	consumer.AddHandler(h)
 	if e.lookupAddr != "" && partition < 0 {
-		err = e.consumer.ConnectToNSQLookupd(e.lookupAddr)
+		err = consumer.ConnectToNSQLookupd(e.lookupAddr)
 		return
 	}
 	if partition > -1 {
 		partition = partition % len(e.addresses)
-		err = e.consumer.ConnectToNSQDs([]string{e.addresses[partition]})
+		err = consumer.ConnectToNSQDs([]string{e.addresses[partition]})
 		return err
 	}
-	err = e.consumer.ConnectToNSQDs(e.addresses)
+	err = consumer.ConnectToNSQDs(e.addresses)
 	return err
 }
 
@@ -127,8 +134,8 @@ func (e *NSQ) Register(opts ...storage.Option) {
 	h := &nsqConsumerHandler{o.F}
 	err := e.newConsumer(o.Topic, o.GroupID, o.Partition, h)
 	if err != nil {
-		//目前不支持动态注册
-		panic(err)
+		slog.Error("nsq consumer register error", slog.Any("err", err))
+		os.Exit(-1)
 	}
 }
 
@@ -153,7 +160,9 @@ func (e *NSQ) Shutdown() {
 		e.producer[i].Stop()
 	}
 	if e.consumer != nil {
-		e.consumer.Stop()
+		for k := range e.consumer {
+			e.consumer[k].Stop()
+		}
 	}
 }
 
