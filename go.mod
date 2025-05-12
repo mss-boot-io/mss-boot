@@ -53,7 +53,7 @@ require (
 	gopkg.in/yaml.v3 v3.0.1
 	gorm.io/driver/mysql v1.5.7
 	gorm.io/driver/postgres v1.5.11
-	gorm.io/gorm v1.26.0
+	gorm.io/gorm v1.26.1
 	gorm.io/plugin/dbresolver v1.6.0
 	k8s.io/api v0.33.0
 	k8s.io/apimachinery v0.33.0
