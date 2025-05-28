@@ -34,7 +34,7 @@ type VerifyCode struct {
 
 func (v *VerifyCode) GenerateCode(ctx context.Context, key string, expire time.Duration) (string, error) {
 	code := generateCode6()
-	err := v.Cache.Set(ctx, fmt.Sprintf("verify-code-%s", key), code, expire)
+	err := v.Cache.Set(ctx, fmt.Sprintf("verify-code-%s", key), code, expire).Err()
 	if err != nil {
 		return "", err
 	}
@@ -42,7 +42,7 @@ func (v *VerifyCode) GenerateCode(ctx context.Context, key string, expire time.D
 }
 
 func (v *VerifyCode) VerifyCode(ctx context.Context, key, code string) (bool, error) {
-	s, err := v.Cache.Get(ctx, fmt.Sprintf("verify-code-%s", key))
+	s, err := v.Cache.Get(ctx, fmt.Sprintf("verify-code-%s", key)).Result()
 	if err != nil {
 		return false, err
 	}

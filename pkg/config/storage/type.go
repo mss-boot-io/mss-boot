@@ -5,6 +5,7 @@ import (
 	"time"
 
 	"github.com/bsm/redislock"
+	"github.com/redis/go-redis/v9"
 	"gorm.io/gorm"
 )
 
@@ -13,20 +14,11 @@ const (
 )
 
 type AdapterCache interface {
+	redis.UniversalClient
 	Name() string
 	String() string
 	Initialize(*gorm.DB) error
 	RemoveFromTag(ctx context.Context, tag string) error
-	Get(ctx context.Context, key string) (string, error)
-	Set(ctx context.Context, key string, val interface{}, expire time.Duration) error
-	Del(ctx context.Context, key string) error
-	HashGet(ctx context.Context, hk, key string) (string, error)
-	HashAll(ctx context.Context, hk string) (map[string]string, error)
-	HashSet(ctx context.Context, hk, key string, val interface{}, expire time.Duration) error
-	HashDel(ctx context.Context, hk, key string) error
-	Increase(ctx context.Context, key string) error
-	Decrease(ctx context.Context, key string) error
-	Expire(ctx context.Context, key string, dur time.Duration) error
 }
 
 type AdapterQueue interface {

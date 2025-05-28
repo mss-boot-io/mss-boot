@@ -23,7 +23,6 @@ type Cache struct {
 	QueryCacheDuration time.Duration `yaml:"queryCacheDuration" json:"queryCacheDuration"`
 	QueryCacheKeys     []string      `yaml:"queryCacheKeys" json:"queryCacheKeys"`
 	Redis              *storage.RedisConnectOptions
-	Memory             interface{}
 }
 
 // Init 构造cache 顺序 redis > 其他 > memory
@@ -49,12 +48,6 @@ func (e Cache) Init(set func(storage.AdapterCache), queryCache func(tx *gorm.DB,
 		}
 		if set != nil {
 			set(r)
-		}
-	}
-	if e.Memory != nil {
-		m := cache.NewMemory(opts...)
-		if set != nil {
-			set(m)
 		}
 	}
 	if e.QueryCache && e.QueryCacheDuration > 0 && gormdb.DB != nil && queryCache != nil {

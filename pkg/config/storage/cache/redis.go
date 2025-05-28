@@ -21,8 +21,8 @@ func NewRedis(client redis.UniversalClient, options *redis.UniversalOptions, opt
 		client = redis.NewUniversalClient(options)
 	}
 	r := &Redis{
-		client: client,
-		opts:   o,
+		UniversalClient: client,
+		opts:            o,
 	}
 	err := r.connect()
 	if err != nil {
@@ -33,8 +33,8 @@ func NewRedis(client redis.UniversalClient, options *redis.UniversalOptions, opt
 
 // Redis cache implement
 type Redis struct {
-	client redis.UniversalClient
-	opts   Options
+	redis.UniversalClient
+	opts Options
 }
 
 func (r *Redis) Initialize(tx *gorm.DB) error {
@@ -52,59 +52,8 @@ func (*Redis) String() string {
 // connect connect test
 func (r *Redis) connect() error {
 	var err error
-	_, err = r.client.Ping(context.TODO()).Result()
+	_, err = r.Ping(context.TODO()).Result()
 	return err
-}
-
-// Get from key
-func (r *Redis) Get(ctx context.Context, key string) (string, error) {
-	return r.client.Get(ctx, key).Result()
-}
-
-// Set value with key and expire time
-func (r *Redis) Set(ctx context.Context, key string, val interface{}, expire time.Duration) error {
-	return r.client.Set(ctx, key, val, expire).Err()
-}
-
-// Del delete key in redis
-func (r *Redis) Del(ctx context.Context, key string) error {
-	return r.client.Del(ctx, key).Err()
-}
-
-// HashGet from key
-func (r *Redis) HashGet(ctx context.Context, hk, key string) (string, error) {
-	return r.client.HGet(ctx, hk, key).Result()
-}
-
-func (r *Redis) HashAll(ctx context.Context, hk string) (map[string]string, error) {
-	return r.client.HGetAll(ctx, hk).Result()
-}
-
-func (r *Redis) HashSet(ctx context.Context, hk, key string, val interface{}, expire time.Duration) error {
-	err := r.client.HSet(ctx, hk, key, val).Err()
-	if err != nil {
-		return err
-	}
-	return r.client.Expire(ctx, hk, expire).Err()
-}
-
-// HashDel delete key in specify redis's hashtable
-func (r *Redis) HashDel(ctx context.Context, hk, key string) error {
-	return r.client.HDel(ctx, hk, key).Err()
-}
-
-// Increase key's value
-func (r *Redis) Increase(ctx context.Context, key string) error {
-	return r.client.Incr(ctx, key).Err()
-}
-
-func (r *Redis) Decrease(ctx context.Context, key string) error {
-	return r.client.Decr(ctx, key).Err()
-}
-
-// Expire Set ttl
-func (r *Redis) Expire(ctx context.Context, key string, dur time.Duration) error {
-	return r.client.Expire(ctx, key, dur).Err()
 }
 
 func (r *Redis) Query(tx *gorm.DB) {
@@ -157,7 +106,7 @@ func (r *Redis) Query(tx *gorm.DB) {
 }
 
 func (r *Redis) QueryCache(ctx context.Context, key string, dest any) error {
-	s, err := r.Get(ctx, key)
+	s, err := r.Get(ctx, key).Result()
 	if err != nil {
 		return err
 	}
@@ -176,24 +125,24 @@ func (r *Redis) SaveCache(ctx context.Context, key string, dest any, ttl time.Du
 	if err != nil {
 		return err
 	}
-	return r.client.Set(ctx, key, string(s), ttl).Err()
+	return r.Set(ctx, key, string(s), ttl).Err()
 }
 
 func (r *Redis) SaveTagKey(ctx context.Context, tag, key string) error {
-	return r.client.SAdd(ctx, tag, key).Err()
+	return r.SAdd(ctx, tag, key).Err()
 }
 
 func (r *Redis) RemoveFromTag(ctx context.Context, tag string) error {
-	keys, err := r.client.SMembers(ctx, tag).Result()
+	keys, err := r.SMembers(ctx, tag).Result()
 	if err != nil {
 		return err
 	}
-	return r.client.Del(ctx, keys...).Err()
+	return r.Del(ctx, keys...).Err()
 }
 
 // GetClient 暴露原生client
 func (r *Redis) GetClient() redis.UniversalClient {
-	return r.client
+	return r
 }
 
 func (r *Redis) generateKey(key string) string {
