@@ -44,9 +44,9 @@ func TestRedis_HashSet(t *testing.T) {
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
 			r := &Redis{
-				client: tt.fields.client,
+				UniversalClient: tt.fields.client,
 			}
-			if err := r.HashSet(tt.args.ctx, tt.args.hk, tt.args.key, tt.args.val, tt.args.expire); (err != nil) != tt.wantErr {
+			if err := r.HSet(tt.args.ctx, tt.args.hk, tt.args.key, tt.args.val, tt.args.expire).Err(); (err != nil) != tt.wantErr {
 				t.Errorf("HashSet() error = %v, wantErr %v", err, tt.wantErr)
 			}
 		})
@@ -86,9 +86,9 @@ func TestRedis_HashGet(t *testing.T) {
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
 			r := &Redis{
-				client: tt.fields.client,
+				UniversalClient: tt.fields.client,
 			}
-			got, err := r.HashGet(tt.args.ctx, tt.args.hk, tt.args.key)
+			got, err := r.HGet(tt.args.ctx, tt.args.hk, tt.args.key).Result()
 			if (err != nil) != tt.wantErr {
 				t.Errorf("HashGet() error = %v, wantErr %v", err, tt.wantErr)
 				return
@@ -131,9 +131,9 @@ func TestRedis_HashDel(t *testing.T) {
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
 			r := &Redis{
-				client: tt.fields.client,
+				UniversalClient: tt.fields.client,
 			}
-			if err := r.HashDel(tt.args.ctx, tt.args.hk, tt.args.key); (err != nil) != tt.wantErr {
+			if err := r.HDel(tt.args.ctx, tt.args.hk, tt.args.key).Err(); (err != nil) != tt.wantErr {
 				t.Errorf("HashDel() error = %v, wantErr %v", err, tt.wantErr)
 			}
 		})
@@ -209,10 +209,10 @@ func TestRedis_Set(t *testing.T) {
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
 			r := &Redis{
-				client: tt.fields.client,
-				opts:   tt.fields.opts,
+				UniversalClient: tt.fields.client,
+				opts:            tt.fields.opts,
 			}
-			if err := r.Set(tt.args.ctx, tt.args.key, tt.args.val, tt.args.expire); (err != nil) != tt.wantErr {
+			if err := r.Set(tt.args.ctx, tt.args.key, tt.args.val, tt.args.expire).Err(); (err != nil) != tt.wantErr {
 				t.Errorf("Set() error = %v, wantErr %v", err, tt.wantErr)
 			}
 		})
@@ -250,9 +250,9 @@ func TestRedis_Get(t *testing.T) {
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
 			r := &Redis{
-				client: tt.fields.client,
+				UniversalClient: tt.fields.client,
 			}
-			got, err := r.Get(tt.args.ctx, tt.args.key)
+			got, err := r.Get(tt.args.ctx, tt.args.key).Result()
 			if (err != nil) != tt.wantErr {
 				t.Errorf("Get() error = %v, wantErr %v", err, tt.wantErr)
 				return
@@ -293,9 +293,9 @@ func TestRedis_Del(t *testing.T) {
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
 			r := &Redis{
-				client: tt.fields.client,
+				UniversalClient: tt.fields.client,
 			}
-			if err := r.Del(tt.args.ctx, tt.args.key); (err != nil) != tt.wantErr {
+			if err := r.Del(tt.args.ctx, tt.args.key).Err(); (err != nil) != tt.wantErr {
 				t.Errorf("Del() error = %v, wantErr %v", err, tt.wantErr)
 			}
 		})
