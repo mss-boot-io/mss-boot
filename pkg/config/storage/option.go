@@ -1,6 +1,9 @@
 package storage
 
-import "github.com/IBM/sarama"
+import (
+	"github.com/IBM/sarama"
+	"time"
+)
 
 /*
  * @Author: lwnmengjing<lwnmengjing@qq.com>
@@ -17,6 +20,7 @@ type Options struct {
 	Partition                   int
 	PartitionAssignmentStrategy sarama.BalanceStrategy
 	KafkaConfig                 *sarama.Config
+	Delay                       time.Duration
 }
 
 func DefaultOptions() *Options {
@@ -34,6 +38,12 @@ func SetOptions(opts ...Option) *Options {
 }
 
 type Option func(*Options)
+
+func WithDelay(delay time.Duration) Option {
+	return func(o *Options) {
+		o.Delay = delay
+	}
+}
 
 func WithStrategy(f sarama.BalanceStrategy) Option {
 	return func(o *Options) {

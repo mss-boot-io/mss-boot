@@ -125,6 +125,10 @@ func (e *NSQ) Append(opts ...storage.Option) error {
 	if err != nil {
 		return err
 	}
+	if o.Delay > 0 {
+		// 延时消息
+		return e.getProducer(o.Message.GetID()).DeferredPublish(o.Message.GetStream(), o.Delay, rb)
+	}
 	return e.getProducer(o.Message.GetID()).Publish(o.Message.GetStream(), rb)
 }
 
