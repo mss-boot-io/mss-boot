@@ -1,8 +1,9 @@
 package storage
 
 import (
-	"github.com/IBM/sarama"
 	"time"
+
+	"github.com/IBM/sarama"
 )
 
 /*
