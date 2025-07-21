@@ -152,7 +152,7 @@ func (e *API) Bind(d interface{}, bindings ...binding.Binding) *API {
 		case nil:
 			err = e.Context.ShouldBindUri(d)
 		case binding.Query:
-			err = e.Context.BindQuery(d)
+			err = e.Context.ShouldBindWith(d, binding.Query)
 		default:
 			err = e.Context.ShouldBindWith(d, bindings[i])
 		}
@@ -162,7 +162,8 @@ func (e *API) Bind(d interface{}, bindings ...binding.Binding) *API {
 			continue
 		}
 		if err != nil {
-			errs, ok := err.(validator.ValidationErrors)
+			var errs validator.ValidationErrors
+			ok := errors.As(err, &errs)
 			if ok && i < needValidateNum {
 				err = nil
 				continue
