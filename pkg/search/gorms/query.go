@@ -75,10 +75,11 @@ func parseSQL(driver string, searchTag *resolveSearchTag, condition Condition, q
 	if driver == Postgres {
 		iStr = "i"
 	}
+	column := fmt.Sprintf("%s%s%s", sep, searchTag.Column, sep)
 	if searchTag.Table != "" {
 		searchTag.Table = fmt.Sprintf("%s%s%s.", sep, searchTag.Table, sep)
+		column = searchTag.Table + column
 	}
-	column := fmt.Sprintf("%s%s%s", sep, searchTag.Column, sep)
 	switch searchTag.Type {
 	case "left":
 		//左关联

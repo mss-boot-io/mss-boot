@@ -104,6 +104,14 @@ func (e *Database) Init() {
 			e.Registers[i].Replicas[j] = pkg.ParseEnvTemplate(e.Registers[i].Replicas[j])
 		}
 	}
+	switch e.Driver {
+	case gorms.Postgres:
+		gorms.Driver = gorms.Postgres
+	case gorms.Mysql:
+		gorms.Driver = gorms.Mysql
+	case gorms.Dm:
+		gorms.Driver = gorms.Dm
+	}
 
 	registers := make([]ResolverConfigure, len(e.Registers))
 	for i := range e.Registers {
