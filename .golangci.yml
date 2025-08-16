@@ -144,11 +144,14 @@ linters:
       - common-false-positives
       - legacy
     paths:
-      - test/testdata_etc # test files
-      - internal/go # extracted from Go code
-      - internal/x # extracted from x/tools code
-      - pkg/goformatters/gci/internal # extracted from gci code
-      - pkg/goanalysis/runner_checker.go # extracted from x/tools code
+      - vendor
+      - proto
+      - test
+      - ".*\\_test\\.go$"
+      - ".*\\_string\\.go$"
+      - "pkg/response/actions/k8s/control.go"
+      - "pkg/response/actions/k8s/search.go"
+      - "core/server/**"
     rules:
       - path: (.+)_test\.go
         linters:
@@ -218,4 +221,4 @@ formatters:
       - ".*\\_string\\.go$"
       - "pkg/response/actions/k8s/control.go"
       - "pkg/response/actions/k8s/search.go"
-      - core/server
+      - "core/server/**"
