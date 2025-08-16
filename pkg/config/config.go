@@ -107,7 +107,7 @@ func Init(cfg source.Entity, options ...source.Option) (err error) {
 		slog.Error(err.Error())
 		return err
 	}
-	//postfix hook
+	// postfix hook
 	if opts.PostfixHook != nil {
 		err = unm(rb, opts.PostfixHook)
 		if err != nil {
@@ -135,7 +135,7 @@ func Init(cfg source.Entity, options ...source.Option) (err error) {
 			slog.Error(err.Error())
 		}
 	}
-	//postfix hook
+	// postfix hook
 	if opts.PostfixHook != nil {
 		err = unm(rb, opts.PostfixHook)
 		if err != nil {

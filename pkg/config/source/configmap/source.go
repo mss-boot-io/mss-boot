@@ -107,7 +107,6 @@ func (s *Source) getClientset() error {
 			if err != nil {
 				return err
 			}
-
 		} else {
 			var apiConfig *clientcmdapi.Config
 			if s.opt.Kubeconfig != "" {

@@ -93,7 +93,7 @@ func (e *Search) searchMgm(c *gin.Context) {
 		defer result.Close(c)
 		items := make([]any, 0, req.GetPageSize())
 		for result.Next(c) {
-			//var data any
+			// var data any
 			m := pkg.ModelDeepCopy(e.Model)
 			err = result.Decode(m)
 			if err != nil {
@@ -106,10 +106,10 @@ func (e *Search) searchMgm(c *gin.Context) {
 		api.PageOK(items, count, req.GetPage(), req.GetPageSize())
 		return
 	}
-	//use Aggregate
+	// use Aggregate
 	//https://docs.mongodb.com/manual/reference/operator/aggregation/lookup/
 	pipeline := bson.A{
-		//builder.S(builder.Lookup(authorColl.Name(), "author_id", field.ID, "author")),
+		// builder.S(builder.Lookup(authorColl.Name(), "author_id", field.ID, "author")),
 	}
 	for i := range linkConfigs {
 		pipeline = append(pipeline,
@@ -119,7 +119,7 @@ func (e *Search) searchMgm(c *gin.Context) {
 					linkConfigs[i].LocalField,
 					field.ID, linkConfigs[i].ForeignField)))
 	}
-	//limit skip sort
+	// limit skip sort
 	pipeline = append(pipeline, bson.D{
 		{Key: "$limit", Value: req.GetPageSize()},
 	}, bson.D{
@@ -150,7 +150,7 @@ func (e *Search) searchMgm(c *gin.Context) {
 		if bm == nil {
 			continue
 		}
-		//todo bson.M to model
+		// todo bson.M to model
 		err = BsonMTransferModel(bm, m)
 		if err != nil {
 			api.AddError(err).Log.ErrorContext(c, "transfer bson.M to model error", "error", err)

@@ -4,8 +4,8 @@ import "strings"
 
 // Condition interface
 type Condition interface {
-	SetWhere(k string, v []interface{})
-	SetOr(k string, v []interface{})
+	SetWhere(k string, v []any)
+	SetOr(k string, v []any)
 	SetOrder(k string)
 	SetJoinOn(t, on string) Condition
 }
@@ -21,11 +21,11 @@ type GormCondition struct {
 // GormPublic gorm public
 type GormPublic struct {
 	// Where and condition
-	Where map[string][]interface{}
+	Where map[string][]any
 	// Order order
 	Order []string
 	// Or condition
-	Or map[string][]interface{}
+	Or map[string][]any
 }
 
 // GormJoin gorm join
@@ -44,17 +44,17 @@ func (e *GormJoin) SetJoinOn(t, on string) Condition {
 }
 
 // SetWhere set where
-func (e *GormPublic) SetWhere(k string, v []interface{}) {
+func (e *GormPublic) SetWhere(k string, v []any) {
 	if e.Where == nil {
-		e.Where = make(map[string][]interface{})
+		e.Where = make(map[string][]any)
 	}
 	e.Where[k] = v
 }
 
 // SetOr set or condition
-func (e *GormPublic) SetOr(k string, v []interface{}) {
+func (e *GormPublic) SetOr(k string, v []any) {
 	if e.Or == nil {
-		e.Or = make(map[string][]interface{})
+		e.Or = make(map[string][]any)
 	}
 	e.Or[k] = v
 }

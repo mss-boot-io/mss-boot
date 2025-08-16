@@ -42,7 +42,7 @@ func (e *Create) Handler() gin.HandlersChain {
 		switch c.Request.Method {
 		case http.MethodPost:
 			api := response.Make(c)
-			//create
+			// create
 			m := e.GetModel(c)
 			if m == nil {
 				// no set model

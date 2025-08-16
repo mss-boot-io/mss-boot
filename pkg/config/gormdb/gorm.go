@@ -94,7 +94,7 @@ type GORMConfig struct {
 // Init init db
 func (e *Database) Init() {
 	var err error
-	//parse env
+	// parse env
 	e.Source = pkg.ParseEnvTemplate(e.Source)
 	for i := range e.Registers {
 		for j := range e.Registers[i].Sources {
@@ -154,7 +154,7 @@ func (e *Database) Init() {
 	}
 	// casbin
 	if e.CasbinModel != "" {
-		//set casbin adapter
+		// set casbin adapter
 		var a persist.Adapter
 		a, err = gormadapter.NewAdapterByDBUseTableName(DB, "mss_boot", "casbin_rule")
 		if err != nil {

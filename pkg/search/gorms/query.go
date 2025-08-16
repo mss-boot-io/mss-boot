@@ -30,7 +30,7 @@ const (
  *	isnull
  *  order 排序		e.g. order[key]=desc     order[key]=asc
  */
-func ResolveSearchQuery(driver string, q interface{}, condition Condition) {
+func ResolveSearchQuery(driver string, q any, condition Condition) {
 	qType := reflect.TypeOf(q)
 	qValue := reflect.ValueOf(q)
 	if qType.Kind() == reflect.Ptr {
@@ -44,7 +44,7 @@ func ResolveSearchQuery(driver string, q interface{}, condition Condition) {
 	for i := 0; i < qType.NumField(); i++ {
 		tag, ok := qType.Field(i).Tag.Lookup(FromQueryTag)
 		if !ok {
-			//递归调用
+			// 递归调用
 			ResolveSearchQuery(driver, qValue.Field(i).Interface(), condition)
 			continue
 		}
@@ -82,7 +82,7 @@ func parseSQL(driver string, searchTag *resolveSearchTag, condition Condition, q
 	}
 	switch searchTag.Type {
 	case "left":
-		//左关联
+		// 左关联
 		join := condition.SetJoinOn(searchTag.Type, fmt.Sprintf(
 			"left join %s%s%s on %s%s%s.%s%s%s = %s%s%s.%s%s%s",
 			sep,
@@ -99,36 +99,36 @@ func parseSQL(driver string, searchTag *resolveSearchTag, condition Condition, q
 		))
 		ResolveSearchQuery(driver, qValue.Field(i).Interface(), join)
 	case "exact", "iexact":
-		condition.SetWhere(fmt.Sprintf("%s = ?", column), []interface{}{qValue.Field(i).Interface()})
+		condition.SetWhere(fmt.Sprintf("%s = ?", column), []any{qValue.Field(i).Interface()})
 	case "contains":
-		condition.SetWhere(fmt.Sprintf("%s like ?", column), []interface{}{"%" + qValue.Field(i).String() + "%"})
+		condition.SetWhere(fmt.Sprintf("%s like ?", column), []any{"%" + qValue.Field(i).String() + "%"})
 	case "icontains":
-		condition.SetWhere(fmt.Sprintf("%s %slike ?", column, iStr), []interface{}{"%" + qValue.Field(i).String() + "%"})
+		condition.SetWhere(fmt.Sprintf("%s %slike ?", column, iStr), []any{"%" + qValue.Field(i).String() + "%"})
 	case "gt":
-		condition.SetWhere(fmt.Sprintf("%s > ?", column), []interface{}{qValue.Field(i).Interface()})
+		condition.SetWhere(fmt.Sprintf("%s > ?", column), []any{qValue.Field(i).Interface()})
 	case "gte":
-		condition.SetWhere(fmt.Sprintf("%s >= ?", column), []interface{}{qValue.Field(i).Interface()})
+		condition.SetWhere(fmt.Sprintf("%s >= ?", column), []any{qValue.Field(i).Interface()})
 	case "lt":
-		condition.SetWhere(fmt.Sprintf("%s < ?", column), []interface{}{qValue.Field(i).Interface()})
+		condition.SetWhere(fmt.Sprintf("%s < ?", column), []any{qValue.Field(i).Interface()})
 	case "lte":
-		condition.SetWhere(fmt.Sprintf("%s <= ?", column), []interface{}{qValue.Field(i).Interface()})
+		condition.SetWhere(fmt.Sprintf("%s <= ?", column), []any{qValue.Field(i).Interface()})
 	case "startswith":
-		condition.SetWhere(fmt.Sprintf("%s like ?", column), []interface{}{qValue.Field(i).String() + "%"})
+		condition.SetWhere(fmt.Sprintf("%s like ?", column), []any{qValue.Field(i).String() + "%"})
 	case "istartswith":
-		condition.SetWhere(fmt.Sprintf("%s %slike ?", column, iStr), []interface{}{qValue.Field(i).String() + "%"})
+		condition.SetWhere(fmt.Sprintf("%s %slike ?", column, iStr), []any{qValue.Field(i).String() + "%"})
 	case "endswith":
-		condition.SetWhere(fmt.Sprintf("%s like ?", column), []interface{}{"%" + qValue.Field(i).String()})
+		condition.SetWhere(fmt.Sprintf("%s like ?", column), []any{"%" + qValue.Field(i).String()})
 	case "iendswith":
-		condition.SetWhere(fmt.Sprintf("%s %slike ?", column, iStr), []interface{}{"%" + qValue.Field(i).String()})
+		condition.SetWhere(fmt.Sprintf("%s %slike ?", column, iStr), []any{"%" + qValue.Field(i).String()})
 	case "in":
-		condition.SetWhere(fmt.Sprintf("%s in (?)", column), []interface{}{qValue.Field(i).Interface()})
+		condition.SetWhere(fmt.Sprintf("%s in (?)", column), []any{qValue.Field(i).Interface()})
 	case "isnull":
-		if !(qValue.Field(i).IsZero() && qValue.Field(i).IsNil()) {
-			condition.SetWhere(fmt.Sprintf("%s isnull", column), make([]interface{}, 0))
+		if !qValue.Field(i).IsZero() || !qValue.Field(i).IsNil() {
+			condition.SetWhere(fmt.Sprintf("%s isnull", column), make([]any, 0))
 		}
 	case "between":
 		condition.SetWhere(fmt.Sprintf("%s between ? and ?", column),
-			[]interface{}{qValue.Field(i).Index(0).Interface(), qValue.Field(i).Index(1).Interface()})
+			[]any{qValue.Field(i).Index(0).Interface(), qValue.Field(i).Index(1).Interface()})
 	case "order":
 		switch strings.ToLower(qValue.Field(i).String()) {
 		case "desc", "asc":

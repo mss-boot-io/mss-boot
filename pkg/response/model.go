@@ -22,7 +22,7 @@ type Response struct {
 
 type response struct {
 	Response
-	Data interface{} `json:"data,omitempty"`
+	Data any `json:"data,omitempty"`
 }
 
 // Page page
@@ -38,7 +38,7 @@ type page struct {
 }
 
 // SetList set data
-func (e *response) SetList(data interface{}) {
+func (e *response) SetList(data any) {
 	e.Data = data
 }
 
@@ -87,7 +87,7 @@ func (e *response) Error(c *gin.Context, code int, err error, msg ...string) {
 }
 
 // OK ok
-func (e *response) OK(c *gin.Context, data interface{}) {
+func (e *response) OK(c *gin.Context, data any) {
 	checkContext(c)
 	res := Default.Clone()
 	res.SetList(data)
@@ -108,14 +108,14 @@ func (e *response) OK(c *gin.Context, data interface{}) {
 }
 
 // PageOK page ok
-func (e *response) PageOK(c *gin.Context, result interface{}, count, pageIndex, pageSize int64) {
+func (e *response) PageOK(c *gin.Context, result any, count, pageIndex, pageSize int64) {
 	checkContext(c)
 	var res page
 	res.Count = count
 	res.Current = pageIndex
 	res.PageSize = pageSize
-	res.response.SetList(result)
-	res.response.SetTraceID(pkg.GenerateMsgIDFromContext(c))
+	res.SetList(result)
+	res.SetTraceID(pkg.GenerateMsgIDFromContext(c))
 	c.Set("result", res)
 	c.Set("status", http.StatusOK)
 	c.AbortWithStatusJSON(http.StatusOK, res)

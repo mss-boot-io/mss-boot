@@ -34,7 +34,7 @@ func NewNSQ(cfg *nsq.Config, lookup, adminAddr string, addresses ...string) (*NS
 		adminAddr:  adminAddr,
 		cfg:        cfg,
 	}
-	//通过adminaddr获取节点信息
+	// 通过adminaddr获取节点信息
 	err := n.queryNSQAdmin()
 	if err != nil {
 		return nil, err
@@ -175,13 +175,13 @@ func (e *NSQ) queryNSQAdmin() error {
 		return nil
 	}
 	endpoint := e.adminAddr
-	if strings.Index(endpoint, "http") < 0 {
+	if !strings.Contains(endpoint, "http") {
 		endpoint = fmt.Sprintf("http://%s", endpoint)
 	}
 
 	var data NodesResp
 	client := &http.Client{}
-	req, err := http.NewRequest("GET", fmt.Sprintf("%s/api/nodes", endpoint), nil)
+	req, err := http.NewRequest("GET", fmt.Sprintf("%s/api/nodes", endpoint), http.NoBody)
 	if err != nil {
 		slog.Error("error creating HTTP request to nsq admin", slog.Any("err", err))
 		return err
@@ -243,7 +243,7 @@ type nsqConsumerHandler struct {
 
 func (e nsqConsumerHandler) HandleMessage(message *nsq.Message) error {
 	m := new(Message)
-	data := make(map[string]interface{})
+	data := make(map[string]any)
 	err := json.Unmarshal(message.Body, &data)
 	if err != nil {
 		return err

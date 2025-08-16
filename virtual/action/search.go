@@ -39,7 +39,7 @@ func (e *Search) Handler() gin.HandlersChain {
 		switch c.Request.Method {
 		case http.MethodGet:
 			api := response.Make(c)
-			//search
+			// search
 			m := e.GetModel(c)
 			if m == nil {
 				// no set model
