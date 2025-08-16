@@ -12,13 +12,13 @@ import (
 	"log"
 	"time"
 
-	// nolint "github.com/casbin/casbin/v2"
+	//nolint "github.com/casbin/casbin/v2"
 	"github.com/casbin/casbin/v2"
-	// nolint "github.com/casbin/casbin/v2"
+	//nolint "github.com/casbin/casbin/v2"
 	"github.com/casbin/casbin/v2/model"
-	// nolint "github.com/casbin/casbin/v2/persist"
+	//nolint "github.com/casbin/casbin/v2/persist"
 	"github.com/casbin/casbin/v2/persist"
-	// nolint "github.com/casbin/mongodb-adapter/v3"
+	//nolint "github.com/casbin/mongodb-adapter/v3"
 	mongodbadapter "github.com/casbin/mongodb-adapter/v3"
 	mgm "github.com/kamva/mgm/v3"
 	"go.mongodb.org/mongo-driver/mongo"
@@ -61,7 +61,7 @@ func (e *Database) Init() {
 		ApplyURI(e.URL).
 		SetServerAPIOptions(serverAPIOptions)
 	if e.Timeout == 0 {
-		//set default timeout
+		// set default timeout
 		e.Timeout = 10 * time.Second
 	}
 	ctx, cancel := context.WithTimeout(
@@ -76,7 +76,7 @@ func (e *Database) Init() {
 	if err != nil {
 		log.Fatalf("ping mongo error: %s", err.Error())
 	}
-	//set mgm default client
+	// set mgm default client
 	err = mgm.SetDefaultConfig(&mgm.Config{CtxTimeout: e.Timeout}, e.Name, clientOptions)
 	if err != nil {
 		log.Fatalf("mgm.SetDefaultConfig err: %s", err.Error())
@@ -86,7 +86,7 @@ func (e *Database) Init() {
 		tables[i].Make()
 	}
 	if e.CasbinModel != "" {
-		//set casbin adapter
+		// set casbin adapter
 		var a persist.Adapter
 		a, err = mongodbadapter.NewAdapterWithClientOption(clientOptions, e.Name, e.Timeout)
 		if err != nil {

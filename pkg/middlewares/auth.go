@@ -23,7 +23,7 @@ import (
 func AuthMiddleware() gin.HandlerFunc {
 	return func(c *gin.Context) {
 		api := response.Make(c)
-		//登录认证
+		// 登录认证
 		accessToken := getTokenFromHeader(c)
 		if accessToken == "" {
 			api.AddError(errors.New("token is empty"))
@@ -57,7 +57,7 @@ func AuthMiddleware() gin.HandlerFunc {
 			api.Err(http.StatusUnauthorized)
 			return
 		}
-		//鉴权
+		// 鉴权
 		c.Set("user", user)
 		c.Next()
 	}

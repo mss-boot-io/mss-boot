@@ -12,7 +12,7 @@ import (
 )
 
 // Translate 结构体环转
-func Translate(from, to interface{}) {
+func Translate(from, to any) {
 	fType := reflect.TypeOf(from)
 	fValue := reflect.ValueOf(from)
 	if fType.Kind() == reflect.Ptr {

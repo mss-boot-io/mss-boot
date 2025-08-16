@@ -31,10 +31,10 @@ type bindConstructor struct {
 	mux   sync.Mutex
 }
 
-func (e *bindConstructor) GetBindingForGin(d interface{}) []binding.Binding {
+func (e *bindConstructor) GetBindingForGin(d any) []binding.Binding {
 	bs := e.getBinding(reflect.TypeOf(d).String())
 	if bs == nil {
-		//重新构建
+		// 重新构建
 		bs = e.resolve(d)
 	}
 	gbsMap := make(map[uint8]binding.Binding)
@@ -61,7 +61,7 @@ func (e *bindConstructor) GetBindingForGin(d interface{}) []binding.Binding {
 	return gbs
 }
 
-func (e *bindConstructor) resolve(d interface{}) []uint8 {
+func (e *bindConstructor) resolve(d any) []uint8 {
 	bs := make([]uint8, 0)
 	qType := reflect.TypeOf(d)
 	if qType.Kind() == reflect.Ptr {
@@ -76,7 +76,7 @@ func (e *bindConstructor) resolve(d interface{}) []uint8 {
 	var v string
 	for i := 0; i < qType.NumField(); i++ {
 		if qType.Field(i).Type.Kind() == reflect.Struct {
-			//递归
+			// 递归
 			bs = append(bs, e.resolve(qValue.Field(i).Interface())...)
 		}
 		tag = qType.Field(i).Tag
@@ -89,7 +89,7 @@ func (e *bindConstructor) resolve(d interface{}) []uint8 {
 		if v, ok = tag.Lookup("yaml"); ok && v != "-" {
 			bs = append(bs, yaml)
 		}
-		//if v, ok = tag.Lookup("form"); ok && v != "-" {
+		// if v, ok = tag.Lookup("form"); ok && v != "-" {
 		//	bs = append(bs, form)
 		//}
 		if v, ok = tag.Lookup("query"); ok && v != "-" {
@@ -98,12 +98,12 @@ func (e *bindConstructor) resolve(d interface{}) []uint8 {
 		if v, ok = tag.Lookup("uri"); ok && v != "-" {
 			bs = append(bs, 0)
 		}
-		if t, ok := tag.Lookup("binding"); ok && strings.Index(t, "dive") > -1 {
+		if t, ok := tag.Lookup("binding"); ok && strings.Contains(t, "dive") {
 			qValue := reflect.ValueOf(d)
 			bs = append(bs, e.resolve(qValue.Field(i))...)
 			continue
 		}
-		if t, ok := tag.Lookup("validate"); ok && strings.Index(t, "dive") > -1 {
+		if t, ok := tag.Lookup("validate"); ok && strings.Contains(t, "dive") {
 			qValue := reflect.ValueOf(d)
 			bs = append(bs, e.resolve(qValue.Field(i))...)
 		}

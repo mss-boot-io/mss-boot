@@ -93,7 +93,7 @@ func (e *Search) search(c *gin.Context) {
 
 	if e.opts.TreeField != "" && e.opts.Depth > 0 {
 		treeFields := make([]string, 0, e.opts.Depth)
-		for i := 0; i < e.opts.Depth; i++ {
+		for i := range e.opts.Depth {
 			treeFields[i] = e.opts.TreeField
 		}
 		query = query.Preload(strings.Join(treeFields, "."))

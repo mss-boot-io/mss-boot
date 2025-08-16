@@ -27,7 +27,7 @@ func getResourceReader(src string) (r *bytes.Reader, err error) {
 		return nil, errors.New("图片源错误")
 	}
 
-	//跳过证书验证
+	// 跳过证书验证
 	c := &http.Client{
 		Transport: &http.Transport{
 			TLSClientConfig: &tls.Config{InsecureSkipVerify: true},
@@ -48,7 +48,7 @@ func getResourceReader(src string) (r *bytes.Reader, err error) {
 		return r, nil
 	}
 
-	//if src[0:2] == "s3" {
+	// if src[0:2] == "s3" {
 	//	// todo: get image from s3
 	//}
 

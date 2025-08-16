@@ -38,7 +38,7 @@ func (g GeneralDelDto) GetIds() []int {
 		}
 	}
 	if len(ids) <= 0 {
-		//方式全部删除
+		// 方式全部删除
 		ids = append(ids, 0)
 	}
 	return ids
@@ -50,7 +50,7 @@ type GeneralGetDto struct {
 }
 
 // MakeCondition  make condition
-func MakeCondition(q interface{}) func(db *gorm.DB) *gorm.DB {
+func MakeCondition(q any) func(db *gorm.DB) *gorm.DB {
 	return func(db *gorm.DB) *gorm.DB {
 		condition := &GormCondition{
 			GormPublic: GormPublic{},

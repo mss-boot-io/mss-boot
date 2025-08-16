@@ -43,10 +43,10 @@ func NewFileWriter(opts ...Option) (*FileWriter, error) {
 					p.num--
 					filename = p.getFilenameAccordingToTimestamp()
 				}
-				//文件不存在
+				// 文件不存在
 				break
 			}
-			//存在，但是报错了
+			// 存在，但是报错了
 			return nil, err
 		}
 		p.num++
@@ -79,7 +79,7 @@ func (p *FileWriter) checkFile() {
 	info, _ := p.file.Stat()
 	if strings.Contains(p.file.Name(), time.Now().Format(fileNameTimeFormat)) ||
 		(p.opts.cap > 0 && uint(info.Size()) > p.opts.cap) {
-		//生成新文件
+		// 生成新文件
 		if uint(info.Size()) > p.opts.cap {
 			p.num++
 		} else {

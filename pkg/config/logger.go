@@ -29,7 +29,7 @@ type Logger struct {
 	Cap        uint       `yaml:"cap" json:"cap"`
 	Json       bool       `yaml:"json" json:"json"`
 	BufferSize uint       `yaml:"bufferSize" json:"bufferSize"`
-	//Loki       *Loki      `yaml:"loki" json:"loki"`
+	// Loki       *Loki      `yaml:"loki" json:"loki"`
 }
 
 type Loki struct {
@@ -67,7 +67,7 @@ func (e *Logger) Init() {
 			slog.Error("logger setup error", slog.Any("error", err))
 			os.Exit(-1)
 		}
-	//case "loki":
+	// case "loki":
 	//	opts := make([]writer.Option, 0)
 	//	if e.Loki != nil && e.Loki.URL != "" {
 	//		opts = append(opts, writer.WithLokiEndpoint(e.Loki.URL))

@@ -38,7 +38,7 @@ func AppendTable(t Tabler) {
 // Init init
 func (e *Database) Init() {
 	if e.Timeout == 0 {
-		//set default timeout
+		// set default timeout
 		e.Timeout = 10 * time.Second
 	}
 	ctx, cancel := context.WithTimeout(

@@ -52,7 +52,6 @@ func FromKey(ctx context.Context) (string, bool) {
 		if t, ok := value.(string); ok {
 			return t, true
 		}
-
 	}
 
 	return "", false
@@ -66,7 +65,6 @@ func FromTag(ctx context.Context) (string, bool) {
 		if t, ok := value.(string); ok {
 			return t, true
 		}
-
 	}
 
 	return "", false

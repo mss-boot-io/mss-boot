@@ -8,6 +8,6 @@ package config
  */
 
 // Entity 配置实体
-//type Entity interface {
+// type Entity interface {
 //	OnChange()
 //}

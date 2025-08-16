@@ -32,10 +32,10 @@ type AdapterQueue interface {
 type Messager interface {
 	SetID(string)
 	SetStream(string)
-	SetValues(map[string]interface{})
+	SetValues(map[string]any)
 	GetID() string
 	GetStream() string
-	GetValues() map[string]interface{}
+	GetValues() map[string]any
 	GetPrefix() string
 	SetPrefix(string)
 	SetErrorCount(count int)

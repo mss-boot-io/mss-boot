@@ -37,7 +37,7 @@ func (e *Update) Handler() gin.HandlersChain {
 		switch c.Request.Method {
 		case http.MethodPut:
 			api := response.Make(c)
-			//update
+			// update
 			m := e.GetModel(c)
 			if m == nil {
 				// no set model

@@ -97,7 +97,6 @@ func ParseAcceptLanguage(languages string, supportedLanguages []string) []string
 		}
 
 		langs = append(langs, lang)
-
 	}
 
 	langs.SortByQuality()
@@ -109,5 +108,4 @@ func ParseAcceptLanguage(languages string, supportedLanguages []string) []string
 	}
 
 	return langString
-
 }
