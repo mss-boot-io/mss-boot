@@ -1,42 +1,142 @@
 version: "2"
 
-#output:
-#  show-stats: true
-#  sort-order:
-#    - file
-#    - linter
-
 linters:
+  default: none
   enable:
-    - misspell
-    - govet
-    - errcheck
-    - goconst
-    - unparam
-    - ineffassign
-    - nakedret
-    - gocyclo
-    - goimports
-    - lll
+    - bodyclose
+    - copyloopvar
+    - depguard
+    - dogsled
     - dupl
+    - errcheck
+    - errorlint
+    - funlen
+    - gocheckcompilerdirectives
+    - gochecknoinits
+    - goconst
+    - gocritic
+    - gocyclo
+    - godox
+    - mnd
+    - goprintffuncname
+    - gosec
+    - govet
+    - intrange
+    - ineffassign
+    - lll
+    - misspell
+    - nakedret
+    - noctx
+    - nolintlint
+    - revive
+    - staticcheck
+    - testifylint
+    - unconvert
+    - unparam
+    - unused
+    - whitespace
 
 linters-settings:
   dupl:
-    threshold: 400
+    threshold: 100
+  funlen:
+    lines: -1
+    statements: 50
+  goconst:
+    min-len: 2
+    min-occurrences: 3
+  gocritic:
+    enabled-tags:
+      - diagnostic
+      - experimental
+      - opinionated
+      - performance
+      - style
+    disabled-checks:
+      - dupImport
+      - ifElseChain
+      - octalLiteral
+      - whyNoLint
+  gocyclo:
+    min-complexity: 15
+  godox:
+    keywords:
+      - FIXME
+  mnd:
+    checks:
+      - argument
+      - case
+      - condition
+      - return
+    ignored-numbers:
+      - '0'
+      - '1'
+      - '2'
+      - '3'
+    ignored-functions:
+      - strings.SplitN
+  govet:
+    settings:
+      printf:
+        funcs:
+          - (github.com/golangci/golangci-lint/v2/pkg/logutils.Log).Infof
+          - (github.com/golangci/golangci-lint/v2/pkg/logutils.Log).Warnf
+          - (github.com/golangci/golangci-lint/v2/pkg/logutils.Log).Errorf
+          - (github.com/golangci/golangci-lint/v2/pkg/logutils.Log).Fatalf
+    enable:
+      - nilness
+      - shadow
+  errorlint:
+    asserts: false
   lll:
-    line-length: 170
+    line-length: 140
+  misspell:
+    locale: US
+    ignore-rules:
+      - "importas"
+  nolintlint:
+    allow-unused: false
+    require-explanation: true
+    require-specific: true
+  revive:
+    rules:
+      - name: indent-error-flow
+      - name: unexported-return
+        disabled: true
+      - name: unused-parameter
+      - name: unused-receiver
 
-#issues:
-#  exclude-rules:
-#    - text: "Error return value of .* is not checked"
-#      linters:
-#        - errcheck
-#  exclude-dirs:
-#    - vendor
-#    - proto
-#    - test
-#  exclude-files:
-#    - ".*_test\\.go$"
-#    - ".*_string\\.go$"
-#    - "pkg/response/actions/k8s/control.go"
-#    - "pkg/response/actions/k8s/search.go"
+issues:
+  exclude-rules:
+    - text: "Error return value of .* is not checked"
+      linters:
+        - errcheck
+  exclude-dirs:
+    - vendor
+    - proto
+    - test
+  exclude-files:
+    - ".*_test\\.go$"
+    - ".*_string\\.go$"
+    - "pkg/response/actions/k8s/control.go"
+    - "pkg/response/actions/k8s/search.go"
+
+formatters:
+  enable:
+    - gofmt
+    - goimports
+  settings:
+    gofmt:
+      rewrite-rules:
+        - pattern: 'interface{}'
+          replacement: 'any'
+    goimports:
+      local-prefixes:
+        - github.com/golangci/golangci-lint/v2
+  exclusions:
+    paths:
+      - test/testdata_etc
+      - internal/go
+      - internal/x
+      - pkg/goformatters/gci/internal
+      - pkg/goanalysis/runner_checker.go
