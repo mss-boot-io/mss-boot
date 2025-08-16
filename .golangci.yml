@@ -16,9 +16,9 @@ linters:
     - ineffassign
     - nakedret
     - gocyclo
+    - goimports
     - lll
     - dupl
-    - goimports
 
 linters-settings:
   dupl:
@@ -27,6 +27,10 @@ linters-settings:
     line-length: 170
 
 issues:
+  exclude-rules:
+    - text: "Error return value of .* is not checked"
+      linters:
+        - errcheck
   exclude-dirs:
     - vendor
     - proto
@@ -36,7 +40,3 @@ issues:
     - ".*_string\\.go$"
     - "pkg/response/actions/k8s/control.go"
     - "pkg/response/actions/k8s/search.go"
-  exclude-rules:
-    - text: "Error return value of .* is not checked"
-      linters:
-        - errcheck
