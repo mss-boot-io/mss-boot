@@ -151,7 +151,7 @@ linters:
       - ".*\\_string\\.go$"
       - "pkg/response/actions/k8s/control.go"
       - "pkg/response/actions/k8s/search.go"
-      - "core/server/**"
+      - "core/server"
     rules:
       - path: (.+)_test\.go
         linters:
@@ -221,4 +221,4 @@ formatters:
       - ".*\\_string\\.go$"
       - "pkg/response/actions/k8s/control.go"
       - "pkg/response/actions/k8s/search.go"
-      - "core/server/**"
+      - "core/server"
