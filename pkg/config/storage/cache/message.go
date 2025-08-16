@@ -17,7 +17,7 @@ func (m *Message) GetStream() string {
 	return m.Stream
 }
 
-func (m *Message) GetValues() map[string]interface{} {
+func (m *Message) GetValues() map[string]any {
 	return m.Values
 }
 
@@ -29,7 +29,7 @@ func (m *Message) SetStream(stream string) {
 	m.Stream = stream
 }
 
-func (m *Message) SetValues(values map[string]interface{}) {
+func (m *Message) SetValues(values map[string]any) {
 	m.Values = values
 }
 
@@ -37,14 +37,14 @@ func (m *Message) GetPrefix() (prefix string) {
 	if m.Values == nil {
 		return
 	}
-	v, _ := m.Values[storage.PrefixKey]
+	v := m.Values[storage.PrefixKey]
 	prefix, _ = v.(string)
 	return
 }
 
 func (m *Message) SetPrefix(prefix string) {
 	if m.Values == nil {
-		m.Values = make(map[string]interface{})
+		m.Values = make(map[string]any)
 	}
 	m.Values[storage.PrefixKey] = prefix
 }

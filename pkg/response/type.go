@@ -14,7 +14,7 @@ type Responses interface {
 	SetCode(int)
 	SetTraceID(string)
 	SetMsg(...string)
-	SetList(interface{})
+	SetList(any)
 	SetStatus(string)
 	Clone() Responses
 	Error(ctx *gin.Context, code int, err error, msg ...string)

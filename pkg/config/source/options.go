@@ -84,7 +84,6 @@ type Options struct {
 
 func (o *Options) GetExtend() Scheme {
 	return o.Extend
-
 }
 
 // DefaultOptions default options

@@ -22,12 +22,12 @@ import (
 // transInit local 通常取决于 http 请求头的 'Accept-Language'
 func transInit(local string) (trans ut.Translator, err error) {
 	if v, ok := binding.Validator.Engine().(*validator.Validate); ok {
-		zhT := zh.New() //chinese
-		enT := en.New() //english
+		zhT := zh.New() // chinese
+		enT := en.New() // english
 		uni := ut.New(enT, zhT, enT)
 
 		var o bool
-		//register translate
+		// register translate
 		// 注册翻译器
 		switch local {
 		case "zh", "zh-CN":

@@ -109,7 +109,7 @@ func (o *Storage) Init() {
 	}
 
 	if o.Region == "" || o.AccessKeyID == "" || o.SecretAccessKey == "" {
-		//use default config
+		// use default config
 		opts := make([]func(*config.LoadOptions) error, 0)
 		if o.Region != "" {
 			opts = append(opts, config.WithRegion(o.Region))

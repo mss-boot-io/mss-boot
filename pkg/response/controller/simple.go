@@ -42,7 +42,6 @@ func NewSimple(options ...Option) *Simple {
 // GetProvider get provider
 func (e *Simple) GetProvider() fmt.Stringer {
 	return e.options.modelProvider
-
 }
 
 // Path route path

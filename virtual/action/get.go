@@ -41,7 +41,7 @@ func (e *Get) Handler() gin.HandlersChain {
 		switch c.Request.Method {
 		case http.MethodGet:
 			api := response.Make(c)
-			//get
+			// get
 			m := e.GetModel(c)
 			if m == nil {
 				// no set model

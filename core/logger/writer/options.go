@@ -12,7 +12,7 @@ import "time"
 // Options 可配置参数
 type Options struct {
 	path         string
-	suffix       string //文件扩展名
+	suffix       string // 文件扩展名
 	cap          uint
 	lokiURL      string
 	lokiLabels   map[string]string

@@ -117,7 +117,7 @@ func (k *Kafka) getConfig() *sarama.Config {
 				c.Net.SASL.Mechanism = sarama.SASLTypeSCRAMSHA512
 			}
 		}
-		//c.Version = sarama.V1_0_0_0
+		// c.Version = sarama.V1_0_0_0
 		if k.Version != "" {
 			v, err := sarama.ParseKafkaVersion(k.Version)
 			if err == nil {
@@ -181,12 +181,12 @@ type SASL struct {
 	SCRAMAuthzID string `yaml:"scramAuthzID" json:"scramAuthzID"`
 	// SCRAMClientGeneratorFunc is a generator of a user provided implementation of a SCRAM
 	// client used to perform the SCRAM exchange with the server.
-	//SCRAMClientGeneratorFunc func() SCRAMClient
+	// SCRAMClientGeneratorFunc func() SCRAMClient
 	// TokenProvider is a user-defined callback for generating
 	// access tokens for SASL/OAUTHBEARER auth. See the
 	// AccessTokenProvider interface docs for proper implementation
 	// guidelines.
-	//TokenProvider AccessTokenProvider
+	// TokenProvider AccessTokenProvider
 
 	GSSAPI sarama.GSSAPIConfig `yaml:"gssapi" json:"gssapi"`
 }
@@ -204,7 +204,7 @@ func (e *Queue) Init(set func(storage.AdapterQueue)) {
 		e.Redis.Consumer.VisibilityTimeout = e.Redis.Consumer.VisibilityTimeout * time.Second
 		client := storage.GetRedisClient()
 		if client == nil {
-			options, err := e.Redis.RedisConnectOptions.GetRedisOptions()
+			options, err := e.Redis.GetRedisOptions()
 			if err != nil {
 				log.Fatalf("queue redis init error: %s", err.Error())
 			}

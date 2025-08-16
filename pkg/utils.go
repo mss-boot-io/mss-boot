@@ -148,7 +148,7 @@ func supportColumn(data any, fields ...string) bool {
 			continue
 		}
 		for j := range fields {
-			exist = exist || strings.ToLower(field.Name) == strings.ToLower(fields[j])
+			exist = exist || strings.EqualFold(field.Name, fields[j])
 			if exist {
 				break
 			}
@@ -177,7 +177,7 @@ func SetValue(data any, key string, value any) {
 			SetValue(valueOf.Field(i).Interface(), key, value)
 			continue
 		}
-		if strings.ToLower(field.Name) == key {
+		if strings.EqualFold(field.Name, key) {
 			v := reflect.ValueOf(value)
 			valueOf.FieldByName(field.Name).Set(v)
 		}

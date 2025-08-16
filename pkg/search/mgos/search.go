@@ -12,7 +12,7 @@ import (
 )
 
 // MakeCondition make condition
-func MakeCondition(q interface{}) (bson.M, bson.D) {
+func MakeCondition(q any) (bson.M, bson.D) {
 	condition := &Public{}
 	ResolveSearchQuery(q, condition)
 	var filter bson.M
