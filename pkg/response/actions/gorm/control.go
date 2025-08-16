@@ -134,7 +134,7 @@ func (e *Control) update(c *gin.Context) {
 	if e.opts.Scope != nil {
 		query = query.Scopes(e.opts.Scope(c, m))
 	}
-	//find object
+	// find object
 	err := query.First(m).Error
 	if err != nil {
 		if errors.Is(err, gorm.ErrRecordNotFound) {

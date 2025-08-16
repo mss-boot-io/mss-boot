@@ -41,7 +41,7 @@ func (e *Delete) Handler() gin.HandlersChain {
 		switch c.Request.Method {
 		case http.MethodDelete:
 			api := response.Make(c)
-			//delete
+			// delete
 			m := e.GetModel(c)
 			if m == nil {
 				// no set model
@@ -79,6 +79,6 @@ func (e *Delete) Handler() gin.HandlersChain {
 	return gin.HandlersChain{h}
 }
 
-//func (e *Delete) GenOpenAPI(m *model.Model) *spec.PathItemProps {
+// func (e *Delete) GenOpenAPI(m *model.Model) *spec.PathItemProps {
 //
 //}

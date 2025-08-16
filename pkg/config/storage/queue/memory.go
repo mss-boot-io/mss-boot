@@ -62,9 +62,9 @@ func (m *Memory) Append(opts ...storage.Option) error {
 	}
 
 	var q memoryQueue
-	switch v.(type) {
+	switch v := v.(type) {
 	case memoryQueue:
-		q = v.(memoryQueue)
+		q = v
 	default:
 		q = m.makeQueue()
 		m.queue.Store(o.Message.GetStream(), q)
@@ -86,9 +86,9 @@ func (m *Memory) Register(opts ...storage.Option) {
 		m.queue.Store(o.Topic, v)
 	}
 	var q memoryQueue
-	switch v.(type) {
+	switch v := v.(type) {
 	case memoryQueue:
-		q = v.(memoryQueue)
+		q = v
 	default:
 		q = m.makeQueue()
 		m.queue.Store(o.Topic, q)

@@ -52,7 +52,6 @@ func (s *Source) ReadFile(name string) (rb []byte, err error) {
 			s.opt.Extend = source.Extends[i]
 			return kvPair.Value, nil
 		}
-
 	}
 	return nil, err
 }
@@ -88,7 +87,6 @@ func (s *Source) Watch(c source.Entity, unm func([]byte, any) error) error {
 				if pair != nil {
 					if err = decoder(pair.Value, cfg); err != nil {
 						slog.Error("Failed to decode config", slog.Any("error", err))
-
 					}
 				}
 				pair = mapPairs[key+"/"+sc.name+"-"+pkg.GetStage()+"."+string(sc.opt.Extend)]

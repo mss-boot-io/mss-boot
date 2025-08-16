@@ -28,17 +28,17 @@ type Pt struct {
 
 // DImage 图片切片
 type DImage struct {
-	PNG draw.Image //合并到的PNG切片,可用image.NewrRGBA设置
-	X   int        //横坐标
-	Y   int        //纵坐标
+	PNG draw.Image // 合并到的PNG切片,可用image.NewrRGBA设置
+	X   int        // 横坐标
+	Y   int        // 纵坐标
 }
 
 // DText 文字切片
 type DText struct {
-	PNG   draw.Image //合并到的PNG切片,可用image.NewrRGBA设置
-	Title string     //文字
-	X     int        //横坐标
-	Y     int        //纵坐标
+	PNG   draw.Image // 合并到的PNG切片,可用image.NewrRGBA设置
+	Title string     // 文字
+	X     int        // 横坐标
+	Y     int        // 纵坐标
 	Size  float64
 	R     uint8
 	G     uint8
@@ -102,17 +102,17 @@ func (dtext *DText) SetColor(R uint8, G uint8, B uint8) {
 // MergeText 合并字体到载体
 func (dtext *DText) MergeText(title string, tf *truetype.Font, x int, y int, rect image.Rectangle) error {
 	fc := freetype.NewContext()
-	//设置屏幕每英寸的分辨率
+	// 设置屏幕每英寸的分辨率
 	fc.SetDPI(72)
-	//设置用于绘制文本的字体
+	// 设置用于绘制文本的字体
 	fc.SetFont(tf)
-	//以磅为单位设置字体大小
+	// 以磅为单位设置字体大小
 	fc.SetFontSize(dtext.Size)
-	//设置剪裁矩形以进行绘制
+	// 设置剪裁矩形以进行绘制
 	fc.SetClip(rect)
-	//设置目标图像
+	// 设置目标图像
 	fc.SetDst(dtext.PNG)
-	//设置绘制操作的源图像，通常为 image.Uniform
+	// 设置绘制操作的源图像，通常为 image.Uniform
 	fc.SetSrc(image.NewUniform(color.RGBA{dtext.R, dtext.G, dtext.B, dtext.A}))
 
 	pt := freetype.Pt(x, y)

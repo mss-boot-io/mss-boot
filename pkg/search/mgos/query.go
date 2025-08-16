@@ -32,7 +32,7 @@ const (
  *	isnull
  *  order 排序		e.g. order[key]=desc     order[key]=asc
  */
-func ResolveSearchQuery(q interface{}, condition Condition) {
+func ResolveSearchQuery(q any, condition Condition) {
 	qType := reflect.TypeOf(q)
 	if qType.Kind() == reflect.Ptr {
 		qType = qType.Elem()
@@ -53,7 +53,7 @@ func ResolveSearchQuery(q interface{}, condition Condition) {
 		case "-":
 			continue
 		case "dlv":
-			//递归调用
+			// 递归调用
 			ResolveSearchQuery(qValue.Field(i).Interface(), condition)
 			continue
 		}
@@ -61,10 +61,10 @@ func ResolveSearchQuery(q interface{}, condition Condition) {
 		if qValue.Field(i).IsZero() {
 			continue
 		}
-		//解析
+		// 解析
 		switch t.Type {
-		//case "left":
-		//todo 左关联
+		// case "left":
+		// todo 左关联
 		case "exact", "iexact":
 			condition.SetAnd(bson.M{t.Column: qValue.Field(i).Interface()})
 		case "contains", "icontains":
@@ -84,7 +84,7 @@ func ResolveSearchQuery(q interface{}, condition Condition) {
 		case "in":
 			condition.SetAnd(bson.M{t.Column: bson.M{"$in": qValue.Field(i).Interface()}})
 		case "isnull":
-			condition.SetAnd(bson.M{t.Column: bson.M{"$in": []interface{}{nil}, "$exists": true}})
+			condition.SetAnd(bson.M{t.Column: bson.M{"$in": []any{nil}, "$exists": true}})
 		case "order":
 			switch strings.ToLower(qValue.Field(i).String()) {
 			case "asc":

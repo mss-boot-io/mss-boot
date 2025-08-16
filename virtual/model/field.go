@@ -128,8 +128,8 @@ func (f *Field) GenOpenAPIFie() *spec.Schema {
 	if f.DataType == schema.String {
 		s.MaxLength = ptr.Int64(int64(f.Size))
 	}
-	//todo float64
-	//if f.DataType == schema.Float {
+	// todo float64
+	// if f.DataType == schema.Float {
 	//	s.Maximum = ptr.Float64(f.Precision)
 	//	s.Minimum = &f.Scale
 	//}
@@ -142,7 +142,7 @@ func (f *Field) GenOpenAPIFie() *spec.Schema {
 	if f.NotNull {
 		s.Nullable = false
 	}
-	//if f.PrimaryKey != "" {
+	// if f.PrimaryKey != "" {
 	//	s.Extensions = spec.Extensions(map[string]interface{}{
 	//		"x-order": f.PrimaryKey,
 	//	})

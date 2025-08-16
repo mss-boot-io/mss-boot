@@ -82,12 +82,12 @@ type dbResolverConfig struct {
 	sources  []string
 	replicas []string
 	policy   string
-	tables   []interface{}
+	tables   []any
 }
 
 // NewResolverConfigure 初始化 ResolverConfigure
 func NewResolverConfigure(sources, replicas []string, policy string, tables []string) ResolverConfigure {
-	data := make([]interface{}, len(tables))
+	data := make([]any, len(tables))
 	for i := range tables {
 		data[i] = tables[i]
 	}

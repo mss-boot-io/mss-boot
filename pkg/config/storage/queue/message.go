@@ -26,10 +26,10 @@ func (m *Message) GetStream() string {
 	return m.Stream
 }
 
-func (m *Message) GetValues() map[string]interface{} {
+func (m *Message) GetValues() map[string]any {
 	m.mux.Lock()
 	defer m.mux.Unlock()
-	data := make(map[string]interface{})
+	data := make(map[string]any)
 	for k, v := range m.Values {
 		data[k] = v
 	}
@@ -48,7 +48,7 @@ func (m *Message) SetStream(stream string) {
 	m.Stream = stream
 }
 
-func (m *Message) SetValues(values map[string]interface{}) {
+func (m *Message) SetValues(values map[string]any) {
 	m.mux.Lock()
 	defer m.mux.Unlock()
 	if m.ID == "" {
@@ -72,7 +72,7 @@ func (m *Message) GetPrefix() (prefix string) {
 	if m.Values == nil {
 		return
 	}
-	v, _ := m.Values[storage.PrefixKey]
+	v := m.Values[storage.PrefixKey]
 	prefix, _ = v.(string)
 	return
 }
@@ -81,7 +81,7 @@ func (m *Message) SetPrefix(prefix string) {
 	m.mux.Lock()
 	defer m.mux.Unlock()
 	if m.Values == nil {
-		m.Values = make(map[string]interface{})
+		m.Values = make(map[string]any)
 	}
 	m.Values[storage.PrefixKey] = prefix
 }

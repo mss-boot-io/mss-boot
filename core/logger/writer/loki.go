@@ -1,6 +1,6 @@
 package writer
 
-//import (
+// import (
 //	"bytes"
 //	"errors"
 //	"io"
@@ -24,7 +24,7 @@ package writer
 // * @Last Modified time: 2024/5/7 18:37:00
 // */
 //
-//type LokiWriter struct {
+// type LokiWriter struct {
 //	opts    Options
 //	entries chan logproto.Entry
 //}

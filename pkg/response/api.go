@@ -107,7 +107,7 @@ func (e *API) AddError(err error) *API {
 	if e.Error == nil {
 		e.Error = err
 	} else {
-		e.Error = fmt.Errorf("%v; %w", e.Error, err)
+		e.Error = fmt.Errorf("%w; %w", e.Error, err)
 	}
 	if e.Error != nil {
 		e.Log = e.Log.With("error", e.Error)
@@ -131,14 +131,14 @@ func Make(c *gin.Context) *API {
 }
 
 // Bind 参数校验
-func (e *API) Bind(d interface{}, bindings ...binding.Binding) *API {
+func (e *API) Bind(d any, bindings ...binding.Binding) *API {
 	var err error
 	if len(bindings) == 0 {
 		bindings = constructor.GetBindingForGin(d)
 	}
 	switch e.Context.Request.Method {
 	case http.MethodGet, http.MethodHead, http.MethodOptions:
-		//去除json、yaml、xml
+		// 去除json、yaml、xml
 		for i := range bindings {
 			switch bindings[i] {
 			case binding.JSON, binding.XML, binding.YAML:
@@ -199,12 +199,12 @@ func (e *API) Err(code int, msg ...string) {
 }
 
 // OK 通常成功数据处理
-func (e *API) OK(data interface{}, msg ...string) {
+func (e *API) OK(data any, msg ...string) {
 	Default.OK(e.Context, data)
 }
 
 // PageOK 分页数据处理
-func (e *API) PageOK(result interface{}, count int64, pageIndex int64, pageSize int64, msg ...string) {
+func (e *API) PageOK(result any, count int64, pageIndex int64, pageSize int64, msg ...string) {
 	Default.PageOK(e.Context, result, count, pageIndex, pageSize)
 }
 
@@ -225,7 +225,7 @@ func GetRequestLogger(c *gin.Context) *slog.Logger {
 			return log
 		}
 	}
-	//如果没有在上下文中放入logger
+	// 如果没有在上下文中放入logger
 	requestID := pkg.GenerateMsgIDFromContext(c)
 	return slog.Default().With(strings.ToLower(pkg.TrafficKey), requestID)
 }

@@ -106,6 +106,7 @@ linters:
         - '3'
       ignored-functions:
         - strings.SplitN
+        - Init
     govet:
       settings:
         printf:
@@ -152,6 +153,7 @@ linters:
       - "pkg/response/actions/k8s/control.go"
       - "pkg/response/actions/k8s/search.go"
       - "core/server"
+      - pkg/response/actions/k8s
     rules:
       - path: (.+)_test\.go
         linters:

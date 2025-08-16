@@ -103,6 +103,6 @@ func Unwrap(err error) error {
 
 // As panics if target is not a non-nil pointer to either a type that implements
 // error, or to any interface type.
-func As(err error, target interface{}) bool {
+func As(err error, target any) bool {
 	return errors.As(err, target)
 }
