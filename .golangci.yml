@@ -106,21 +106,6 @@ linters-settings:
       - name: unused-parameter
       - name: unused-receiver
 
-issues:
-  exclude-rules:
-    - text: "Error return value of .* is not checked"
-      linters:
-        - errcheck
-  exclude-dirs:
-    - vendor
-    - proto
-    - test
-  exclude-files:
-    - ".*_test\\.go$"
-    - ".*_string\\.go$"
-    - "pkg/response/actions/k8s/control.go"
-    - "pkg/response/actions/k8s/search.go"
-
 formatters:
   enable:
     - gofmt
