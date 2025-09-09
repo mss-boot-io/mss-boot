@@ -12,7 +12,7 @@ func NewSampleWatcher(queue storage.AdapterQueue) *SampleWatcher {
 	return &SampleWatcher{
 		queue:   queue,
 		topic:   "casbin-watcher",
-		groupID: pkg.GetProjectName(),
+		groupID: pkg.GetNodeName(),
 	}
 }
 
