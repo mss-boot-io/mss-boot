@@ -48,8 +48,11 @@ type NSQ struct {
 	adminAddr  string
 	cfg        *nsq.Config
 	producer   []*nsq.Producer
-	consumer   map[string]*nsq.Consumer
-	mux        sync.Mutex
+	consumer   map[string]struct {
+		*nsq.Consumer
+		partition int
+	}
+	mux sync.Mutex
 }
 
 // String 字符串类型
@@ -87,28 +90,28 @@ func (e *NSQ) newConsumer(topic, channel string, partition int, h nsq.Handler) (
 		e.cfg = nsq.NewConfig()
 	}
 	if e.consumer == nil {
-		e.consumer = make(map[string]*nsq.Consumer)
+		e.consumer = make(map[string]struct {
+			*nsq.Consumer
+			partition int
+		})
 	}
 
 	consumer, ok := e.consumer[fmt.Sprintf("%s:%s", topic, channel)]
 	if !ok {
-		consumer, err = nsq.NewConsumer(topic, channel, e.cfg)
+		consumer = struct {
+			*nsq.Consumer
+			partition int
+		}{
+			partition: partition,
+		}
+		consumer.Consumer, err = nsq.NewConsumer(topic, channel, e.cfg)
 		if err != nil {
 			return err
 		}
 		e.consumer[fmt.Sprintf("%s:%s", topic, channel)] = consumer
 	}
 	consumer.AddHandler(h)
-	if e.lookupAddr != "" && partition < 0 {
-		err = consumer.ConnectToNSQLookupd(e.lookupAddr)
-		return
-	}
-	if partition > -1 {
-		partition = partition % len(e.addresses)
-		err = consumer.ConnectToNSQDs([]string{e.addresses[partition]})
-		return err
-	}
-	err = consumer.ConnectToNSQDs(e.addresses)
+	e.consumer[fmt.Sprintf("%s:%s", topic, channel)] = consumer
 	return err
 }
 
@@ -156,6 +159,29 @@ func (e *NSQ) ping() {
 }
 
 func (e *NSQ) Run(context.Context) {
+	for i := range e.consumer {
+		if e.lookupAddr != "" && e.consumer[i].partition < 0 {
+			err := e.consumer[i].ConnectToNSQLookupd(e.lookupAddr)
+			if err != nil {
+				slog.Error("nsq consumer connect to nsqlookupd error", slog.Any("err", err))
+				os.Exit(-1)
+			}
+			continue
+		}
+		if e.consumer[i].partition > -1 {
+			partition := e.consumer[i].partition % len(e.addresses)
+			err := e.consumer[i].ConnectToNSQDs([]string{e.addresses[partition]})
+			if err != nil {
+				slog.Error("select consumer by partition failed", "err", err)
+				os.Exit(-1)
+			}
+		}
+		err := e.consumer[i].ConnectToNSQDs(e.addresses)
+		if err != nil {
+			slog.Error("select consumer by address failed", "err", err)
+			os.Exit(-1)
+		}
+	}
 	e.ping()
 }
 

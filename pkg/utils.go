@@ -251,3 +251,18 @@ func GetProjectName() string {
 	}
 	return project
 }
+
+func GetNodeName() string {
+	node := os.Getenv("node_name")
+	if node == "" {
+		node = os.Getenv("NODE_NAME")
+	}
+	if node == "" {
+		hostname, err := os.Hostname()
+		if err != nil {
+			return "unknown"
+		}
+		node = hostname
+	}
+	return node
+}
