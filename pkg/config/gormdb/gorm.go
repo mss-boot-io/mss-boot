@@ -165,12 +165,16 @@ func (e *Database) Init() {
 			if e.IAM.Params != "" {
 				dsn = dsn + " " + e.IAM.Params
 			}
+			// WARNING: The DSN below contains a temporary IAM authentication token.
+			// Do NOT log or expose e.Source, as it contains sensitive credentials.
 			e.Source = dsn
 		} else {
 			dsn := fmt.Sprintf("%s:%s@tcp(%s:%d)/%s?tls=true&allowCleartextPasswords=true", e.IAM.User, token, e.IAM.Host, e.IAM.Port, e.IAM.DBName)
 			if e.IAM.Params != "" {
 				dsn = dsn + "&" + e.IAM.Params
 			}
+			// WARNING: The DSN below contains a temporary IAM authentication token.
+			// Do NOT log or expose e.Source, as it contains sensitive credentials.
 			e.Source = dsn
 		}
 		if e.ConnMaxLifeTime == 0 || e.ConnMaxLifeTime > 840 {
