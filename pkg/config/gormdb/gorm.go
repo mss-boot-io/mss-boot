@@ -186,6 +186,8 @@ func (e *Database) Init() {
 			// Do NOT log or expose e.Source, as it contains sensitive credentials.
 			e.Source = dsn
 		}
+		// AWS RDS IAM tokens are valid for 15 minutes, so we set a max connection lifetime
+		// of 840 seconds (14 minutes) to ensure tokens are refreshed before expiration.
 		if e.ConnMaxLifeTime == 0 || e.ConnMaxLifeTime > 840 {
 			e.ConnMaxLifeTime = 840
 		}
