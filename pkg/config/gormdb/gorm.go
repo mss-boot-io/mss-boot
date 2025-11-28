@@ -147,13 +147,17 @@ func (e *Database) Init() {
 		}
 		cfg, cfgErr := config.LoadDefaultConfig(context.TODO())
 		if cfgErr != nil {
-			slog.Error("aws config load error", slog.Any("err", cfgErr))
+			slog.Error("failed to load AWS configuration for RDS IAM authentication", slog.Any("err", cfgErr))
 			os.Exit(-1)
 		}
 		endpoint := fmt.Sprintf("%s:%d", e.IAM.Host, e.IAM.Port)
 		token, tokErr := auth.BuildAuthToken(context.TODO(), endpoint, e.IAM.Region, e.IAM.User, cfg.Credentials)
 		if tokErr != nil {
-			slog.Error("aws rds iam token error", slog.Any("err", tokErr))
+			slog.Error("failed to build RDS IAM authentication token",
+				slog.String("endpoint", endpoint),
+				slog.String("region", e.IAM.Region),
+				slog.String("user", e.IAM.User),
+				slog.Any("err", tokErr))
 			os.Exit(-1)
 		}
 		if e.Driver == gorms.Postgres {
