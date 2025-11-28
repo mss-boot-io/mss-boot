@@ -9,16 +9,22 @@ package gormdb
 
 import (
 	"context"
+	"database/sql"
+	"database/sql/driver"
 	"fmt"
 	"log/slog"
 	"os"
+	"strings"
 
+	"github.com/aws/aws-sdk-go-v2/aws"
 	"github.com/aws/aws-sdk-go-v2/config"
 	"github.com/aws/aws-sdk-go-v2/feature/rds/auth"
 	"github.com/casbin/casbin/v2"
 	"github.com/casbin/casbin/v2/model"
 	"github.com/casbin/casbin/v2/persist"
 	gormadapter "github.com/casbin/gorm-adapter/v3"
+	mysqldriver "github.com/go-sql-driver/mysql"
+	gmysql "gorm.io/driver/mysql"
 	"gorm.io/gorm"
 	"gorm.io/gorm/logger"
 	"gorm.io/gorm/schema"
@@ -110,6 +116,67 @@ type AWSRDSIAM struct {
 	Params string `yaml:"params" json:"params"`
 }
 
+type iamMySQLConnector struct {
+	region string
+	user   string
+	addr   string
+	dbName string
+	params map[string]string
+	creds  aws.CredentialsProvider
+}
+
+func (c *iamMySQLConnector) Connect(ctx context.Context) (driver.Conn, error) {
+	token, err := auth.BuildAuthToken(ctx, c.addr, c.region, c.user, c.creds)
+	if err != nil {
+		return nil, err
+	}
+	cfg := mysqldriver.NewConfig()
+	cfg.User = c.user
+	cfg.Passwd = token
+	cfg.Net = "tcp"
+	cfg.Addr = c.addr
+	cfg.DBName = c.dbName
+	cfg.Params = map[string]string{}
+	cfg.AllowCleartextPasswords = true
+	cfg.TLSConfig = "skip-verify"
+	for k, v := range c.params {
+		cfg.Params[k] = v
+	}
+	connector, cerr := mysqldriver.NewConnector(cfg)
+	if cerr != nil {
+		return nil, cerr
+	}
+	return connector.Connect(ctx)
+}
+
+func (c *iamMySQLConnector) Driver() driver.Driver { return &mysqldriver.MySQLDriver{} }
+
+func makeIAMMySQLOpen(region, user, defaultAddr, defaultDB string, params map[string]string, creds aws.CredentialsProvider) func(string) gorm.Dialector {
+	return func(dsn string) gorm.Dialector {
+		addr := defaultAddr
+		db := defaultDB
+		if dsn != "" {
+			if parsed, err := mysqldriver.ParseDSN(dsn); err == nil {
+				if parsed.Addr != "" {
+					addr = parsed.Addr
+				}
+				if parsed.DBName != "" {
+					db = parsed.DBName
+				}
+			}
+		}
+		conn := &iamMySQLConnector{
+			region: region,
+			user:   user,
+			addr:   addr,
+			dbName: db,
+			params: params,
+			creds:  creds,
+		}
+		return gmysql.New(gmysql.Config{Conn: sql.OpenDB(conn)})
+	}
+}
+
 // Init init db
 func (e *Database) Init() {
 	var err error
@@ -178,13 +245,23 @@ func (e *Database) Init() {
 			// Do NOT log or expose e.Source, as it contains sensitive credentials.
 			e.Source = dsn
 		} else {
-			dsn := fmt.Sprintf("%s:%s@tcp(%s:%d)/%s?tls=true&allowCleartextPasswords=true", e.IAM.User, token, e.IAM.Host, e.IAM.Port, e.IAM.DBName)
+			params := map[string]string{}
 			if e.IAM.Params != "" {
-				dsn = dsn + "&" + e.IAM.Params
+				for _, kv := range strings.Split(e.IAM.Params, "&") {
+					if kv == "" {
+						continue
+					}
+					parts := strings.SplitN(kv, "=", 2)
+					if len(parts) == 2 {
+						params[parts[0]] = parts[1]
+					} else {
+						params[parts[0]] = ""
+					}
+				}
 			}
-			// WARNING: The DSN below contains a temporary IAM authentication token.
-			// Do NOT log or expose e.Source, as it contains sensitive credentials.
-			e.Source = dsn
+			openIAM := makeIAMMySQLOpen(e.IAM.Region, e.IAM.User, fmt.Sprintf("%s:%d", e.IAM.Host, e.IAM.Port), e.IAM.DBName, params, cfg.Credentials)
+			Opens["mysql"] = func(s string) gorm.Dialector { return openIAM(s) }
+			e.Source = ""
 		}
 		// AWS RDS IAM tokens are valid for 15 minutes, so we set a max connection lifetime
 		// of 840 seconds (14 minutes) to ensure tokens are refreshed before expiration.
