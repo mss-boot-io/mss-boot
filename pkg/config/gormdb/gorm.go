@@ -97,6 +97,9 @@ type GORMConfig struct {
 	TranslateError bool `yaml:"translateError" json:"translateError"`
 }
 
+// AWSRDSIAM configures AWS RDS IAM authentication for database connections.
+// When Enable is true, the database connection will use IAM authentication tokens
+// instead of traditional username/password authentication.
 type AWSRDSIAM struct {
 	Enable bool   `yaml:"enable" json:"enable"`
 	Region string `yaml:"region" json:"region"`
