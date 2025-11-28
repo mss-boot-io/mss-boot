@@ -10,13 +10,14 @@ replace (
 require (
 	github.com/IBM/sarama v1.46.3
 	github.com/aws/aws-msk-iam-sasl-signer-go v1.0.4
-	github.com/aws/aws-sdk-go-v2 v1.39.5
+	github.com/aws/aws-sdk-go-v2 v1.40.0
 	github.com/aws/aws-sdk-go-v2/config v1.31.16
 	github.com/aws/aws-sdk-go-v2/credentials v1.18.20
+	github.com/aws/aws-sdk-go-v2/feature/rds/auth v1.6.14
 	github.com/aws/aws-sdk-go-v2/service/appconfigdata v1.23.8
 	github.com/aws/aws-sdk-go-v2/service/dynamodb v1.52.3
 	github.com/aws/aws-sdk-go-v2/service/s3 v1.89.1
-	github.com/aws/smithy-go v1.23.1
+	github.com/aws/smithy-go v1.23.2
 	github.com/bsm/redislock v0.9.4
 	github.com/casbin/casbin/v2 v2.131.0
 	github.com/casbin/gorm-adapter/v3 v3.37.0

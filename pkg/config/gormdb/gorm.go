@@ -8,9 +8,13 @@ package gormdb
  */
 
 import (
+	"context"
+	"fmt"
 	"log/slog"
 	"os"
 
+	"github.com/aws/aws-sdk-go-v2/config"
+	"github.com/aws/aws-sdk-go-v2/feature/rds/auth"
 	"github.com/casbin/casbin/v2"
 	"github.com/casbin/casbin/v2/model"
 	"github.com/casbin/casbin/v2/persist"
@@ -49,6 +53,8 @@ type Database struct {
 	CasbinModel string `yaml:"casbinModel"`
 	// Config gorm config
 	Config GORMConfig `yaml:"config"`
+	// IAM aws rds iam auth
+	IAM AWSRDSIAM `yaml:"iam"`
 }
 
 // DBResolverConfig db resolver config
@@ -91,11 +97,26 @@ type GORMConfig struct {
 	TranslateError bool `yaml:"translateError" json:"translateError"`
 }
 
+type AWSRDSIAM struct {
+	Enable bool   `yaml:"enable" json:"enable"`
+	Region string `yaml:"region" json:"region"`
+	User   string `yaml:"user" json:"user"`
+	Host   string `yaml:"host" json:"host"`
+	Port   int    `yaml:"port" json:"port"`
+	DBName string `yaml:"dbName" json:"dbName"`
+	Params string `yaml:"params" json:"params"`
+}
+
 // Init init db
 func (e *Database) Init() {
 	var err error
 	// parse env
 	e.Source = pkg.ParseEnvTemplate(e.Source)
+	e.IAM.Region = pkg.ParseEnvTemplate(e.IAM.Region)
+	e.IAM.User = pkg.ParseEnvTemplate(e.IAM.User)
+	e.IAM.Host = pkg.ParseEnvTemplate(e.IAM.Host)
+	e.IAM.DBName = pkg.ParseEnvTemplate(e.IAM.DBName)
+	e.IAM.Params = pkg.ParseEnvTemplate(e.IAM.Params)
 	for i := range e.Registers {
 		for j := range e.Registers[i].Sources {
 			e.Registers[i].Sources[j] = pkg.ParseEnvTemplate(e.Registers[i].Sources[j])
@@ -111,6 +132,43 @@ func (e *Database) Init() {
 		gorms.Driver = gorms.Mysql
 	case gorms.Dm:
 		gorms.Driver = gorms.Dm
+	}
+
+	if e.IAM.Enable {
+		if e.IAM.Port == 0 {
+			if e.Driver == gorms.Postgres {
+				e.IAM.Port = 5432
+			} else {
+				e.IAM.Port = 3306
+			}
+		}
+		cfg, cfgErr := config.LoadDefaultConfig(context.TODO())
+		if cfgErr != nil {
+			slog.Error("aws config load error", slog.Any("err", cfgErr))
+			os.Exit(-1)
+		}
+		endpoint := fmt.Sprintf("%s:%d", e.IAM.Host, e.IAM.Port)
+		token, tokErr := auth.BuildAuthToken(context.TODO(), endpoint, e.IAM.Region, e.IAM.User, cfg.Credentials)
+		if tokErr != nil {
+			slog.Error("aws rds iam token error", slog.Any("err", tokErr))
+			os.Exit(-1)
+		}
+		if e.Driver == gorms.Postgres {
+			dsn := fmt.Sprintf("host=%s port=%d user=%s password=%s dbname=%s", e.IAM.Host, e.IAM.Port, e.IAM.User, token, e.IAM.DBName)
+			if e.IAM.Params != "" {
+				dsn = dsn + " " + e.IAM.Params
+			}
+			e.Source = dsn
+		} else {
+			dsn := fmt.Sprintf("%s:%s@tcp(%s:%d)/%s?tls=true&allowCleartextPasswords=true", e.IAM.User, token, e.IAM.Host, e.IAM.Port, e.IAM.DBName)
+			if e.IAM.Params != "" {
+				dsn = dsn + "&" + e.IAM.Params
+			}
+			e.Source = dsn
+		}
+		if e.ConnMaxLifeTime == 0 || e.ConnMaxLifeTime > 840 {
+			e.ConnMaxLifeTime = 840
+		}
 	}
 
 	registers := make([]ResolverConfigure, len(e.Registers))
