@@ -138,6 +138,15 @@ func (e *Database) Init() {
 	}
 
 	if e.IAM.Enable {
+		if e.IAM.Region == "" || e.IAM.User == "" || e.IAM.Host == "" || e.IAM.DBName == "" {
+			slog.Error("IAM authentication enabled but required fields are missing",
+				slog.String("Region", e.IAM.Region),
+				slog.String("User", e.IAM.User),
+				slog.String("Host", e.IAM.Host),
+				slog.String("DBName", e.IAM.DBName),
+			)
+			os.Exit(-1)
+		}
 		if e.IAM.Port == 0 {
 			if e.Driver == gorms.Postgres {
 				e.IAM.Port = 5432
