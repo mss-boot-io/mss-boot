@@ -161,7 +161,7 @@ func (e *Database) Init() {
 			os.Exit(-1)
 		}
 		if e.Driver == gorms.Postgres {
-			dsn := fmt.Sprintf("host=%s port=%d user=%s password=%s dbname=%s", e.IAM.Host, e.IAM.Port, e.IAM.User, token, e.IAM.DBName)
+			dsn := fmt.Sprintf("host=%s port=%d user=%s password=%s dbname=%s sslmode=require", e.IAM.Host, e.IAM.Port, e.IAM.User, token, e.IAM.DBName)
 			if e.IAM.Params != "" {
 				dsn = dsn + " " + e.IAM.Params
 			}
