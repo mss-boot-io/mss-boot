@@ -139,6 +139,12 @@ func (c *iamMySQLConnector) Connect(ctx context.Context) (driver.Conn, error) {
 	cfg.Params = map[string]string{}
 	cfg.AllowCleartextPasswords = true
 	cfg.TLSConfig = "skip-verify"
+	if v, ok := c.params["parseTime"]; ok {
+		if strings.ToLower(v) == "true" {
+			cfg.ParseTime = true
+		}
+		delete(c.params, "parseTime")
+	}
 	for k, v := range c.params {
 		cfg.Params[k] = v
 	}
