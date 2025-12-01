@@ -136,6 +136,7 @@ func (c *iamMySQLConnector) Connect(ctx context.Context) (driver.Conn, error) {
 	cfg.Net = "tcp"
 	cfg.Addr = c.addr
 	cfg.DBName = c.dbName
+	cfg.ParseTime = true
 	cfg.Params = map[string]string{}
 	cfg.AllowCleartextPasswords = true
 	cfg.TLSConfig = "skip-verify"
