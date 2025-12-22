@@ -63,6 +63,10 @@ func (e *response) SetCode(code int) {
 	e.Code = code
 }
 
+func (e *response) SetErrorCode(errorCode string) {
+	e.ErrorCode = errorCode
+}
+
 func (e *response) SetStatus(status string) {
 	e.Status = status
 }

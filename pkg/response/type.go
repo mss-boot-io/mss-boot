@@ -17,6 +17,7 @@ type Responses interface {
 	SetList(any)
 	SetStatus(string)
 	Clone() Responses
+	SetErrorCode(string)
 	Error(ctx *gin.Context, code int, err error, msg ...string)
 	OK(ctx *gin.Context, data any)
 	PageOK(ctx *gin.Context, result any, count, pageIndex, pageSize int64)
