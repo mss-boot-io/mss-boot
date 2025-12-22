@@ -26,3 +26,7 @@ func (e *DefaultError) ErrorMsg() string {
 func (e *DefaultError) Error() string {
 	return fmt.Sprintf("code: %s, msg: %s", e.ErrorCode(), e.ErrorMsg())
 }
+
+func NewError(code, msg string) Error {
+	return &DefaultError{Code: code, Msg: msg}
+}
