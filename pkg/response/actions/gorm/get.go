@@ -13,11 +13,11 @@ import (
 	"net/http"
 
 	"github.com/gin-gonic/gin"
-	"gorm.io/gorm"
-
 	"github.com/mss-boot-io/mss-boot/pkg"
 	"github.com/mss-boot-io/mss-boot/pkg/config/gormdb"
 	"github.com/mss-boot-io/mss-boot/pkg/response"
+	"gorm.io/gorm"
+	"gorm.io/plugin/dbresolver"
 )
 
 // Get action
@@ -77,7 +77,7 @@ func (e *Get) get(c *gin.Context, key string) {
 		query = query.Preload(preload)
 	}
 	if e.opts.Scope != nil {
-		query = query.Scopes(e.opts.Scope(c, m))
+		query = query.Clauses(dbresolver.Use(m.TableName())).Scopes(e.opts.Scope(c, m))
 	}
 	err := query.First(m).Error
 	if err != nil {

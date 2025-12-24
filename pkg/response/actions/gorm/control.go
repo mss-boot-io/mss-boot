@@ -14,11 +14,11 @@ import (
 	"net/http"
 
 	"github.com/gin-gonic/gin"
-	"gorm.io/gorm"
-
 	"github.com/mss-boot-io/mss-boot/pkg"
 	"github.com/mss-boot-io/mss-boot/pkg/config/gormdb"
 	"github.com/mss-boot-io/mss-boot/pkg/response"
+	"gorm.io/gorm"
+	"gorm.io/plugin/dbresolver"
 )
 
 // Control action
@@ -84,7 +84,7 @@ func (e *Control) create(c *gin.Context) {
 	}
 	query := gormdb.DB.WithContext(c)
 	if e.opts.Scope != nil {
-		query = query.Scopes(e.opts.Scope(c, e.opts.Model))
+		query = query.Clauses(dbresolver.Use(m.TableName())).Scopes(e.opts.Scope(c, e.opts.Model))
 	}
 	err := query.Transaction(func(tx *gorm.DB) error {
 		err := tx.Create(m).Error
