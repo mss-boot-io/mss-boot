@@ -82,7 +82,11 @@ func (e *Control) create(c *gin.Context) {
 			return
 		}
 	}
-	err := gormdb.DB.WithContext(c).Transaction(func(tx *gorm.DB) error {
+	query := gormdb.DB.WithContext(c)
+	if e.opts.Scope != nil {
+		query = query.Scopes(e.opts.Scope(c, e.opts.Model))
+	}
+	err := query.Transaction(func(tx *gorm.DB) error {
 		err := tx.Create(m).Error
 		if err != nil {
 			api.AddError(err).Log.ErrorContext(c, "Create error", "error", err)
