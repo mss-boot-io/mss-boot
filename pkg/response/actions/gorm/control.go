@@ -136,7 +136,7 @@ func (e *Control) update(c *gin.Context) {
 	}
 	query := gormdb.DB.WithContext(context.WithValue(c, "gorm:cache:tag", m.TableName())).Where(e.opts.Key, id)
 	if e.opts.Scope != nil {
-		query = query.Scopes(e.opts.Scope(c, m))
+		query = query.Clauses(dbresolver.Use(m.TableName())).Scopes(e.opts.Scope(c, m))
 	}
 	// find object
 	err := query.First(m).Error
