@@ -15,6 +15,7 @@ import (
 
 	"github.com/gin-gonic/gin"
 	"gorm.io/gorm"
+	"gorm.io/plugin/dbresolver"
 
 	"github.com/mss-boot-io/mss-boot/pkg"
 	"github.com/mss-boot-io/mss-boot/pkg/config/gormdb"
@@ -86,10 +87,13 @@ func (e *Search) search(c *gin.Context) {
 		gorms.MakeCondition(req),
 		gorms.Paginate(int(req.GetPageSize()), int(req.GetPage())),
 	}
+
+	query := db.Model(m)
+
 	if e.opts.Scope != nil {
 		scopes = append(scopes, e.opts.Scope(c, m))
+		query = query.Clauses(dbresolver.Use(m.TableName())).Scopes(scopes...)
 	}
-	query := db.Model(m).Scopes(scopes...)
 
 	if e.opts.TreeField != "" && e.opts.Depth > 0 {
 		treeFields := make([]string, 0, e.opts.Depth)

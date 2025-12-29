@@ -14,11 +14,11 @@ import (
 	"net/http"
 
 	"github.com/gin-gonic/gin"
-	"gorm.io/gorm"
-
 	"github.com/mss-boot-io/mss-boot/pkg"
 	"github.com/mss-boot-io/mss-boot/pkg/config/gormdb"
 	"github.com/mss-boot-io/mss-boot/pkg/response"
+	"gorm.io/gorm"
+	"gorm.io/plugin/dbresolver"
 )
 
 // Control action
@@ -82,7 +82,11 @@ func (e *Control) create(c *gin.Context) {
 			return
 		}
 	}
-	err := gormdb.DB.WithContext(c).Transaction(func(tx *gorm.DB) error {
+	query := gormdb.DB.WithContext(c)
+	if e.opts.Scope != nil {
+		query = query.Clauses(dbresolver.Use(m.TableName())).Scopes(e.opts.Scope(c, e.opts.Model))
+	}
+	err := query.Transaction(func(tx *gorm.DB) error {
 		err := tx.Create(m).Error
 		if err != nil {
 			api.AddError(err).Log.ErrorContext(c, "Create error", "error", err)
@@ -132,7 +136,7 @@ func (e *Control) update(c *gin.Context) {
 	}
 	query := gormdb.DB.WithContext(context.WithValue(c, "gorm:cache:tag", m.TableName())).Where(e.opts.Key, id)
 	if e.opts.Scope != nil {
-		query = query.Scopes(e.opts.Scope(c, m))
+		query = query.Clauses(dbresolver.Use(m.TableName())).Scopes(e.opts.Scope(c, m))
 	}
 	// find object
 	err := query.First(m).Error

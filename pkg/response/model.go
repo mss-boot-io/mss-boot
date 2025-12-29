@@ -1,6 +1,7 @@
 package response
 
 import (
+	"errors"
 	"net/http"
 	"strings"
 
@@ -71,15 +72,22 @@ func (e *response) SetStatus(status string) {
 	e.Status = status
 }
 
-// Error error
+// DefaultError error
 func (e *response) Error(c *gin.Context, code int, err error, msg ...string) {
 	checkContext(c)
 	res := Default.Clone()
 	if msg == nil {
 		msg = make([]string, 0)
 	}
+
 	if err != nil {
-		msg = append(msg, err.Error())
+		var responseError Error
+		if errors.As(err, &responseError) {
+			msg = append(msg, responseError.ErrorMsg())
+			res.SetErrorCode(responseError.ErrorCode())
+		} else {
+			msg = append(msg, err.Error())
+		}
 	}
 	res.SetMsg(msg...)
 	res.SetTraceID(pkg.GenerateMsgIDFromContext(c))

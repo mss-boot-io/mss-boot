@@ -12,9 +12,9 @@ import (
 	"net/http"
 
 	"github.com/gin-gonic/gin"
-
 	"github.com/mss-boot-io/mss-boot/pkg/config/gormdb"
 	"github.com/mss-boot-io/mss-boot/pkg/response"
+	"gorm.io/plugin/dbresolver"
 )
 
 // Delete action
@@ -84,7 +84,7 @@ func (e *Delete) delete(c *gin.Context, ids ...string) {
 	query := gormdb.DB.WithContext(c).
 		Where(fmt.Sprintf("%s IN ?", e.opts.Key), ids)
 	if e.opts.Scope != nil {
-		query = query.Scopes(e.opts.Scope(c, e.opts.Model))
+		query = query.Clauses(dbresolver.Use(e.opts.Model.TableName())).Scopes(e.opts.Scope(c, e.opts.Model))
 	}
 	err := query.Delete(e.opts.Model).Error
 	if err != nil {
