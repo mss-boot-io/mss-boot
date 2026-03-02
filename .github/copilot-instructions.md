@@ -1,5 +1,20 @@
 # Copilot Repository Instructions
 
+## 项目简称
+- `mss-boot` 简称 `mss`
+- `mss-boot-admin` 简称 `admin`
+- `mss-boot-admin-antd` 简称 `antd`
+
+## Startup Reuse Constraint
+
+When the user explicitly asks to "start the project" (including equivalent intents such as starting both backend and frontend), execute this default flow without extra confirmation:
+
+1. Start `admin` backend: run `go run . server` in `mss-boot-admin` (background).
+2. Start `antd` frontend: run `pnpm dev` in `mss-boot-admin-antd` (background).
+3. Use repository config as source of truth: backend follows `config/application.yml` `server.addr` (baseline usually `0.0.0.0:8080`), frontend dev port is usually `8000`.
+4. After start, provide verifiable status (for example: reachable ports and no fatal terminal errors).
+5. Keep services running unless the user explicitly asks to stop them.
+
 In this repository, follow these mandatory rules when generating any prompts or documentation files:
 
 1. Always create or update prompt/document files only under `aigc/prompts/` (or its subfolders).
