@@ -11,7 +11,7 @@ require (
 	github.com/aws/aws-sdk-go-v2/feature/rds/auth v1.6.21
 	github.com/aws/aws-sdk-go-v2/service/appconfigdata v1.23.22
 	github.com/aws/aws-sdk-go-v2/service/dynamodb v1.57.1
-	github.com/aws/aws-sdk-go-v2/service/s3 v1.98.0
+	github.com/aws/aws-sdk-go-v2/service/s3 v1.99.0
 	github.com/aws/smithy-go v1.24.3
 	github.com/bsm/redislock v0.9.4
 	github.com/casbin/casbin/v2 v2.135.0
