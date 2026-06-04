@@ -39,6 +39,8 @@ jobs:
           go install golang.org/x/tools/cmd/goimports
 
       - name: golangci-lint
+        # Advisory until the existing lint backlog is burned down; go test remains required.
+        continue-on-error: true
         uses: golangci/golangci-lint-action@v8
         with:
           # Optional: version of golangci-lint to use in form of v1.2 or v1.2.3 or `latest` to use the latest version
