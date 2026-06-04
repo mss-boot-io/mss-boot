@@ -3,12 +3,12 @@ package gormdb
 import (
 	"testing"
 
-	"gorm.io/driver/mysql"
+	"github.com/glebarez/sqlite"
 	"gorm.io/gorm"
 )
 
-var dsn0 = "dsn0"
-var dsn1 = "dsn1"
+var dsn0 = "file:primary?mode=memory&cache=shared"
+var dsn1 = "file:replica?mode=memory&cache=shared"
 var tables = []interface{}{"sys_user", "sys_role"}
 
 func TestDBConfig_Init(t *testing.T) {
@@ -56,7 +56,7 @@ func TestDBConfig_Init(t *testing.T) {
 			},
 			args{
 				config: &gorm.Config{},
-				open:   mysql.Open,
+				open:   sqlite.Open,
 			},
 			false,
 		},
@@ -72,7 +72,7 @@ func TestDBConfig_Init(t *testing.T) {
 			},
 			args{
 				config: &gorm.Config{},
-				open:   mysql.Open,
+				open:   sqlite.Open,
 			},
 			false,
 		},

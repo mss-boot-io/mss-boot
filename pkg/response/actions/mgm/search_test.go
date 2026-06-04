@@ -44,13 +44,16 @@ func Test_getLinkTag(t *testing.T) {
 				model: &testModel{},
 			},
 			wantCollectionName: "authors",
-			wantLocalField:     "authorID",
+			wantLocalField:     "author_id",
 			wantForeignField:   "_id",
 		},
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
 			list := getLinkTag(tt.args.model)
+			if len(list) != 1 {
+				t.Fatalf("getLinkTag() got %d configs, want 1", len(list))
+			}
 			if list[0].CollectionName != tt.wantCollectionName {
 				t.Errorf("getLinkTag() gotCollectionName = %v, want %v", list[0].CollectionName, tt.wantCollectionName)
 			}

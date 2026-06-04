@@ -20,7 +20,7 @@
 > - 遵循 RESTful API 设计规范
 > - 登录支持idp(dex)
 > - 支持 Swagger 文档(基于swaggo)
-> - 代码生成工具
+> - AI 可读契约、发布治理与可观测能力
 > - 完善的cicd配套
 
 ## todo list
