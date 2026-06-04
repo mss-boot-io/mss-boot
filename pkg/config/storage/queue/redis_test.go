@@ -27,6 +27,9 @@ func testRedisClient(t *testing.T) *redis.Client {
 		_ = client.Close()
 		t.Skipf("skip redis integration test: %v", err)
 	}
+	t.Cleanup(func() {
+		_ = client.Close()
+	})
 	return client
 }
 
