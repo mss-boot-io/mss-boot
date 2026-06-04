@@ -234,18 +234,35 @@ func getLinkTag(model any) []LinkConfig {
 			if f.Type.String() == "mgm.DefaultModel" {
 				continue
 			}
-			vm, ok := valueOf.Field(i).Interface().(mgm.Model)
+			vm, ok := valueOf.Field(i).Addr().Interface().(mgm.Model)
 			if !ok {
 				continue
 			}
 			m := pkg.ModelDeepCopy(vm)
 			configs = append(configs, LinkConfig{
 				FieldName:      f.Tag.Get("bson"),
-				CollectionName: mgm.Coll(m).Name(),
-				LocalField:     f.Name + field.ID,
+				CollectionName: mgm.CollName(m),
+				LocalField:     getLinkLocalField(typeOf, f.Name),
 				ForeignField:   field.ID,
 			})
 		}
 	}
 	return configs
+}
+
+func getLinkLocalField(typeOf reflect.Type, relationName string) string {
+	for _, name := range []string{relationName + "ID", relationName + field.ID} {
+		for i := 0; i < typeOf.NumField(); i++ {
+			f := typeOf.Field(i)
+			if f.Name != name {
+				continue
+			}
+			tag := f.Tag.Get("bson")
+			if tag == "" || tag == "-" {
+				return name
+			}
+			return strings.Split(tag, ",")[0]
+		}
+	}
+	return relationName + field.ID
 }

@@ -10,9 +10,9 @@ import (
 	"testing"
 
 	"github.com/gin-gonic/gin"
+	"github.com/glebarez/sqlite"
 	"github.com/google/uuid"
 	"github.com/sanity-io/litter"
-	"gorm.io/driver/mysql"
 	"gorm.io/gorm"
 
 	"gopkg.in/yaml.v3"
@@ -26,6 +26,24 @@ import (
  */
 
 var id = strings.ReplaceAll(uuid.New().String(), "-", "")
+
+func openTestDB(t *testing.T) *gorm.DB {
+	t.Helper()
+	dbName := strings.NewReplacer("/", "_", " ", "_").Replace(t.Name())
+	db, err := gorm.Open(sqlite.Open(fmt.Sprintf("file:%s?mode=memory&cache=shared", dbName)), &gorm.Config{})
+	if err != nil {
+		t.Fatalf("Open() error = %v", err)
+	}
+	sqlDB, err := db.DB()
+	if err != nil {
+		t.Fatalf("DB() error = %v", err)
+	}
+	sqlDB.SetMaxOpenConns(1)
+	t.Cleanup(func() {
+		_ = sqlDB.Close()
+	})
+	return db
+}
 
 // PaginationTest pagination params
 type PaginationTest struct {
@@ -103,12 +121,7 @@ func TestModel_Migrate(t *testing.T) {
 		if err != nil {
 			t.Fatalf("Unmarshal() error = %v", err)
 		}
-		db, err := gorm.Open(mysql.New(mysql.Config{
-			DSN: tt.dsn,
-		}))
-		if err != nil {
-			t.Fatalf("Open() error = %v", err)
-		}
+		db := openTestDB(t)
 		if err = m.Migrate(db); (err != nil) != tt.wantError {
 			t.Errorf("Migrate() error = %v, wantError %v", err, tt.wantError)
 		}
@@ -150,11 +163,9 @@ func TestModel_Create(t *testing.T) {
 				t.Fatalf("Unmarshal() error = %v", err)
 			}
 			m.Init()
-			db, err := gorm.Open(mysql.New(mysql.Config{
-				DSN: tt.dsn,
-			}))
-			if err != nil {
-				t.Fatalf("Open() error = %v", err)
+			db := openTestDB(t)
+			if err = m.Migrate(db); err != nil {
+				t.Fatalf("Migrate() error = %v", err)
 			}
 			// 创建一个虚拟的 HTTP 请求和响应
 			w := httptest.NewRecorder()
@@ -212,11 +223,12 @@ func TestModel_Update(t *testing.T) {
 			if err != nil {
 				t.Fatalf("Unmarshal() error = %v", err)
 			}
-			db, err := gorm.Open(mysql.New(mysql.Config{
-				DSN: tt.dsn,
-			}))
-			if err != nil {
-				t.Fatalf("Open() error = %v", err)
+			db := openTestDB(t)
+			if err = m.Migrate(db); err != nil {
+				t.Fatalf("Migrate() error = %v", err)
+			}
+			if err = db.Exec("INSERT INTO test (id, name) VALUES (?, ?)", id, "test1").Error; err != nil {
+				t.Fatalf("seed test model error = %v", err)
 			}
 			// 创建一个虚拟的 HTTP 请求和响应
 			w := httptest.NewRecorder()
@@ -271,11 +283,12 @@ func TestModel_Delete(t *testing.T) {
 			if err != nil {
 				t.Fatalf("Unmarshal() error = %v", err)
 			}
-			db, err := gorm.Open(mysql.New(mysql.Config{
-				DSN: tt.dsn,
-			}))
-			if err != nil {
-				t.Fatalf("Open() error = %v", err)
+			db := openTestDB(t)
+			if err = m.Migrate(db); err != nil {
+				t.Fatalf("Migrate() error = %v", err)
+			}
+			if err = db.Exec("INSERT INTO test (id, name) VALUES (?, ?)", id, "test1").Error; err != nil {
+				t.Fatalf("seed test model error = %v", err)
 			}
 			// 创建一个虚拟的 HTTP 请求和响应
 			w := httptest.NewRecorder()
@@ -324,11 +337,12 @@ func TestModel_List(t *testing.T) {
 			if err != nil {
 				t.Fatalf("Unmarshal() error = %v", err)
 			}
-			db, err := gorm.Open(mysql.New(mysql.Config{
-				DSN: tt.dsn,
-			}))
-			if err != nil {
-				t.Fatalf("Open() error = %v", err)
+			db := openTestDB(t)
+			if err = m.Migrate(db); err != nil {
+				t.Fatalf("Migrate() error = %v", err)
+			}
+			if err = db.Exec("INSERT INTO test (id, name) VALUES (?, ?)", id, "test1").Error; err != nil {
+				t.Fatalf("seed test model error = %v", err)
 			}
 			// 创建一个虚拟的 HTTP 请求和响应
 			w := httptest.NewRecorder()

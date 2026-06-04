@@ -12,6 +12,27 @@ import (
 	"github.com/mss-boot-io/mss-boot/pkg/config/storage"
 )
 
+func testRedisClient(t *testing.T) *redis.Client {
+	t.Helper()
+	client := redis.NewClient(&redis.Options{
+		Addr:         "127.0.0.1:6379",
+		DialTimeout:  200 * time.Millisecond,
+		ReadTimeout:  200 * time.Millisecond,
+		WriteTimeout: 200 * time.Millisecond,
+		MaxRetries:   0,
+	})
+	ctx, cancel := context.WithTimeout(context.Background(), 500*time.Millisecond)
+	defer cancel()
+	if err := client.Ping(ctx).Err(); err != nil {
+		_ = client.Close()
+		t.Skipf("skip redis integration test: %v", err)
+	}
+	t.Cleanup(func() {
+		_ = client.Close()
+	})
+	return client
+}
+
 func TestRedis_Append(t *testing.T) {
 	type fields struct {
 		ConnectOption   *redis.Options
@@ -25,7 +46,7 @@ func TestRedis_Append(t *testing.T) {
 		name    string
 		message storage.Messager
 	}
-	client := redis.NewUniversalClient(&redis.UniversalOptions{})
+	client := testRedisClient(t)
 	tests := []struct {
 		name    string
 		fields  fields
@@ -91,7 +112,7 @@ func TestRedis_Register(t *testing.T) {
 		name string
 		f    storage.ConsumerFunc
 	}
-	client := redis.NewClient(&redis.Options{})
+	client := testRedisClient(t)
 	tests := []struct {
 		name   string
 		fields fields

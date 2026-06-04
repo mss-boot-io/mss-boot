@@ -8,6 +8,27 @@ import (
 	"github.com/redis/go-redis/v9"
 )
 
+func testRedisClient(t *testing.T) redis.UniversalClient {
+	t.Helper()
+	client := redis.NewUniversalClient(&redis.UniversalOptions{
+		Addrs:        []string{"127.0.0.1:6379"},
+		DialTimeout:  200 * time.Millisecond,
+		ReadTimeout:  200 * time.Millisecond,
+		WriteTimeout: 200 * time.Millisecond,
+		MaxRetries:   0,
+	})
+	ctx, cancel := context.WithTimeout(context.Background(), 500*time.Millisecond)
+	defer cancel()
+	if err := client.Ping(ctx).Err(); err != nil {
+		_ = client.Close()
+		t.Skipf("skip redis integration test: %v", err)
+	}
+	t.Cleanup(func() {
+		_ = client.Close()
+	})
+	return client
+}
+
 func TestRedis_HashSet(t *testing.T) {
 	type fields struct {
 		client redis.UniversalClient
@@ -19,7 +40,7 @@ func TestRedis_HashSet(t *testing.T) {
 		val    interface{}
 		expire time.Duration
 	}
-	client := redis.NewUniversalClient(&redis.UniversalOptions{})
+	client := testRedisClient(t)
 	tests := []struct {
 		name    string
 		fields  fields
@@ -72,7 +93,7 @@ func TestRedis_HashGet(t *testing.T) {
 		{
 			name: "hash get",
 			fields: fields{
-				client: redis.NewUniversalClient(&redis.UniversalOptions{}),
+				client: testRedisClient(t),
 			},
 			args: args{
 				ctx: context.Background(),
@@ -118,7 +139,7 @@ func TestRedis_HashDel(t *testing.T) {
 		{
 			name: "hash del",
 			fields: fields{
-				client: redis.NewUniversalClient(&redis.UniversalOptions{}),
+				client: testRedisClient(t),
 			},
 			args: args{
 				ctx: context.Background(),
@@ -160,7 +181,7 @@ func TestRedis_Set(t *testing.T) {
 		{
 			name: "set",
 			fields: fields{
-				client: redis.NewUniversalClient(&redis.UniversalOptions{}),
+				client: testRedisClient(t),
 				opts: Options{
 					QueryCacheDuration: 10 * time.Second,
 				},
@@ -176,7 +197,7 @@ func TestRedis_Set(t *testing.T) {
 		{
 			name: "set with empty value",
 			fields: fields{
-				client: redis.NewUniversalClient(&redis.UniversalOptions{}),
+				client: testRedisClient(t),
 				opts: Options{
 					QueryCacheDuration: 10 * time.Second,
 				},
@@ -192,7 +213,7 @@ func TestRedis_Set(t *testing.T) {
 		{
 			name: "set with int value",
 			fields: fields{
-				client: redis.NewUniversalClient(&redis.UniversalOptions{}),
+				client: testRedisClient(t),
 				opts: Options{
 					QueryCacheDuration: 10 * time.Second,
 				},
@@ -237,7 +258,7 @@ func TestRedis_Get(t *testing.T) {
 		{
 			name: "get",
 			fields: fields{
-				client: redis.NewUniversalClient(&redis.UniversalOptions{}),
+				client: testRedisClient(t),
 			},
 			args: args{
 				ctx: context.Background(),
@@ -281,7 +302,7 @@ func TestRedis_Del(t *testing.T) {
 		{
 			name: "del",
 			fields: fields{
-				client: redis.NewUniversalClient(&redis.UniversalOptions{}),
+				client: testRedisClient(t),
 			},
 			args: args{
 				ctx: context.Background(),

@@ -1,21 +1,26 @@
 # Security Policy
 
-## Supported Versions
+## Reporting a vulnerability
 
-Use this section to tell people about which versions of your project are
-currently being supported with security updates.
+Do not open a public issue for suspected vulnerabilities.
 
-| Version | Supported          |
-| ------- | ------------------ |
-| 5.1.x   | :white_check_mark: |
-| 5.0.x   | :x:                |
-| 4.0.x   | :white_check_mark: |
-| < 4.0   | :x:                |
+Use GitHub Security Advisories for this repository when private vulnerability
+reporting is enabled. If that setting is not available yet, contact the
+maintainer privately and include the affected commit/tag, impact, reproduction
+steps, and any proof of concept.
 
-## Reporting a Vulnerability
+The organization still needs a final public security contact. Until then,
+private GitHub advisories are the preferred intake path.
 
-Use this section to tell people how to report a vulnerability.
+## Supported versions
 
-Tell them where to go, how often they can expect to get an update on a
-reported vulnerability, what to expect if the vulnerability is accepted or
-declined, etc.
+The active `main` branch and the latest tagged release are supported by default.
+Older versions are handled case by case until a formal support matrix is
+published.
+
+## Response expectations
+
+- Acknowledge valid private reports within 7 days when possible.
+- Triage severity, affected versions, and exploitability before public
+  disclosure.
+- Prepare a fix, release note, and upgrade guidance before disclosing details.

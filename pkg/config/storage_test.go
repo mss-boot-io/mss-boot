@@ -91,6 +91,12 @@ func TestStorage_Init(t *testing.T) {
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
+			if tt.fields.Region == "" || tt.fields.Bucket == "" || tt.fields.AccessKeyID == "" || tt.fields.SecretAccessKey == "" {
+				t.Skipf("skip %s integration test: storage credentials are not configured", tt.name)
+			}
+			if tt.fields.Type == MINIO && tt.fields.Endpoint == "" {
+				t.Skip("skip minio integration test: minio_endpoint is not configured")
+			}
 			o := &Storage{
 				Type:            tt.fields.Type,
 				SigningMethod:   tt.fields.SigningMethod,
