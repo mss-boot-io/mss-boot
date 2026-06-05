@@ -12,6 +12,9 @@ updates:
     labels:
       - "area/backend"
       - "type/security"
+    ignore:
+      - dependency-name: "github.com/casbin/gorm-adapter/v3"
+        update-types: ["version-update:semver-minor", "version-update:semver-patch"]
   - package-ecosystem: "github-actions"
     directory: "/"
     schedule:
