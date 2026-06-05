@@ -1,6 +1,6 @@
 module github.com/mss-boot-io/mss-boot
 
-go 1.26
+go 1.26.0
 
 require (
 	github.com/IBM/sarama v1.47.0
@@ -51,14 +51,14 @@ require (
 	golang.org/x/oauth2 v0.36.0
 	golang.org/x/time v0.15.0
 	google.golang.org/grpc v1.81.1
-	google.golang.org/protobuf v1.36.11
+	google.golang.org/protobuf v1.36.12-0.20260120151049-f2248ac996af
 	gopkg.in/yaml.v3 v3.0.1
 	gorm.io/driver/mysql v1.6.0
 	gorm.io/driver/postgres v1.6.0
 	gorm.io/gorm v1.31.1
 	gorm.io/plugin/dbresolver v1.6.2
 	k8s.io/api v0.35.3
-	k8s.io/apimachinery v0.35.3
+	k8s.io/apimachinery v0.36.1
 	k8s.io/client-go v0.35.3
 )
 
