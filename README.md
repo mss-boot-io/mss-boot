@@ -16,7 +16,7 @@ English | [简体中文](https://github.com/mss-boot-io/mss-boot/blob/main/READM
 
 An enterprise-level language heterogeneous microservice solution that supports grpc and http protocols. The single-service code framework adheres to the principle of minimalism, while providing complete devops process support (gitops).
 
-## 📦 Latest Version: v0.7.2
+## 📦 Latest Version: v0.7.1
 
 [documentation](https://docs.mss-boot-io.top)
 
