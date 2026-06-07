@@ -1,18 +1,22 @@
 # mss-boot
 
 ---
-<img align="right" width="320" src="https://mss-boot-io.github.io/mss-boot-docs/images/logos/logo-b.png"  alt="https://github.com/mss-boot-io/mss-boot"/>
+<img align="right" width="32" src="https://docs.mss-boot-io.top/favicon.ico"  alt="https://github.com/mss-boot-io/mss-boot"/>
 
 
 [![ci](https://github.com/mss-boot-io/mss-boot/actions/workflows/ci.yml/badge.svg)](https://github.com/mss-boot-io/mss-boot/actions/workflows/ci.yml)
+[![CodeQL](https://github.com/mss-boot-io/mss-boot/actions/workflows/codeql.yml/badge.svg)](https://github.com/mss-boot-io/mss-boot/actions/workflows/codeql.yml)
+[![OpenSSF Scorecard](https://github.com/mss-boot-io/mss-boot/actions/workflows/scorecard.yml/badge.svg)](https://github.com/mss-boot-io/mss-boot/actions/workflows/scorecard.yml)
 [![Release](https://img.shields.io/github/v/release/mss-boot-io/mss-boot.svg?style=flat-square)](https://github.com/mss-boot-io/mss-boot/releases)
-[![License](https://img.shields.io/github/license/mashape/apistatus.svg)](https://github.com/mss-boot-io/mss-boot)
+[![License](https://img.shields.io/github/license/mss-boot-io/mss-boot.svg?style=flat-square)](https://github.com/mss-boot-io/mss-boot/blob/main/LICENSE)
 
 [English](https://github.com/mss-boot-io/mss-boot/blob/main/README.md) | 简体中文
 
 支持grpc、http协议的企业级语言异构微服务解决方案，单服务代码框架坚持极简的原则，同时提供完善的devops流程支撑(gitops)
 
-[在线文档](https://mss-boot-io.github.io/mss-boot-docs/index.html)
+[在线文档](https://docs.mss-boot-io.top)
+
+[贡献指南](./CONTRIBUTING.md) · [安全策略](./SECURITY.md) · [新手任务](https://github.com/mss-boot-io/mss-boot/issues?q=is%3Aissue%20is%3Aopen%20label%3A%22good%20first%20issue%22)
 
 [微服务集合](https://github.com/mss-boot-io/mss-boot-monorepo)
 

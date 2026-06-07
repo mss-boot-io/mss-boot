@@ -14,6 +14,7 @@ import (
 	"github.com/gin-gonic/gin"
 	"github.com/kamva/mgm/v3"
 	"go.mongodb.org/mongo-driver/bson"
+	"go.mongodb.org/mongo-driver/bson/primitive"
 	"go.mongodb.org/mongo-driver/mongo"
 
 	"github.com/mss-boot-io/mss-boot/pkg/response"
@@ -64,7 +65,13 @@ func (e *Delete) delete(c *gin.Context, ids ...string) {
 		api.OK(nil)
 		return
 	}
-	_, err := mgm.Coll(e.Model).DeleteMany(c, bson.M{"_id": bson.M{"$in": ids}})
+	objectIDs, err := parseObjectIDs(ids)
+	if err != nil {
+		api.AddError(err)
+		api.Err(http.StatusUnprocessableEntity)
+		return
+	}
+	_, err = mgm.Coll(e.Model).DeleteMany(c, bson.M{"_id": bson.M{"$in": objectIDs}})
 	if err != nil {
 		if errors.Is(err, mongo.ErrNoDocuments) {
 			api.OK(nil)
@@ -74,4 +81,16 @@ func (e *Delete) delete(c *gin.Context, ids ...string) {
 		return
 	}
 	api.OK(nil)
+}
+
+func parseObjectIDs(ids []string) ([]primitive.ObjectID, error) {
+	objectIDs := make([]primitive.ObjectID, 0, len(ids))
+	for _, id := range ids {
+		objectID, err := primitive.ObjectIDFromHex(id)
+		if err != nil {
+			return nil, err
+		}
+		objectIDs = append(objectIDs, objectID)
+	}
+	return objectIDs, nil
 }

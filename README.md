@@ -5,8 +5,10 @@
 
 
 [![ci](https://github.com/mss-boot-io/mss-boot/actions/workflows/ci.yml/badge.svg)](https://github.com/mss-boot-io/mss-boot/actions/workflows/ci.yml)
+[![CodeQL](https://github.com/mss-boot-io/mss-boot/actions/workflows/codeql.yml/badge.svg)](https://github.com/mss-boot-io/mss-boot/actions/workflows/codeql.yml)
+[![OpenSSF Scorecard](https://github.com/mss-boot-io/mss-boot/actions/workflows/scorecard.yml/badge.svg)](https://github.com/mss-boot-io/mss-boot/actions/workflows/scorecard.yml)
 [![Release](https://img.shields.io/github/v/release/mss-boot-io/mss-boot.svg?style=flat-square)](https://github.com/mss-boot-io/mss-boot/releases)
-[![License](https://img.shields.io/github/license/mashape/apistatus.svg)](https://github.com/mss-boot-io/mss-boot)
+[![License](https://img.shields.io/github/license/mss-boot-io/mss-boot.svg?style=flat-square)](https://github.com/mss-boot-io/mss-boot/blob/main/LICENSE)
 
 English | [简体中文](https://github.com/mss-boot-io/mss-boot/blob/main/README.Zh-cn.md)
 
@@ -17,6 +19,8 @@ An enterprise-level language heterogeneous microservice solution that supports g
 ## 📦 Latest Version: v0.7.1
 
 [documentation](https://docs.mss-boot-io.top)
+
+[contributing](./CONTRIBUTING.md) · [security](./SECURITY.md) · [good first issues](https://github.com/mss-boot-io/mss-boot/issues?q=is%3Aissue%20is%3Aopen%20label%3A%22good%20first%20issue%22)
 
 [http service template](https://github.com/mss-boot-io/service-http)
 
