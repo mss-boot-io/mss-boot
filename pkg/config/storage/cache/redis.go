@@ -103,6 +103,7 @@ func (r *Redis) Query(tx *gorm.DB) {
 		tx.Logger.Error(ctx, err.Error())
 		return
 	}
+	_ = r.SaveTagKey(ctx, tag, key)
 }
 
 func (r *Redis) QueryCache(ctx context.Context, key string, dest any) error {
@@ -137,6 +138,10 @@ func (r *Redis) RemoveFromTag(ctx context.Context, tag string) error {
 	if err != nil {
 		return err
 	}
+	if len(keys) == 0 {
+		return r.Del(ctx, tag).Err()
+	}
+	keys = append(keys, tag)
 	return r.Del(ctx, keys...).Err()
 }
 

@@ -22,3 +22,4 @@
 ## 参考文件
 
 - 详细约束见：`aigc/prompts/prompt-constraints.zh-CN.md`
+- Query cache tag invalidation：`aigc/prompts/query-cache-tag-invalidation-2026-06-07.zh-CN.md`
