@@ -5,8 +5,16 @@ import (
 	"testing"
 	"time"
 
+	"github.com/alicebob/miniredis/v2"
+	"github.com/glebarez/sqlite"
 	"github.com/redis/go-redis/v9"
+	"gorm.io/gorm"
 )
+
+type queryCacheRecord struct {
+	ID   int64
+	Name string
+}
 
 func testRedisClient(t *testing.T) redis.UniversalClient {
 	t.Helper()
@@ -27,6 +35,80 @@ func testRedisClient(t *testing.T) redis.UniversalClient {
 		_ = client.Close()
 	})
 	return client
+}
+
+func testMiniredisClient(t *testing.T) (redis.UniversalClient, *miniredis.Miniredis) {
+	t.Helper()
+	server := miniredis.RunT(t)
+	client := redis.NewUniversalClient(&redis.UniversalOptions{
+		Addrs: []string{server.Addr()},
+	})
+	t.Cleanup(func() {
+		_ = client.Close()
+		server.Close()
+	})
+	return client, server
+}
+
+func TestRedis_QueryStoresNewCacheKeyInTagSet(t *testing.T) {
+	client, _ := testMiniredisClient(t)
+	r, err := NewRedis(client, nil, WithQueryCacheKeys("*"), WithQueryCacheDuration(time.Minute))
+	if err != nil {
+		t.Fatalf("new redis cache: %v", err)
+	}
+	db, err := gorm.Open(sqlite.Open(":memory:"), &gorm.Config{})
+	if err != nil {
+		t.Fatalf("open sqlite db: %v", err)
+	}
+	if err := db.AutoMigrate(&queryCacheRecord{}); err != nil {
+		t.Fatalf("auto migrate: %v", err)
+	}
+	if err := db.Create(&queryCacheRecord{Name: "acme"}).Error; err != nil {
+		t.Fatalf("seed record: %v", err)
+	}
+	if err := r.Initialize(db); err != nil {
+		t.Fatalf("initialize query cache: %v", err)
+	}
+
+	ctx := context.WithValue(context.Background(), "gorm:cache:tag", "query_cache_records")
+	var records []queryCacheRecord
+	if err := db.WithContext(ctx).Find(&records).Error; err != nil {
+		t.Fatalf("query records: %v", err)
+	}
+	if len(records) != 1 || records[0].Name != "acme" {
+		t.Fatalf("expected seeded record, got %#v", records)
+	}
+
+	tag := "gorm.cache:query_cache_records"
+	keys, err := client.SMembers(context.Background(), tag).Result()
+	if err != nil {
+		t.Fatalf("read tag set: %v", err)
+	}
+	if len(keys) != 1 {
+		t.Fatalf("expected one cached key in tag set, got %d: %#v", len(keys), keys)
+	}
+	if exists, err := client.Exists(context.Background(), keys[0]).Result(); err != nil || exists != 1 {
+		t.Fatalf("expected cached key to exist, exists=%d err=%v", exists, err)
+	}
+
+	if err := r.RemoveFromTag(context.Background(), tag); err != nil {
+		t.Fatalf("remove from tag: %v", err)
+	}
+	if exists, err := client.Exists(context.Background(), keys[0], tag).Result(); err != nil || exists != 0 {
+		t.Fatalf("expected cached key and tag set to be removed, exists=%d err=%v", exists, err)
+	}
+}
+
+func TestRedis_RemoveFromTagHandlesEmptyTag(t *testing.T) {
+	client, _ := testMiniredisClient(t)
+	r, err := NewRedis(client, nil)
+	if err != nil {
+		t.Fatalf("new redis cache: %v", err)
+	}
+
+	if err := r.RemoveFromTag(context.Background(), "gorm.cache:missing"); err != nil {
+		t.Fatalf("remove missing tag: %v", err)
+	}
 }
 
 func TestRedis_HashSet(t *testing.T) {
