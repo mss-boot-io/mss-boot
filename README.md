@@ -16,7 +16,7 @@ English | [简体中文](https://github.com/mss-boot-io/mss-boot/blob/main/READM
 
 An enterprise-level language heterogeneous microservice solution that supports grpc and http protocols. The single-service code framework adheres to the principle of minimalism, while providing complete devops process support (gitops).
 
-## 📦 Latest Version: v0.7.1
+## 📦 Latest Version: v0.7.3
 
 [documentation](https://docs.mss-boot-io.top)
 
@@ -39,7 +39,7 @@ An enterprise-level language heterogeneous microservice solution that supports g
 > - Action scope management for context-aware operations
 > - Extensive middleware ecosystem
 
-## 🚀 v0.7.1 Highlights
+## 🚀 v0.7.x Highlights
 
 ### Core Improvements
 - **Enhanced Error Handling**: Standardized error codes and improved error propagation
@@ -97,7 +97,7 @@ go test -tags=integration ./...
 
 ### Using Go Modules
 ```bash
-go get github.com/mss-boot-io/mss-boot@v0.7.1
+go get github.com/mss-boot-io/mss-boot@v0.7.3
 ```
 
 ### Basic Usage
