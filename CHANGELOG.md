@@ -2,6 +2,28 @@
 
 All notable changes to the mss-boot framework will be documented in this file.
 
+## [v0.7.3] - 2026-06-07
+
+### Added
+
+- Structured GitHub issue forms and refreshed open-source entry points.
+- Local developer Makefile targets for `test`, `coverage`, and `tidy`.
+
+### Changed
+
+- Refreshed README quick-start guidance to use the latest `v0.7.3` module version.
+- Corrected Makefile build metadata import path to `github.com/mss-boot-io/mss-boot`.
+
+### Fixed
+
+- Kept GORM query-cache tag invalidation complete for create, update, and delete paths.
+- Hardened Mongo delete handling by validating ObjectID input before deletion.
+
+### Validation
+
+- GitHub CI, lint, CodeQL, docs-drift, PR guard, and govulncheck passed before release.
+- Local `go test ./pkg/response/actions/mgm ./...` passed on the release commit.
+
 ## [v0.7.1] - 2026-04-06
 
 ### Added

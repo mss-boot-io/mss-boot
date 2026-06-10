@@ -14,6 +14,8 @@
 
 支持grpc、http协议的企业级语言异构微服务解决方案，单服务代码框架坚持极简的原则，同时提供完善的devops流程支撑(gitops)
 
+## 📦 当前版本: v0.7.3
+
 [在线文档](https://docs.mss-boot-io.top)
 
 [贡献指南](./CONTRIBUTING.md) · [安全策略](./SECURITY.md) · [新手任务](https://github.com/mss-boot-io/mss-boot/issues?q=is%3Aissue%20is%3Aopen%20label%3A%22good%20first%20issue%22)
@@ -25,6 +27,8 @@
 > - 登录支持idp(dex)
 > - 支持 Swagger 文档(基于swaggo)
 > - AI 可读契约、发布治理与可观测能力
+> - 标准化错误处理与 Action Scope 上下文治理
+> - GORM 查询缓存标签失效、Mongo ObjectID 安全校验等稳定性增强
 > - 完善的cicd配套
 
 ## todo list
@@ -74,6 +78,24 @@ golangci-lint run ./...
 ```
 
 GitHub Actions 会在仓库根目录运行 action 提供的 latest `golangci-lint`。如果本地二进制由低于 `go.mod` 目标版本的 Go 构建，请先重新安装再扫描。当前 lint job 用于提示历史 lint backlog，`go test ./...` 仍是必须通过的 CI 检查。
+
+## 🔧 快速开始
+
+### 环境要求
+- Go 1.26+
+
+### 使用 Go Modules
+```bash
+go get github.com/mss-boot-io/mss-boot@v0.7.3
+```
+
+### 本地检查
+```bash
+make tidy
+make test
+make coverage
+make lint
+```
 
 ## 请我喝杯咖啡
 <a href="https://www.buymeacoffee.com/lwnmengjing" target="_blank"><img src="https://cdn.buymeacoffee.com/buttons/v2/default-yellow.png" alt="Buy Me A Coffee" style="height: 60px !important;width: 217px !important;" ></a>

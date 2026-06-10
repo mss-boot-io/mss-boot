@@ -44,6 +44,8 @@ An enterprise-level language heterogeneous microservice solution that supports g
 ### Core Improvements
 - **Enhanced Error Handling**: Standardized error codes and improved error propagation
 - **Action Scope Management**: Better context management for complex operations
+- **Query Cache Invalidation**: More complete GORM query-cache tag invalidation for create, update, and delete paths
+- **Mongo Safety**: ObjectID validation before Mongo delete operations
 - **Dependency Updates**: Comprehensive dependency refresh across all modules
 - **Performance Optimizations**: Improved memory usage and response times
 
@@ -51,6 +53,7 @@ An enterprise-level language heterogeneous microservice solution that supports g
 - **Test Coverage**: Comprehensive test suite with 80%+ coverage requirement
 - **Integration Testing**: Robust integration tests for all core components
 - **CI/CD Pipeline**: Enhanced GitHub Actions workflow with quality gates
+- **Open Source Intake**: Structured issue forms and refreshed contributor entry points
 
 ### Documentation
 - **Comprehensive Guides**: Updated documentation for all core features
@@ -72,9 +75,9 @@ The request flow uses a small set of repeated terms:
 > - [x] Support config provider  
 > - [x] Support istio traces
 > - [x] Out-of-the-box support
-> - [x] Enhanced error handling (v0.7.1)
-> - [x] Action scope management (v0.7.1)
-> - [x] Comprehensive testing infrastructure (v0.7.1)
+> - [x] Enhanced error handling (v0.7.x)
+> - [x] Action scope management (v0.7.x)
+> - [x] Comprehensive testing infrastructure (v0.7.x)
 
 ## 🧪 Testing
 
@@ -119,6 +122,9 @@ The GitHub Actions lint job runs `golangci-lint` from the repository root with t
 
 ## 🔧 Quick Start
 
+### Requirements
+- Go 1.26+
+
 ### Using Go Modules
 ```bash
 go get github.com/mss-boot-io/mss-boot@v0.7.3
@@ -139,6 +145,14 @@ func main() {
         log.Fatal("server run failed", log.Err(err))
     }
 }
+```
+
+### Local Checks
+```bash
+make tidy
+make test
+make coverage
+make lint
 ```
 
 ## 📝 CHANGELOG
