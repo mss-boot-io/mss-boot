@@ -14,6 +14,8 @@
 
 支持grpc、http协议的企业级语言异构微服务解决方案，单服务代码框架坚持极简的原则，同时提供完善的devops流程支撑(gitops)
 
+## 📦 当前版本: v0.7.3
+
 [在线文档](https://docs.mss-boot-io.top)
 
 [贡献指南](./CONTRIBUTING.md) · [安全策略](./SECURITY.md) · [新手任务](https://github.com/mss-boot-io/mss-boot/issues?q=is%3Aissue%20is%3Aopen%20label%3A%22good%20first%20issue%22)
@@ -25,6 +27,8 @@
 > - 登录支持idp(dex)
 > - 支持 Swagger 文档(基于swaggo)
 > - AI 可读契约、发布治理与可观测能力
+> - 标准化错误处理与 Action Scope 上下文治理
+> - GORM 查询缓存标签失效、Mongo ObjectID 安全校验等稳定性增强
 > - 完善的cicd配套
 
 ## todo list
@@ -33,6 +37,24 @@
 > - [x] 支持config provider
 > - [ ] 支持istio链路追踪
 > - [ ] 开箱即用支持
+
+## 🔧 快速开始
+
+### 环境要求
+- Go 1.26+
+
+### 使用 Go Modules
+```bash
+go get github.com/mss-boot-io/mss-boot@v0.7.3
+```
+
+### 本地检查
+```bash
+make tidy
+make test
+make coverage
+make lint
+```
 
 ## 请我喝杯咖啡
 <a href="https://www.buymeacoffee.com/lwnmengjing" target="_blank"><img src="https://cdn.buymeacoffee.com/buttons/v2/default-yellow.png" alt="Buy Me A Coffee" style="height: 60px !important;width: 217px !important;" ></a>

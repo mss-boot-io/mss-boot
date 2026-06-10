@@ -4,7 +4,7 @@ NAME=micro
 IMAGE_NAME=micro/$(NAME)
 GIT_COMMIT=$(shell git rev-parse --short HEAD)
 GIT_TAG=$(shell git describe --abbrev=0 --tags --always --match "v*")
-GIT_IMPORT=github.com/matchstalk/mss-boot
+GIT_IMPORT=github.com/mss-boot-io/mss-boot
 CGO_ENABLED=0
 BUILD_DATE=$(shell date +%s)
 LDFLAGS=-X $(GIT_IMPORT).BuildDate=$(BUILD_DATE) -X $(GIT_IMPORT).GitCommit=$(GIT_COMMIT) -X $(GIT_IMPORT).GitTag=$(GIT_TAG)
@@ -22,5 +22,20 @@ proto:
 .PHONY: lint
 lint:
 	golangci-lint run -v ./...
+
+.PHONY: fix-lint
 fix-lint:
 	goimports -w .
+
+.PHONY: test
+test:
+	go test ./...
+
+.PHONY: coverage
+coverage:
+	go test ./... -coverprofile=coverage.out
+	go tool cover -func=coverage.out
+
+.PHONY: tidy
+tidy:
+	go mod tidy
