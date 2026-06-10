@@ -22,3 +22,5 @@
 ## 参考文件
 
 - 详细约束见：`aigc/prompts/prompt-constraints.zh-CN.md`
+- Query cache tag invalidation：`aigc/prompts/query-cache-tag-invalidation-2026-06-07.zh-CN.md`
+- README 本地验证与 Action/Controller 术语：`aigc/prompts/readme-test-lint-action-glossary-2026-06-09.zh-CN.md`

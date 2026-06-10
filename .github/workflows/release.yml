@@ -12,12 +12,24 @@ jobs:
   release:
     runs-on: ubuntu-latest
     steps:
-      - name: Get version
-        id: get_version
-        run: echo "VERSION=${GITHUB_REF#refs/tags/}" >> "$GITHUB_OUTPUT"
+      - name: Upsert release
+        env:
+          GH_TOKEN: ${{ github.token }}
+          GH_REPO: ${{ github.repository }}
+        run: |
+          set -euo pipefail
 
-      - name: Release
-        uses: softprops/action-gh-release@v3
-        with:
-          generate_release_notes: true
-          prerelease: false
+          tag="${GITHUB_REF_NAME}"
+          title="mss-boot ${tag}"
+
+          if gh release view "${tag}" >/dev/null 2>&1; then
+            gh release edit "${tag}" \
+              --title "${title}" \
+              --draft=false \
+              --prerelease=false
+          else
+            gh release create "${tag}" \
+              --verify-tag \
+              --generate-notes \
+              --title "${title}"
+          fi

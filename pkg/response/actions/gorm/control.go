@@ -122,6 +122,9 @@ func (e *Control) create(c *gin.Context) {
 		return
 	}
 
+	if CleanCacheFromTag != nil {
+		_ = CleanCacheFromTag(c, m.TableName())
+	}
 	api.OK(m)
 }
 

@@ -60,6 +60,16 @@ An enterprise-level language heterogeneous microservice solution that supports g
 - **API Reference**: Complete Swagger documentation for all endpoints
 - **Migration Guides**: Clear upgrade paths from previous versions
 
+## 🧭 Action/Controller Glossary
+
+The request flow uses a small set of repeated terms:
+
+- **Controller**: A `pkg/response.Controller` implementation that owns a route path, route-level Gin handlers, and the mapping from an action name to a concrete `Action`. `pkg/response/controller.Simple` chooses provider-specific actions for GORM, MGM, or Kubernetes models.
+- **Action**: A named request operation such as `get`, `search`, `control`, or `delete`. An action implements `response.Action`, returns a Gin handler chain, and contains the provider-specific logic for handling that operation.
+- **Hook**: A callback attached to a lifecycle point. Common examples are `BeforeCreate`, `AfterUpdate`, `BeforeSearch`, config source `PrefixHook` / `PostHook`, and server start or shutdown hooks.
+- **Scope**: A per-request query filter, usually supplied through `WithScope`, that turns the current Gin context and model table into a GORM scope. Use scopes for tenant filters, ownership filters, or other contextual constraints.
+- **Provider**: The selected backend implementation for a model, config source, or storage target. For controllers this is usually `ModelProviderGorm`, `ModelProviderMgm`, or `ModelProviderK8S`; config and storage packages have their own provider enums.
+
 ## 📋 Todo List
 > - [x] Support dynamodb
 > - [x] Support config provider  
@@ -85,16 +95,30 @@ The project follows strict testing requirements:
 
 ### Running Tests
 ```bash
-# Unit tests
-go test ./... -v
+# Required local test gate
+go test ./...
 
 # Coverage report
 go test ./... -coverprofile=coverage.out
 go tool cover -func=coverage.out
 
-# Integration tests (requires database)
+# Integration tests (requires configured external services)
 go test -tags=integration ./...
 ```
+
+Integration-style tests should skip when optional databases, object storage, Kubernetes clusters, cloud credentials, or other external services are not configured.
+
+### Running Lint
+```bash
+# Install the tools used by the CI lint job when they are not already available
+go install golang.org/x/tools/cmd/goimports@latest
+go install github.com/golangci/golangci-lint/v2/cmd/golangci-lint@latest
+
+# Local lint sweep
+golangci-lint run ./...
+```
+
+The GitHub Actions lint job runs `golangci-lint` from the repository root with the latest action-provided version. If a local binary was built with an older Go version than `go.mod` targets, reinstall it before running the sweep. The lint job is currently advisory while the existing lint backlog is reduced; `go test ./...` remains the required CI gate.
 
 ## 🔧 Quick Start
 

@@ -1,7 +1,7 @@
 # mss-boot
 
 ---
-<img align="right" width="320" src="https://docs.mss-boot-io.top/favicon.ico"  alt="https://github.com/mss-boot-io/mss-boot"/>
+<img align="right" width="32" src="https://docs.mss-boot-io.top/favicon.ico"  alt="https://github.com/mss-boot-io/mss-boot"/>
 
 
 [![ci](https://github.com/mss-boot-io/mss-boot/actions/workflows/ci.yml/badge.svg)](https://github.com/mss-boot-io/mss-boot/actions/workflows/ci.yml)
@@ -37,6 +37,47 @@
 > - [x] 支持config provider
 > - [ ] 支持istio链路追踪
 > - [ ] 开箱即用支持
+
+## 🧭 Action/Controller 术语
+
+mss-boot 的请求流程会反复出现以下概念：
+
+- **Controller**：实现 `pkg/response.Controller` 的控制器，负责路由路径、路由级 Gin handlers，以及按 action 名称取得具体 `Action`。`pkg/response/controller.Simple` 会根据 GORM、MGM 或 Kubernetes 模型 provider 选择对应 action。
+- **Action**：`get`、`search`、`control`、`delete` 等具名请求动作。Action 实现 `response.Action`，返回 Gin handler chain，并封装该动作在具体 provider 下的处理逻辑。
+- **Hook**：挂在生命周期节点上的回调，例如 `BeforeCreate`、`AfterUpdate`、`BeforeSearch`，配置源的 `PrefixHook` / `PostHook`，以及服务启动或关闭回调。
+- **Scope**：通常通过 `WithScope` 注入的按请求查询过滤器，会把当前 Gin context 和模型表转换成 GORM scope。常用于租户、归属关系或其他上下文约束。
+- **Provider**：用于选择后端实现的枚举或 `Stringer`。控制器常见的是 `ModelProviderGorm`、`ModelProviderMgm`、`ModelProviderK8S`；配置源与存储包也有各自的 provider。
+
+## 🧪 本地验证
+
+提交 PR 前建议先在仓库根目录运行：
+
+```bash
+# 必须通过的本地测试入口
+go test ./...
+
+# 覆盖率报告
+go test ./... -coverprofile=coverage.out
+go tool cover -func=coverage.out
+
+# 集成测试，需要先配置对应外部服务
+go test -tags=integration ./...
+```
+
+依赖数据库、对象存储、Kubernetes、云凭证或其他可选外部服务的集成类测试，在配置缺失时应主动 skip，而不是让普通本地验证失败。
+
+Lint 流程与 CI 保持一致：
+
+```bash
+# 未安装工具时先安装
+go install golang.org/x/tools/cmd/goimports@latest
+go install github.com/golangci/golangci-lint/v2/cmd/golangci-lint@latest
+
+# 本地 lint 扫描
+golangci-lint run ./...
+```
+
+GitHub Actions 会在仓库根目录运行 action 提供的 latest `golangci-lint`。如果本地二进制由低于 `go.mod` 目标版本的 Go 构建，请先重新安装再扫描。当前 lint job 用于提示历史 lint backlog，`go test ./...` 仍是必须通过的 CI 检查。
 
 ## 🔧 快速开始
 
