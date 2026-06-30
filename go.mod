@@ -4,11 +4,12 @@ go 1.26.0
 
 require (
 	github.com/IBM/sarama v1.50.2
+	github.com/alicebob/miniredis/v2 v2.38.0
 	github.com/aws/aws-msk-iam-sasl-signer-go v1.0.4
-	github.com/aws/aws-sdk-go-v2 v1.41.12
+	github.com/aws/aws-sdk-go-v2 v1.42.0
 	github.com/aws/aws-sdk-go-v2/config v1.32.23
 	github.com/aws/aws-sdk-go-v2/credentials v1.19.22
-	github.com/aws/aws-sdk-go-v2/feature/rds/auth v1.6.28
+	github.com/aws/aws-sdk-go-v2/feature/rds/auth v1.6.29
 	github.com/aws/aws-sdk-go-v2/service/appconfigdata v1.24.1
 	github.com/aws/aws-sdk-go-v2/service/dynamodb v1.58.0
 	github.com/aws/aws-sdk-go-v2/service/s3 v1.103.2
@@ -43,6 +44,7 @@ require (
 	github.com/skip2/go-qrcode v0.0.0-20200617195104-da1b6568686e
 	github.com/smartystreets/goconvey v1.8.1
 	github.com/spf13/cast v1.10.0
+	github.com/stretchr/testify v1.11.1
 	github.com/xdg-go/scram v1.2.0
 	go.mongodb.org/mongo-driver v1.17.9
 	go.opentelemetry.io/contrib/instrumentation/google.golang.org/grpc/otelgrpc v0.69.0
@@ -69,7 +71,6 @@ require (
 	github.com/Masterminds/goutils v1.1.1 // indirect
 	github.com/Masterminds/semver/v3 v3.4.0 // indirect
 	github.com/Masterminds/sprig/v3 v3.3.0 // indirect
-	github.com/alicebob/miniredis/v2 v2.38.0 // indirect
 	github.com/andygrunwald/go-jira v1.17.0 // indirect
 	github.com/armon/go-metrics v0.4.1 // indirect
 	github.com/aws/aws-sdk-go-v2/aws/protocol/eventstream v1.7.13 // indirect
@@ -193,7 +194,6 @@ require (
 	github.com/shopspring/decimal v1.4.0 // indirect
 	github.com/smarty/assertions v1.15.0 // indirect
 	github.com/spf13/pflag v1.0.10 // indirect
-	github.com/stretchr/testify v1.11.1 // indirect
 	github.com/thoas/go-funk v0.9.3 // indirect
 	github.com/trivago/tgo v1.0.7 // indirect
 	github.com/tsuyoshiwada/go-gitcmd v0.0.0-20180205145712-5f1f5f9475df // indirect
